@@ -54,7 +54,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: set-version
-          args: $GITHUB_REF_NAME
+          args: ${{ github.ref_name }}
 
       - uses: taiki-e/upload-rust-binary-action@v1
         with:

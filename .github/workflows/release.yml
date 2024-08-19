@@ -43,7 +43,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-          components: cargo-edit
+
+      - name: Install cargo edit
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-edit
 
       - name: Set release version
         uses: actions-rs/cargo@v1

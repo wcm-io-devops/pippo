@@ -1,0 +1,10 @@
+/**/.DS_Store
+
+/.cryptkey
+/.idea
+/*.log
+/*.log.gz
+/target
+/pippo.json
+/public
+/test*

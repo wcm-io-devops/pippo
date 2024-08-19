@@ -83,9 +83,9 @@ jobs:
             os: macos-latest
             target: x86_64-apple-darwin
 
-          - build: windows-gnu
-            os: ubuntu-latest
-            target: x86_64-pc-windows-gnu
+          - build: windows
+            os: x86_64-pc-windows-msvc
+            target: x86_64-pc-windows-msvc
 
     steps:
     - uses: actions/checkout@v4

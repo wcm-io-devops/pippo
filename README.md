@@ -10,74 +10,6 @@ Either download the version you want from the [releases page](https://github.com
 cargo install --locked --path .
 ```
 
-## Development
-
-## Install Rust and Cargo
-
-On Linux and macOS systems, this is done as follows:
-
-```bash
-curl https://sh.rustup.rs -sSf | sh
-```
-
-For other OS's check https://rustup.rs/ 
-
-
-### Run application
-
-```bash
-cargo run env vars set <path>
-cargo run pipeline vars set <path>
-# ...
-```
-
-### Set log level
-
-Possible values: 
-
-* error
-* warn
-* info
-* debug
-* trace
-
-```bash
-export RUST_LOG="debug" # or
-RUST_LOG="trace"; cargo run
-```
-
-### Apply formatting
-
-```bash
-# apply
-rustfmt --edition 2018 src/main.rs
-# check only
-rustfmt --edition 2018 --check src/main.rs
-```
-
-## Release
-
-This is currently a semi-automatic process.
-
-### With scripts
-
-1. Install required software: `cargo install cargo-edit`
-1. run `./release_prepare.sh` and ensure version numbers are correctly detected and changed
-2. inspect the created git commit, especially if the change in gitlab.ci is correct!
-3. push to main ; WAIT till the job succeded 
-4. Create a new git tag; a release with the given version string will then be created and is available on GitLab
-5. After the release run `release_finish.sh` and ensure version numbers are correctly detected and changed
-6. push to main
-
-### Manual
-
-1. Set the correct version in `Cargo.toml` and `src/clap_models.rs`.
-2. Run `cargo build` to make sure the changed version reflects in `Cargo.lock` (not sure if this is necessary TBH)
-3. Set the same version in `.gitlab-ci.yml` via the `PACKAGE_VERSION` variable
-4. Push your changes to main
-5. Create a new git tag; a release with the given version string will then be created and is available on GitLab
-6. After the release, do steps 1-4 again to set the version to the next SNAPSHOT iteration.
-
 ## Configuration
 
 > 💡 You can always run `pippo [subcommand] --help`!
@@ -349,3 +281,55 @@ programs:
 pippo -c <pippo.json> -p <program-id> domain list
 pippo -c <pippo.json> domain create <environment-domains.yml>
 ```
+
+## Development
+
+## Install Rust and Cargo
+
+On Linux and macOS systems, this is done as follows:
+
+```bash
+curl https://sh.rustup.rs -sSf | sh
+```
+
+For other OS's check https://rustup.rs/
+
+
+### Run application
+
+```bash
+cargo run env vars set <path>
+cargo run pipeline vars set <path>
+# ...
+```
+
+### Set log level
+
+Possible values:
+
+* error
+* warn
+* info
+* debug
+* trace
+
+```bash
+export RUST_LOG="debug" # or
+RUST_LOG="trace"; cargo run
+```
+
+### Apply formatting
+
+```bash
+# apply
+rustfmt --edition 2018 src/main.rs
+# check only
+rustfmt --edition 2018 --check src/main.rs
+```
+
+## Release
+
+1. Goto the releases page, create and publish a new release with a version number following [semantic versioning](https://semver.org/).
+2. Wait until the release workflow is complete, verify that [release workflow](https://github.com/wcm-io-devops/pippo/actions/workflows/release.yml) finished successfully.
+3. Validate that binaries were correctly attached to the new release
+4. Ensure that changelist is correct.

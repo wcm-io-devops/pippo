@@ -25,17 +25,14 @@ jobs:
           - build: linux
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            bin: pippo
 
           - build: macos_x86_64
             os: macos-latest
             target: x86_64-apple-darwin
-            bin: pippo
 
-          - build: windows-gnu
-            os: ubuntu-latest
-            target: x86_64-pc-windows-gnu
-            bin: pippo.exe
+          - build: windows
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
 
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +44,7 @@ jobs:
         with:
           # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
           # Note that glob pattern is not supported yet.
-          bin: ${{ matrix.bin }}
+          bin: pippo
           # (optional) Target triple, default is host triple.
           # This is optional but it is recommended that this always be set to
           # clarify which target you are building for if macOS is included in

@@ -16,7 +16,6 @@ on:
 jobs:
 
   upload-assets:
-    needs: create-release
     runs-on: ${{ matrix.os }}
 
     strategy:

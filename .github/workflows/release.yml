@@ -43,6 +43,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
+          components: cargo-edit
 
       - name: Set release version
         uses: actions-rs/cargo@v1

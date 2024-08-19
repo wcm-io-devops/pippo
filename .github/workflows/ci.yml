@@ -85,14 +85,6 @@ jobs:
       with: 
         targets: ${{ matrix.target }}
 
-    - name: Install ssl
-      shell: bash
-      run: |
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            sudo apt update
-            sudo apt install libssl-dev -y
-        fi
-
     - name: Build
       uses: actions-rs/cargo@v1
       with:

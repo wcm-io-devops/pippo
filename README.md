@@ -4,7 +4,7 @@ pippo is a fast CLI tool written in Rust for interacting with Adobe Cloud Manage
 
 ## Installation
 
-Either download the version you want from the [releases page](https://github.com/wcm-io-devops/pippo-TODO), or install pippo from source:
+Either download the version you want from the [releases page](https://github.com/wcm-io-devops/pippo/releases), or install pippo from source:
 
 ```bash
 cargo install --locked --path .

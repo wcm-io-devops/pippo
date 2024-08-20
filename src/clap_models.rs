@@ -4,7 +4,7 @@ use clap::{ArgAction, Parser, Subcommand};
 #[clap(
 author,
 version,
-about = "Rust-powered tool to communicate with Adobe Cloud Manager",
+about,
 long_about = None
 )]
 #[clap(propagate_version = true)]

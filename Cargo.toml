@@ -1,8 +1,12 @@
 [package]
 name = "pippo"
 version = "0.0.1-SNAPSHOT"
-authors = ["Nico Bellack <@bellackn>", "Tobias Richter <@tobias-richter>", "Benjamin Sommerfeld"]
+authors = ["Nico Bellack", "Tobias Richter", "Benjamin Sommerfeld"]
+description = "Rust-powered tool to communicate with Adobe Cloud Manager"
 edition = "2018"
+license = "Apache-2.0"
+homepage = "https://github.com/wcm-io-devops/pippo"
+repository = "https://github.com/wcm-io-devops/pippo"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -287,9 +287,7 @@ pub async fn init_cli() {
                     }
                 }
             } else {
-                eprintln!(
-                    "❌ You have to provide a valid Cloud Manager program ID to run this command!"
-                );
+                eprintln!("❌ You have to provide a valid Cloud Manager program ID to run this command!");
             }
         }
 

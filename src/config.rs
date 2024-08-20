@@ -34,7 +34,7 @@ pub enum AuthStrategy {
 pub enum Scope {
     #[serde(rename(deserialize = "ent_cloudmgr_sdk", serialize = "ent_cloudmgr_sdk"))]
     EntCloudmgrSdk,
-    #[serde(rename(deserialize = "ent_aem_cloud_api", serialize = "ent_aem_cloud_api"))]
+    #[serde(rename(deserializ = "ent_aem_cloud_api", serialize = "ent_aem_cloud_api"))]
     EntAemCloudApi,
 }
 

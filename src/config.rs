@@ -55,7 +55,10 @@ impl CloudManagerConfig {
     /// * `path` - String slice that holds the path to the JSON config file
     pub fn from_file(path: &str) -> Self {
         let data = fs::read_to_string(path)
-            .unwrap_or_else(|_| panic!("Unable to find config at path {}", path));
+            .unwrap_or_else(|_| {
+                eprintln!("[ERROR] Unable to find config at path '{}'. The documentation is available at https://github.com/wcm-io-devops/pippo", path);
+                std::process::exit(1)
+            });
         let config: Self = serde_json::from_str(data.as_str()).expect("Invalid JSON format");
         config
     }

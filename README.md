@@ -33,8 +33,9 @@ to another file by using `pippo -c yourconfig.json`.
 
 ### auth_strategy
 
-Authentification Strategy is optional and defaults to `oauth`, which is deprecated by adobe to Jan 1, 2025 
-The following Options are supported:
+Authentification Strategy is optional and defaults to `oauth`, because `jwt` is deprecated by Adobe to Jan 1, 2025. 
+
+The following options are supported:
 
 * oauth2
 * jwt

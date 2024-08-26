@@ -1,6 +1,17 @@
 # pippo
 
-pippo is a fast CLI tool written in Rust for interacting with Adobe Cloud Manager's REST API. 
+pippo is a fast CLI tool written in Rust for interacting with Adobe Cloud Manager's REST API.
+
+It enables you to
+
+ * manage pipeline variables
+ * manage environment variables
+ * start pipelines
+ * list pipeline executions
+ * invalidate pipeline cache
+ * download and tail logs
+ * create Domains
+ * get an access token which can be reused e.g. by `curl` commands in CI/CD pipelines
 
 ## Installation
 

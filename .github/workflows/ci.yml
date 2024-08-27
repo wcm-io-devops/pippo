@@ -104,5 +104,5 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         use-cross: true
-        command: build
-        args: --verbose --target ${{ matrix.target }}
+        command: run
+        args: --verbose --target ${{ matrix.target }} help

@@ -73,6 +73,26 @@ The scope can be used together with `access-token print` in order to generate an
 
 ## Running pippo on non unix environments
 
+### Mac Security Issues
+Prior first start of the pippo arm64 binary on a mac, 
+you must grant an exception to the privacy settings of your OS,
+because the developer of pippo is not verified by apple.
+
+![Error on first launch](doc/pippo-forbidden.jpg)
+
+Left click the downloaded app once while holding CONTROL and select Open from contextmenu:
+
+![Control left click on app](doc/pipo-controlopen.jpg)
+
+Now you get a new warning: 
+
+![Error on first launch](doc/pipo-grant.jpg)
+
+Click Open and allow sudo (Admin by Request) privileges to add an exception to 
+the system settings. After that, pippo works as usual.
+
+### Running the x86 unix app on a mac with arm64
+
 If you are unable to run the unix binary for some reason, (like you are on ARM64 Mac OS) and you are getting a similar error like this:
 
 `zsh: exec format error: ./pippo`

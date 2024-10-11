@@ -11,10 +11,10 @@ use std::process;
 use std::thread::sleep;
 use std::time::Duration;
 
-// Make variables comparable - if they have the same name, they are the same.
+// Make variables comparable - if they have the same name and same service they are equal.
 impl PartialEq for Variable {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
+        self.name == other.name && self.service == other.service
     }
 }
 
@@ -103,6 +103,7 @@ pub async fn set_env_vars_from_file(
     file_path: &str,
     client: &mut CloudManagerClient,
     ci_mode: bool,
+    dry_run: bool,
 ) {
     let input = std::fs::read_to_string(file_path).expect("Unable to read file");
     let input: YamlConfig = serde_yaml::from_str(input.as_str()).unwrap_or_else(|err| {
@@ -190,31 +191,44 @@ pub async fn set_env_vars_from_file(
                     for vf in &vars_final {
                         match vf.value {
                             None => {
-                                println!("{:>8} DELETING '{}'", "✍", vf.name);
+                                println!(
+                                    "{:>8} DELETING '{}', service: {}",
+                                    "✍", vf.name, vf.service
+                                );
                             }
                             Some(_) => {
-                                println!("{:>8} UPDATING '{}'", "✍", vf.name)
+                                println!(
+                                    "{:>8} UPDATING '{}', service: {}",
+                                    "✍", vf.name, vf.service
+                                )
                             }
                         }
                     }
 
-                    match set_env_vars(client, p.id, e.id, &vars_final).await {
-                        Ok(status) => match status {
-                            StatusCode::NO_CONTENT => {
-                                println!("{:>8} Success", "✔");
+                    if dry_run {
+                        println!(
+                            "{:>8} --dry-run detected. Not performing any actions.",
+                            "⚠️",
+                        );
+                    } else {
+                        match set_env_vars(client, p.id, e.id, &vars_final).await {
+                            Ok(status) => match status {
+                                StatusCode::NO_CONTENT => {
+                                    println!("{:>8} Success", "✔");
+                                }
+                                _ => {
+                                    eprintln!(
+                                        "{:>8} {}",
+                                        "Error, check output above".red(),
+                                        "❌".red()
+                                    );
+                                    process::exit(2);
+                                }
+                            },
+                            Err(error) => {
+                                eprintln!("{} {}", "❌ API error: ".red().bold(), error);
+                                process::exit(1);
                             }
-                            _ => {
-                                eprintln!(
-                                    "{:>8} {}",
-                                    "Error, check output above".red(),
-                                    "❌".red()
-                                );
-                                process::exit(2);
-                            }
-                        },
-                        Err(error) => {
-                            eprintln!("{} {}", "❌ API error: ".red().bold(), error);
-                            process::exit(1);
                         }
                     }
                     break '_retry;

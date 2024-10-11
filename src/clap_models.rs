@@ -35,6 +35,10 @@ pub struct Cli {
     #[clap(long = "ci", global = true, action = ArgAction::SetTrue )]
     pub ci_mode: bool,
 
+    /// Only log but to not apply any changes
+    #[clap(long = "dry-run", global = true, action = ArgAction::SetTrue )]
+    pub dry_run_mode: bool,
+
     #[clap(subcommand)]
     pub command: Option<Commands>,
 }

@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 use strum_macros::{EnumString, IntoStaticStr};
 
 // Common models used across multiple modules
@@ -49,8 +50,8 @@ pub struct Variable {
     pub value: Option<String>,
     #[serde(rename(deserialize = "type", serialize = "type"))]
     pub variable_type: VariableType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub service: Option<String>,
+    #[serde(default = "VariableServiceType::all")]
+    pub service: VariableServiceType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
@@ -61,6 +62,29 @@ pub struct Variable {
 pub enum VariableType {
     String,
     SecretString,
+}
+
+/// Possible types that a service can have
+#[derive(Clone, Debug, Deserialize, Serialize, IntoStaticStr, EnumString, PartialEq, Eq)]
+#[strum(serialize_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
+pub enum VariableServiceType {
+    All,
+    Author,
+    Publish,
+    Preview,
+}
+
+impl fmt::Display for VariableServiceType {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{}", format!("{:?}", self).to_lowercase())
+    }
+}
+
+impl VariableServiceType {
+    fn all() -> Self {
+        VariableServiceType::All
+    }
 }
 
 /// Model for the necessary JWT claims to retrieve an Adobe access token

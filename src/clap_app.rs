@@ -71,7 +71,8 @@ pub async fn init_cli() {
                         "🚀 Patching environment variables from input file {}\n",
                         input
                     );
-                    set_env_vars_from_file(input, &mut cm_client, cli.ci_mode).await;
+                    set_env_vars_from_file(input, &mut cm_client, cli.ci_mode, cli.dry_run_mode)
+                        .await;
                     process::exit(0);
                 }
             }

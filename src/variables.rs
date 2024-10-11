@@ -2,7 +2,7 @@ use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::encryption::decrypt;
 use crate::environments::get_environment;
 use crate::errors::throw_adobe_api_error;
-use crate::models::{Variable, VariableType, VariablesList, VariablesResponse, YamlConfig};
+use crate::models::{EnvironmentVariable, PipelineVariable, VariableType, EnvironmentVariablesList, EnvironmentVariablesResponse, YamlConfig, PipelineVariablesList, PipelineVariablesResponse};
 use crate::pipelines::get_pipeline;
 use crate::HOST_NAME;
 use colored::*;
@@ -11,8 +11,15 @@ use std::process;
 use std::thread::sleep;
 use std::time::Duration;
 
-// Make variables comparable - if they have the same name and same service they are equal.
-impl PartialEq for Variable {
+// Make environment variables comparable - if they have the same name and same service they are equal.
+impl PartialEq for EnvironmentVariable {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name && self.service == other.service
+    }
+}
+
+// Make pipeline variables comparable - if they have the same name they are equal.
+impl PartialEq for PipelineVariable {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name && self.service == other.service
     }
@@ -35,7 +42,7 @@ pub async fn get_env_vars(
     client: &mut CloudManagerClient,
     program_id: u32,
     env_id: u32,
-) -> Result<VariablesList, reqwest::Error> {
+) -> Result<EnvironmentVariablesList, reqwest::Error> {
     let request_path = format!(
         "{}/api/program/{}/environment/{}/variables",
         HOST_NAME, program_id, env_id
@@ -45,7 +52,7 @@ pub async fn get_env_vars(
         .await?
         .text()
         .await?;
-    let variables: VariablesResponse =
+    let variables: EnvironmentVariablesResponse =
         serde_json::from_str(response.as_str()).unwrap_or_else(|_| {
             throw_adobe_api_error(response);
             process::exit(1);
@@ -71,7 +78,7 @@ pub async fn set_env_vars(
     client: &mut CloudManagerClient,
     program_id: u32,
     env_id: u32,
-    variables: &[Variable],
+    variables: &[EnvironmentVariable],
 ) -> Result<StatusCode, reqwest::Error> {
     let request_path = format!(
         "{}/api/program/{}/environment/{}/variables",
@@ -125,7 +132,7 @@ pub async fn set_env_vars_from_file(
             // The vector that holds the final variables that will be set or deleted. Will be constructed
             // by comparing the variables that are currently set in Cloud Manager and those in the local
             // YAML config file.
-            let mut vars_final: Vec<Variable> = vec![];
+            let mut vars_final: Vec<EnvironmentVariable> = vec![];
 
             // Check if the targeted environment is ready
             '_retry: loop {
@@ -177,12 +184,11 @@ pub async fn set_env_vars_from_file(
                     let vars_cloud = get_env_vars(client, p.id, e.id).await.unwrap().variables;
                     for vc in vars_cloud {
                         if !vars_yaml.clone().contains(&vc) {
-                            let variable_to_be_deleted = Variable {
+                            let variable_to_be_deleted = EnvironmentVariable {
                                 name: vc.name,
                                 value: None,
                                 variable_type: vc.variable_type,
-                                service: vc.service,
-                                status: None,
+                                service: vc.service
                             };
                             vars_final.push(variable_to_be_deleted);
                         }
@@ -263,7 +269,7 @@ pub async fn get_pipeline_vars(
     client: &mut CloudManagerClient,
     program_id: u32,
     pipeline_id: &u32,
-) -> Result<VariablesList, reqwest::Error> {
+) -> Result<PipelineVariablesList, reqwest::Error> {
     let request_path = format!(
         "{}/api/program/{}/pipeline/{}/variables",
         HOST_NAME, program_id, pipeline_id
@@ -273,7 +279,7 @@ pub async fn get_pipeline_vars(
         .await?
         .text()
         .await?;
-    let variables: VariablesResponse =
+    let variables: PipelineVariablesResponse =
         serde_json::from_str(response.as_str()).unwrap_or_else(|_| {
             throw_adobe_api_error(response);
             process::exit(1);
@@ -299,7 +305,7 @@ pub async fn set_pipeline_vars(
     client: &mut CloudManagerClient,
     program_id: u32,
     pipeline_id: u32,
-    variables: &[Variable],
+    variables: &[PipelineVariable],
 ) -> Result<StatusCode, reqwest::Error> {
     let request_path = format!(
         "{}/api/program/{}/pipeline/{}/variables",
@@ -331,6 +337,7 @@ pub async fn set_pipeline_vars_from_file(
     file_path: &str,
     client: &mut CloudManagerClient,
     ci_mode: bool,
+    dry_run: bool,
 ) {
     let input = std::fs::read_to_string(file_path).expect("Unable to read file");
     let input: YamlConfig = serde_yaml::from_str(input.as_str()).unwrap_or_else(|err| {
@@ -352,7 +359,7 @@ pub async fn set_pipeline_vars_from_file(
             // The vector that holds the final variables that will be set or deleted. Will be constructed
             // by comparing the variables that are currently set in Cloud Manager and those in the local
             // YAML config file.
-            let mut vars_final: Vec<Variable> = vec![];
+            let mut vars_final: Vec<PipelineVariable> = vec![];
 
             // Check if the targeted environment is ready
             '_retry: loop {
@@ -407,12 +414,11 @@ pub async fn set_pipeline_vars_from_file(
                         .variables;
                     for vc in vars_cloud {
                         if !vars_yaml.clone().contains(&vc) {
-                            let variable_to_be_deleted = Variable {
+                            let variable_to_be_deleted = PipelineVariable {
                                 name: vc.name,
                                 value: None,
                                 variable_type: vc.variable_type,
-                                service: vc.service,
-                                status: None,
+                                service: vc.service
                             };
                             vars_final.push(variable_to_be_deleted);
                         }
@@ -429,25 +435,33 @@ pub async fn set_pipeline_vars_from_file(
                         }
                     }
 
-                    match set_pipeline_vars(client, p.id, l.id, &vars_final).await {
-                        Ok(status) => match status {
-                            StatusCode::NO_CONTENT => {
-                                println!("{:>8} Success", "✔");
+                    if dry_run {
+                        println!(
+                            "{:>8} --dry-run detected. Not performing any actions.",
+                            "⚠️",
+                        );
+                    } else {
+                        match set_pipeline_vars(client, p.id, l.id, &vars_final).await {
+                            Ok(status) => match status {
+                                StatusCode::NO_CONTENT => {
+                                    println!("{:>8} Success", "✔");
+                                }
+                                _ => {
+                                    eprintln!(
+                                        "{:>8} {}",
+                                        "Error, check output above".red(),
+                                        "❌".red()
+                                    );
+                                    process::exit(2);
+                                }
+                            },
+                            Err(error) => {
+                                eprintln!("{} {}", "❌ API error: ".red().bold(), error);
+                                process::exit(1);
                             }
-                            _ => {
-                                eprintln!(
-                                    "{:>8} {}",
-                                    "Error, check output above".red(),
-                                    "❌".red()
-                                );
-                                process::exit(2);
-                            }
-                        },
-                        Err(error) => {
-                            eprintln!("{} {}", "❌ API error: ".red().bold(), error);
-                            process::exit(1);
                         }
                     }
+
                     break '_retry;
                 }
             }

@@ -42,16 +42,14 @@ pub struct PipelinesConfig {
     pub variables: Vec<PipelineVariable>,
 }
 
-/// Model for all information about a Cloud Manager environment variable
+/// Model for common cloud manager variables
+
+/// Possible types that a variable can have
 #[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct PipelineVariable {
-    pub name: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<String>,
-    #[serde(rename(deserialize = "type", serialize = "type"))]
-    pub variable_type: VariableType,
-    #[serde(default = "PipelineVariableServiceType::default")]
-    pub service: PipelineVariableServiceType,
+#[serde(rename_all = "camelCase")]
+pub enum VariableType {
+    String,
+    SecretString,
 }
 
 /// Model for all information about a Cloud Manager environment variable
@@ -67,14 +65,6 @@ pub struct EnvironmentVariable {
         skip_serializing_if = "env_var_service_type_is_default"
     )]
     pub service: EnvironmentVariableServiceType,
-}
-
-/// Possible types that a variable can have
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum VariableType {
-    String,
-    SecretString,
 }
 
 /// Possible service types that an environment variable can have
@@ -102,7 +92,21 @@ impl EnvironmentVariableServiceType {
         EnvironmentVariableServiceType::All
     }
 }
-/// Possible service types that an environment variable can have
+
+/// Model for all information about a Cloud Manager pipeline variable
+/// Model for all information about a Cloud Manager environment variable
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct PipelineVariable {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub value: Option<String>,
+    #[serde(rename(deserialize = "type", serialize = "type"))]
+    pub variable_type: VariableType,
+    #[serde(default = "PipelineVariableServiceType::default")]
+    pub service: PipelineVariableServiceType,
+}
+
+/// Possible service types that an pipeline variable can have
 #[derive(Clone, Debug, Deserialize, Serialize, IntoStaticStr, EnumString, PartialEq, Eq)]
 #[strum(serialize_all = "lowercase")]
 #[serde(rename_all = "lowercase")]
@@ -110,7 +114,7 @@ pub enum PipelineVariableServiceType {
     Build,
 }
 
-impl fmt::Display for crate::models::PipelineVariableServiceType {
+impl fmt::Display for PipelineVariableServiceType {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         write!(formatter, "{}", format!("{:?}", self).to_lowercase())
     }

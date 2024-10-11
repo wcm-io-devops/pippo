@@ -207,7 +207,13 @@ pub async fn init_cli() {
             {
                 if let PipelineVarsCommands::Set { input } = &pipeline_vars_command {
                     println!("🚀 Patching pipeline variables from input file {}\n", input);
-                    set_pipeline_vars_from_file(input, &mut cm_client, cli.ci_mode, cli.dry_run_mode).await;
+                    set_pipeline_vars_from_file(
+                        input,
+                        &mut cm_client,
+                        cli.ci_mode,
+                        cli.dry_run_mode,
+                    )
+                    .await;
                     process::exit(0);
                 }
             }

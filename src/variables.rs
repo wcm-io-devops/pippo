@@ -2,7 +2,10 @@ use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::encryption::decrypt;
 use crate::environments::get_environment;
 use crate::errors::throw_adobe_api_error;
-use crate::models::{EnvironmentVariable, PipelineVariable, VariableType, EnvironmentVariablesList, EnvironmentVariablesResponse, YamlConfig, PipelineVariablesList, PipelineVariablesResponse};
+use crate::models::{
+    EnvironmentVariable, EnvironmentVariablesList, EnvironmentVariablesResponse, PipelineVariable,
+    PipelineVariablesList, PipelineVariablesResponse, VariableType, YamlConfig,
+};
 use crate::pipelines::get_pipeline;
 use crate::HOST_NAME;
 use colored::*;
@@ -52,8 +55,8 @@ pub async fn get_env_vars(
         .await?
         .text()
         .await?;
-    let variables: EnvironmentVariablesResponse =
-        serde_json::from_str(response.as_str()).unwrap_or_else(|_| {
+    let variables: EnvironmentVariablesResponse = serde_json::from_str(response.as_str())
+        .unwrap_or_else(|_| {
             throw_adobe_api_error(response);
             process::exit(1);
         });
@@ -188,7 +191,7 @@ pub async fn set_env_vars_from_file(
                                 name: vc.name,
                                 value: None,
                                 variable_type: vc.variable_type,
-                                service: vc.service
+                                service: vc.service,
                             };
                             vars_final.push(variable_to_be_deleted);
                         }
@@ -279,8 +282,8 @@ pub async fn get_pipeline_vars(
         .await?
         .text()
         .await?;
-    let variables: PipelineVariablesResponse =
-        serde_json::from_str(response.as_str()).unwrap_or_else(|_| {
+    let variables: PipelineVariablesResponse = serde_json::from_str(response.as_str())
+        .unwrap_or_else(|_| {
             throw_adobe_api_error(response);
             process::exit(1);
         });
@@ -418,7 +421,7 @@ pub async fn set_pipeline_vars_from_file(
                                 name: vc.name,
                                 value: None,
                                 variable_type: vc.variable_type,
-                                service: vc.service
+                                service: vc.service,
                             };
                             vars_final.push(variable_to_be_deleted);
                         }

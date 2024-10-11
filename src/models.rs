@@ -51,7 +51,7 @@ pub struct PipelineVariable {
     #[serde(rename(deserialize = "type", serialize = "type"))]
     pub variable_type: VariableType,
     #[serde(default = "PipelineVariableServiceType::default")]
-    pub service: PipelineVariableServiceType
+    pub service: PipelineVariableServiceType,
 }
 
 /// Model for all information about a Cloud Manager environment variable
@@ -62,8 +62,11 @@ pub struct EnvironmentVariable {
     pub value: Option<String>,
     #[serde(rename(deserialize = "type", serialize = "type"))]
     pub variable_type: VariableType,
-    #[serde(default = "EnvironmentVariableServiceType::default", skip_serializing_if = "env_var_service_type_is_default")]
-    pub service: EnvironmentVariableServiceType
+    #[serde(
+        default = "EnvironmentVariableServiceType::default",
+        skip_serializing_if = "env_var_service_type_is_default"
+    )]
+    pub service: EnvironmentVariableServiceType,
 }
 
 /// Possible types that a variable can have

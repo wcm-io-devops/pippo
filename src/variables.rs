@@ -14,14 +14,14 @@ use std::process;
 use std::thread::sleep;
 use std::time::Duration;
 
-// Make environment variables comparable - if they have the same name and same service they are equal.
+// Make environment variables comparable - if they have the same name and same service they are the same.
 impl PartialEq for EnvironmentVariable {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name && self.service == other.service
     }
 }
 
-// Make pipeline variables comparable - if they have the same name they are equal.
+// Make pipeline variables comparable - if they have the same name and same service they are the same.
 impl PartialEq for PipelineVariable {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name && self.service == other.service

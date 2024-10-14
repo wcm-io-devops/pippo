@@ -108,9 +108,7 @@ pub struct PipelineVariable {
     pub value: Option<String>,
     #[serde(rename(deserialize = "type", serialize = "type"))]
     pub variable_type: VariableType,
-    #[serde(
-        default = "PipelineVariableServiceType::default"
-    )]
+    #[serde(default = "PipelineVariableServiceType::default")]
     pub service: PipelineVariableServiceType,
 }
 

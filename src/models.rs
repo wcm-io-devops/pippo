@@ -62,7 +62,7 @@ pub struct EnvironmentVariable {
     pub variable_type: VariableType,
     #[serde(
         default = "EnvironmentVariableServiceType::default",
-        skip_serializing_if = "env_var_service_type_is_default"
+        skip_serializing_if = "environment_variable_skip_serializing"
     )]
     pub service: EnvironmentVariableServiceType,
 }
@@ -76,6 +76,8 @@ pub enum EnvironmentVariableServiceType {
     Author,
     Publish,
     Preview,
+    #[serde(other)]
+    Invalid,
 }
 
 impl fmt::Display for EnvironmentVariableServiceType {
@@ -83,7 +85,7 @@ impl fmt::Display for EnvironmentVariableServiceType {
         write!(formatter, "{}", format!("{:?}", self).to_lowercase())
     }
 }
-fn env_var_service_type_is_default(t: &EnvironmentVariableServiceType) -> bool {
+fn environment_variable_skip_serializing(t: &EnvironmentVariableServiceType) -> bool {
     *t == EnvironmentVariableServiceType::All
 }
 
@@ -102,7 +104,9 @@ pub struct PipelineVariable {
     pub value: Option<String>,
     #[serde(rename(deserialize = "type", serialize = "type"))]
     pub variable_type: VariableType,
-    #[serde(default = "PipelineVariableServiceType::default")]
+    #[serde(
+        default = "PipelineVariableServiceType::default"
+    )]
     pub service: PipelineVariableServiceType,
 }
 
@@ -112,6 +116,8 @@ pub struct PipelineVariable {
 #[serde(rename_all = "lowercase")]
 pub enum PipelineVariableServiceType {
     Build,
+    #[serde(other)]
+    Invalid
 }
 
 impl fmt::Display for PipelineVariableServiceType {

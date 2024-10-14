@@ -430,10 +430,16 @@ pub async fn set_pipeline_vars_from_file(
                     for vf in &vars_final {
                         match vf.value {
                             None => {
-                                println!("{:>8} DELETING '{}'", "✍", vf.name);
+                                println!(
+                                    "{:>8} DELETING '{}', service: {}",
+                                    "✍", vf.name, vf.service
+                                );
                             }
                             Some(_) => {
-                                println!("{:>8} UPDATING '{}'", "✍", vf.name)
+                                println!(
+                                    "{:>8} UPDATING '{}', service: {}",
+                                    "✍", vf.name, vf.service
+                                )
                             }
                         }
                     }

@@ -198,18 +198,21 @@ pub async fn set_env_vars_from_file(
                         }
                     }
 
-                    for vf in &vars_final {
-                        // check if service is invalid and error exit when this is the case.
-                        if vf.service == EnvironmentVariableServiceType::Invalid {
-                            eprintln!(
-                                "{:>8} {} '{}'",
-                                "❌".red(),
-                                "Error, invalid service type detected for variable ".red(),
-                                vf.name
-                            );
-                            process::exit(3);
-                        }
+                    if let Some(vf) = vars_final
+                        .iter()
+                        .find(|vf| vf.service == EnvironmentVariableServiceType::Invalid)
+                    {
+                        eprintln!(
+                            "{:>8} {}  '{}: {}'",
+                            "❌".red(),
+                            "ERROR, invalid service type detected for variable".red(),
+                            vf.name,
+                            vf.service
+                        );
+                        process::exit(3);
+                    }
 
+                    for vf in &vars_final {
                         match vf.value {
                             None => {
                                 println!(
@@ -439,18 +442,21 @@ pub async fn set_pipeline_vars_from_file(
                         }
                     }
 
-                    for vf in &vars_final {
-                        // check if service is invalid and error exit when this is the case.
-                        if vf.service == PipelineVariableServiceType::Invalid {
-                            eprintln!(
-                                "{:>8} {} '{}'",
-                                "❌".red(),
-                                "Error, invalid service type detected for variable ".red(),
-                                vf.name
-                            );
-                            process::exit(3);
-                        }
+                    if let Some(vf) = vars_final
+                        .iter()
+                        .find(|vf| vf.service == PipelineVariableServiceType::Invalid)
+                    {
+                        eprintln!(
+                            "{:>8} {}  '{}: {}'",
+                            "❌".red(),
+                            "ERROR, invalid service type detected for variable".red(),
+                            vf.name,
+                            vf.service
+                        );
+                        process::exit(3);
+                    }
 
+                    for vf in &vars_final {
                         match vf.value {
                             None => {
                                 println!(

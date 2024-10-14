@@ -82,7 +82,11 @@ pub enum EnvironmentVariableServiceType {
 
 impl fmt::Display for EnvironmentVariableServiceType {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{}", format!("{:?}", self).to_lowercase())
+        write!(
+            formatter,
+            "{}",
+            format!("{}", serde_json::to_string(self).unwrap().to_string())
+        )
     }
 }
 fn environment_variable_skip_serializing(t: &EnvironmentVariableServiceType) -> bool {
@@ -122,7 +126,11 @@ pub enum PipelineVariableServiceType {
 
 impl fmt::Display for PipelineVariableServiceType {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{}", format!("{:?}", self).to_lowercase())
+        write!(
+            formatter,
+            "{}",
+            format!("{}", serde_json::to_string(self).unwrap().to_string())
+        )
     }
 }
 

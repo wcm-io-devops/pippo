@@ -10,7 +10,7 @@ use reqwest::{Error, Method, StatusCode};
 
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
-use crate::models::{LogTailResponse, LogType, ServiceType};
+use crate::models::logs::{LogTailResponse, LogType, ServiceType};
 use crate::HOST_NAME;
 
 /// Downloads the specified log.

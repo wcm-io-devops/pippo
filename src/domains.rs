@@ -1,6 +1,7 @@
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
-use crate::models::{CreateDomainResponse, DomainList, DomainResponse, MinimumDomain, YamlConfig};
+use crate::models::config::{ProgramsConfig, YamlConfig};
+use crate::models::domains::{CreateDomainResponse, DomainList, DomainResponse, MinimumDomain};
 use crate::HOST_NAME;
 extern crate uuid;
 use colored::Colorize;
@@ -57,7 +58,7 @@ pub async fn create_domains(
         process::exit(1);
     });
     let mut ret_value = 0;
-    let programs: Vec<crate::models::ProgramsConfig> = input.programs;
+    let programs: Vec<ProgramsConfig> = input.programs;
     for d in &programs {
         println!("☁ Program: {}", d.id,);
         if let Some(environments_vec) = &d.environments {

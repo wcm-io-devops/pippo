@@ -1,6 +1,6 @@
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
-use crate::models::{Environment, EnvironmentsList, EnvironmentsResponse};
+use crate::models::environments::{Environment, EnvironmentsList, EnvironmentsResponse};
 use crate::HOST_NAME;
 use reqwest::{Error, Method};
 use std::process;

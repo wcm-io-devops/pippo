@@ -198,6 +198,17 @@ pub async fn set_env_vars_from_file(
                     }
 
                     for vf in &vars_final {
+                        // check if service is invalid and error exit when this is the case.
+                        if vf.service == EnvironmentVariableServiceType::Invalid {
+                            eprintln!(
+                                "{:>8} {} '{}'",
+                                "❌".red(),
+                                "Error, invalid service type detected for variable ".red(),
+                                vf.name
+                            );
+                            process::exit(3);
+                        }
+
                         match vf.value {
                             None => {
                                 println!(
@@ -428,6 +439,17 @@ pub async fn set_pipeline_vars_from_file(
                     }
 
                     for vf in &vars_final {
+                        // check if service is invalid and error exit when this is the case.
+                        if vf.service == PipelineVariableServiceType::Invalid {
+                            eprintln!(
+                                "{:>8} {} '{}'",
+                                "❌".red(),
+                                "Error, invalid service type detected for variable ".red(),
+                                vf.name
+                            );
+                            process::exit(3);
+                        }
+
                         match vf.value {
                             None => {
                                 println!(

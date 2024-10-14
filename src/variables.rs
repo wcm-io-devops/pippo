@@ -3,7 +3,8 @@ use crate::encryption::decrypt;
 use crate::environments::get_environment;
 use crate::errors::throw_adobe_api_error;
 use crate::models::{
-    EnvironmentVariable, EnvironmentVariablesList, EnvironmentVariablesResponse, PipelineVariable,
+    EnvironmentVariable, EnvironmentVariableServiceType, EnvironmentVariablesList,
+    EnvironmentVariablesResponse, PipelineVariable, PipelineVariableServiceType,
     PipelineVariablesList, PipelineVariablesResponse, VariableType, YamlConfig,
 };
 use crate::pipelines::get_pipeline;

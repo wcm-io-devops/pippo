@@ -116,12 +116,14 @@ pub struct PipelineVariable {
 
 /// Possible service types that an pipeline variable can have
 #[derive(Clone, Debug, Deserialize, Serialize, IntoStaticStr, EnumString, PartialEq, Eq)]
-#[strum(serialize_all = "lowercase")]
-#[serde(rename_all = "lowercase")]
+#[strum(serialize_all = "camelCase")]
+#[serde(rename_all = "camelCase")]
 pub enum PipelineVariableServiceType {
     Build,
+    UiTest,
+    FunctionalTest,
     #[serde(other)]
-    Invalid
+    Invalid,
 }
 
 impl fmt::Display for PipelineVariableServiceType {

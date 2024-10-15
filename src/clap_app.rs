@@ -95,6 +95,17 @@ pub async fn init_cli() {
                                     .await
                                     .unwrap();
                                 println!("{}", serde_json::to_string_pretty(&env_vars).unwrap());
+                                if let Some(vf) = env_vars.variables.iter().find(|vf| {
+                                    vf.service == EnvironmentVariableServiceType::Invalid
+                                }) {
+                                    eprintln!(
+                                        "{:>8} {}  '{}: {}'",
+                                        "⚠".yellow(),
+                                        "WARN, invalid service type detected for variable".yellow(),
+                                        vf.name,
+                                        vf.service
+                                    );
+                                }
                             }
                         } else {
                             eprintln!("❌ You have to provide a valid Cloud Manager environment ID to run this command!");

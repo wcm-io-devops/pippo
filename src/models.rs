@@ -62,7 +62,7 @@ pub struct EnvironmentVariable {
     pub variable_type: VariableType,
     #[serde(
         default = "EnvironmentVariableServiceType::default",
-        skip_serializing_if = "env_var_service_type_is_default"
+        skip_serializing_if = "environment_variable_skip_serializing"
     )]
     pub service: EnvironmentVariableServiceType,
 }
@@ -76,14 +76,20 @@ pub enum EnvironmentVariableServiceType {
     Author,
     Publish,
     Preview,
+    #[serde(other)]
+    Invalid,
 }
 
 impl fmt::Display for EnvironmentVariableServiceType {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{}", format!("{:?}", self).to_lowercase())
+        write!(
+            formatter,
+            "{}",
+            format!("{}", serde_json::to_string(self).unwrap().to_string())
+        )
     }
 }
-fn env_var_service_type_is_default(t: &EnvironmentVariableServiceType) -> bool {
+fn environment_variable_skip_serializing(t: &EnvironmentVariableServiceType) -> bool {
     *t == EnvironmentVariableServiceType::All
 }
 
@@ -108,15 +114,23 @@ pub struct PipelineVariable {
 
 /// Possible service types that an pipeline variable can have
 #[derive(Clone, Debug, Deserialize, Serialize, IntoStaticStr, EnumString, PartialEq, Eq)]
-#[strum(serialize_all = "lowercase")]
-#[serde(rename_all = "lowercase")]
+#[strum(serialize_all = "camelCase")]
+#[serde(rename_all = "camelCase")]
 pub enum PipelineVariableServiceType {
     Build,
+    UiTest,
+    FunctionalTest,
+    #[serde(other)]
+    Invalid,
 }
 
 impl fmt::Display for PipelineVariableServiceType {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{}", format!("{:?}", self).to_lowercase())
+        write!(
+            formatter,
+            "{}",
+            format!("{}", serde_json::to_string(self).unwrap().to_string())
+        )
     }
 }
 

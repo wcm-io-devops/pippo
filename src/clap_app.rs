@@ -12,7 +12,7 @@ use crate::client::CloudManagerClient;
 use crate::config::CloudManagerConfig;
 use crate::encryption::{decrypt, encrypt};
 use crate::logs::{download_log, tail_log};
-use crate::models::{Domain, LogType, ServiceType};
+use crate::models::{Domain, LogType, PipelineVariableServiceType, EnvironmentVariableServiceType, ServiceType};
 use crate::variables::{
     get_env_vars, get_pipeline_vars, set_env_vars_from_file, set_pipeline_vars_from_file,
 };
@@ -95,6 +95,17 @@ pub async fn init_cli() {
                                     .await
                                     .unwrap();
                                 println!("{}", serde_json::to_string_pretty(&env_vars).unwrap());
+                                if let Some(vf) = env_vars.variables.iter().find(|vf| {
+                                    vf.service == EnvironmentVariableServiceType::Invalid
+                                }) {
+                                    eprintln!(
+                                        "{:>8} {}  '{}: {}'",
+                                        "⚠".yellow(),
+                                        "WARN, invalid service type detected for variable".yellow(),
+                                        vf.name,
+                                        vf.service
+                                    );
+                                }
                             }
                         } else {
                             eprintln!("❌ You have to provide a valid Cloud Manager environment ID to run this command!");
@@ -283,10 +294,24 @@ pub async fn init_cli() {
                                     get_pipeline_vars(&mut cm_client, program_id, &pipeline_id)
                                         .await
                                         .unwrap();
+
                                 println!(
                                     "{}",
                                     serde_json::to_string_pretty(&pipeline_vars).unwrap()
                                 );
+                                if let Some(vf) = pipeline_vars
+                                    .variables
+                                    .iter()
+                                    .find(|vf| vf.service == PipelineVariableServiceType::Invalid)
+                                {
+                                    eprintln!(
+                                        "{:>8} {}  '{}: {}'",
+                                        "⚠".yellow(),
+                                        "WARN, invalid service type detected for variable".yellow(),
+                                        vf.name,
+                                        vf.service
+                                    );
+                                }
                             }
                         } else {
                             eprintln!("❌ You have to provide a valid Cloud Manager pipeline ID to run this command!");

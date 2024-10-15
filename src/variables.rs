@@ -3,7 +3,8 @@ use crate::encryption::decrypt;
 use crate::environments::get_environment;
 use crate::errors::throw_adobe_api_error;
 use crate::models::{
-    EnvironmentVariable, EnvironmentVariablesList, EnvironmentVariablesResponse, PipelineVariable,
+    EnvironmentVariable, EnvironmentVariableServiceType, EnvironmentVariablesList,
+    EnvironmentVariablesResponse, PipelineVariable, PipelineVariableServiceType,
     PipelineVariablesList, PipelineVariablesResponse, VariableType, YamlConfig,
 };
 use crate::pipelines::get_pipeline;
@@ -195,6 +196,20 @@ pub async fn set_env_vars_from_file(
                             };
                             vars_final.push(variable_to_be_deleted);
                         }
+                    }
+
+                    if let Some(vf) = vars_final
+                        .iter()
+                        .find(|vf| vf.service == EnvironmentVariableServiceType::Invalid)
+                    {
+                        eprintln!(
+                            "{:>8} {}  '{}: {}'",
+                            "❌".red(),
+                            "ERROR, invalid service type detected for variable".red(),
+                            vf.name,
+                            vf.service
+                        );
+                        process::exit(3);
                     }
 
                     for vf in &vars_final {
@@ -425,6 +440,20 @@ pub async fn set_pipeline_vars_from_file(
                             };
                             vars_final.push(variable_to_be_deleted);
                         }
+                    }
+
+                    if let Some(vf) = vars_final
+                        .iter()
+                        .find(|vf| vf.service == PipelineVariableServiceType::Invalid)
+                    {
+                        eprintln!(
+                            "{:>8} {}  '{}: {}'",
+                            "❌".red(),
+                            "ERROR, invalid service type detected for variable".red(),
+                            vf.name,
+                            vf.service
+                        );
+                        process::exit(3);
                     }
 
                     for vf in &vars_final {

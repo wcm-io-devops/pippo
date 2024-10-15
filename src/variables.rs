@@ -231,7 +231,10 @@ pub async fn set_env_vars_from_file(
                     }
 
                     if dry_run {
-                        println!("{:>8} --dry-run detected. Not performing any actions.", "⚠️",);
+                        println!(
+                            "{:>8} --dry-run detected. Not performing any actions.",
+                            "⚠️",
+                        );
                     } else {
                         match set_env_vars(client, p.id, e.id, &vars_final).await {
                             Ok(status) => match status {

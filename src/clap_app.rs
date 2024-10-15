@@ -12,7 +12,9 @@ use crate::client::CloudManagerClient;
 use crate::config::CloudManagerConfig;
 use crate::encryption::{decrypt, encrypt};
 use crate::logs::{download_log, tail_log};
-use crate::models::{Domain, LogType, PipelineVariableServiceType, EnvironmentVariableServiceType, ServiceType};
+use crate::models::{
+    Domain, EnvironmentVariableServiceType, LogType, PipelineVariableServiceType, ServiceType,
+};
 use crate::variables::{
     get_env_vars, get_pipeline_vars, set_env_vars_from_file, set_pipeline_vars_from_file,
 };

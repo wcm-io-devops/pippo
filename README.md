@@ -269,6 +269,12 @@ pippo -c <pippo.json> -p <program-id> -e <environment-id> log save --service <sv
 pippo -c <pippo.json> -p <program-id> -e <environment-id> log tail --service <svc> --log <log>
 ```
 
+### dry-run mode
+
+You can pass the flag `--dry-run` on the command line to preview the changes for
+* environment variables
+* pipeline variables
+
 ### CI mode
 
 Since updating running pipelines or environments that are currently updating is not possible pippo will normally wait until it is possible.

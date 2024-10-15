@@ -475,7 +475,10 @@ pub async fn set_pipeline_vars_from_file(
                     }
 
                     if dry_run {
-                        println!("{:>8} --dry-run detected. Not performing any actions.", "⚠️",);
+                        println!(
+                            "{:>8} --dry-run detected. Not performing any actions.",
+                            "⚠️",
+                        );
                     } else {
                         match set_pipeline_vars(client, p.id, l.id, &vars_final).await {
                             Ok(status) => match status {

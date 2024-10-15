@@ -2,10 +2,11 @@ use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::encryption::decrypt;
 use crate::environments::get_environment;
 use crate::errors::throw_adobe_api_error;
-use crate::models::{
+use crate::models::config::YamlConfig;
+use crate::models::variables::{
     EnvironmentVariable, EnvironmentVariableServiceType, EnvironmentVariablesList,
     EnvironmentVariablesResponse, PipelineVariable, PipelineVariableServiceType,
-    PipelineVariablesList, PipelineVariablesResponse, VariableType, YamlConfig,
+    PipelineVariablesList, PipelineVariablesResponse, VariableType,
 };
 use crate::pipelines::get_pipeline;
 use crate::HOST_NAME;

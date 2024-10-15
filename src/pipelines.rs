@@ -1,6 +1,7 @@
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
-use crate::models::{Execution, Pipeline, PipelinesList, PipelinesResponse};
+use crate::models::execution::Execution;
+use crate::models::pipeline::{Pipeline, PipelinesList, PipelinesResponse};
 use crate::HOST_NAME;
 use reqwest::{Error, Method, StatusCode};
 use std::process;

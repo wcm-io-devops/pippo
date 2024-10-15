@@ -1,6 +1,6 @@
 use crate::client::CloudManagerClient;
 use crate::config::{AuthStrategy, Scope};
-use crate::models::{BearerResponse, JwtClaims};
+use crate::models::auth::{BearerResponse, JwtClaims};
 use crate::IMS_ENDPOINT;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};

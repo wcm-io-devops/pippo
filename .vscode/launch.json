@@ -1,14 +1,11 @@
 {
-  // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
-  // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
-  // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - access-token",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -37,7 +34,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - download logs",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -72,7 +69,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - tail logs",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -105,7 +102,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - domains list",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -134,7 +131,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - config init",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -163,7 +160,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - env list",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -192,7 +189,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - execution list",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -223,7 +220,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - pipeline list",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",
@@ -254,7 +251,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Cargo Debug - program list",
-      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "program": "${workspaceFolder}/target/debug/pippo", 
       "cargo": {
         "args": [
           "build",

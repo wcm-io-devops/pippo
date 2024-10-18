@@ -1,0 +1,285 @@
+{
+  // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+  // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+  // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - access-token",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "access-token",
+        "print"
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - download logs",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "log",
+        "save",
+        "--service",
+        "author",
+        "--log",
+        "aemaccess",
+        "--date",
+        "2024-10-18"
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - tail logs",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "log",
+        "tail",
+        "--service",
+        "author",
+        "--log",
+        "aemaccess"
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - domains list",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "domain",
+        "list",
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - config init",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "domain",
+        "list",
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - env list",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "env",
+        "list",
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - execution list",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "-i",
+        "000000000",
+        "pipeline",
+        "list-executions",
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - pipeline list",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "-i",
+        "000000000",
+        "pipeline",
+        "list",
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Cargo Debug - program list",
+      "program": "${workspaceFolder}/target/debug/pippo", // Pfad zum generierten Artefakt
+      "cargo": {
+        "args": [
+          "build",
+        ]
+      },
+      "args": [
+        "-c",
+        "pippo.json",
+        "-p",
+        "00000",
+        "-e",
+        "00000",
+        "-i",
+        "000000000",
+        "program",
+        "list",
+      ],
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": [
+        "rust"
+      ],
+      "preLaunchTask": "cargo build",
+      "stopOnEntry": false,
+      "env": {},
+      "console": "integratedTerminal"
+    }
+  ]
+}

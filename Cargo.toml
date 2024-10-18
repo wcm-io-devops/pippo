@@ -13,9 +13,9 @@ repository = "https://github.com/wcm-io-devops/pippo"
 [dependencies]
 async-ctrlc = "1.2.0"
 async-trait = "0.1.83"
-cargo-edit = "0.12.3"
+cargo-edit = "0.13.0"
 chrono = { version = "0.4.38", features = ["serde"] }
-clap = { version = "3.2.4", features = ["derive", "yaml", "env"] }
+clap = { version = "3.2.25", features = ["derive", "yaml", "env"] }
 colored = "2.1.0"
 env_logger = "0.11.5"
 flate2 = "1.0.34"
@@ -25,8 +25,8 @@ log = "0.4.22"
 magic-crypt = "3.1.13"
 num = "0.4.3"
 serde = { version = "1.0.210", features = ["derive"] }
-serde_json = "1.0.128"
-serde_yaml = "0.9.34"
+serde_json = "1.0.129"
+serde_yaml = "0.9.33"
 strum = "0.26.3"
 strum_macros = "0.26.4"
 tokio = { version = "1.40.0", features = ["full"] }
@@ -37,7 +37,7 @@ version = "0.12.8"
 features = ["json", "rustls-tls"]
 
 [dependencies.uuid]
-version = "1.10.0"
+version = "1.11.0"
 features = [
     "v4",                # Lets you generate random UUIDs
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
@@ -50,6 +50,6 @@ pre-build = [
 ]
 
 [target.x86_64-apple-darwin.dependencies]
-openssl = { version = "0.10", features = ["vendored"] }
+openssl = { version = "0.10.68", features = ["vendored"] }
 
 

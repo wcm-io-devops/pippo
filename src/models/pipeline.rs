@@ -27,3 +27,17 @@ pub struct Pipeline {
 }
 
 // -------------------------------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::tests::read_json_from_file;
+
+    #[test]
+    fn serialize_bearer_response() {
+        let vobj: PipelinesResponse =
+            read_json_from_file("test/test_pipeline_response.json").unwrap();
+
+        assert_eq!(vobj.pipelines_list.pipelines.len(), 5);
+    }
+}

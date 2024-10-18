@@ -1,0 +1,9 @@
+{
+  "exp": 1550001438,
+  "iss": "C74F69D7594880280.....@AdobeOrg",
+  "sub": "6657031C5C095BB40A4.....@techacct.adobe.com",
+  "https://ims-na1.adobelogin.com/s/ent_dataservices_sdk": true,
+  "aud": "https://ims-na1.adobelogin.com/c/4df5gh.....",
+  "scope_ent_cloudmgr_sdk":true,
+   "scope_ent_aem_cloud_api": false
+  }

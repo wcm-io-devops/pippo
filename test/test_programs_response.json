@@ -1,0 +1,33 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/programs",
+      "templated": false
+    }
+  },
+  "_embedded": {
+    "programs": [
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/tenant": {
+            "href": "/api/tenant/22222",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/22222",
+            "templated": false
+          }
+        },
+        "_embedded": {},
+        "id": "22222",
+        "name": "Demo",
+        "status": "ready",
+        "enabled": true,
+        "createdAt": "1111-12-01T12:26:30.036+1111",
+        "updatedAt": "1111-12-17T10:31:03.923+1111",
+        "tenantId": "Demo"
+      }
+    ]
+  },
+  "_totalNumberOfItems": 1
+}

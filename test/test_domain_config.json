@@ -1,0 +1,36 @@
+{
+  "programs": [
+    {
+      "id": 1,
+      "environments": [
+        {
+          "id": 2,
+          "domains": [
+            {
+              "domainname": "www.demo.de",
+              "certificateId": 12
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "environments": [
+            {
+              "id": 3,
+              "domains": [
+                {
+                  "domainname": "www.demo.dev",
+                  "certificateId": 10
+                },
+                {
+                  "domainname": "www.demo2.dev",
+                  "certificateId": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

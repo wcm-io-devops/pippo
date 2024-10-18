@@ -1,0 +1,65 @@
+{
+  "_links": {
+    "http: //ns.adobe.com/adobecloud/rel/program": {
+      "href": "/api/program/111111",
+      "templated": false
+    },
+    "self": {
+      "href": "/api/program/111111/environment/22222/logs?service=%5Bauthor%5D&name=%5Baemaccess%5D&days=2",
+      "templated": false
+    }
+  },
+  "_embedded": {
+    "downloads": [
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/logs/download": {
+            "href": "/api/program/111111/environment/22222/logs/download?service=author&name=aemaccess&date=2024-10-18",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/logs/tail": {
+            "href": "https://sa0111111log222220494ea1.file.core.windows.net/log-111111-22222/logs/author_aemaccess_2024-10-18.log?sig=SPdcXiGvhSu957xsZoW7BzwFkeh0qkK4fFNx0NEMcYU%3D&api-version=2019-02-02&se=2024-10-19T14%3A12%3A17Z&sv=2019-02-02&sp=r&sr=f"
+          }
+        },
+        "service": "author",
+        "name": "aemaccess",
+        "date": "2024-10-18",
+        "programId": 111111,
+        "environmentId": 22222
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/logs/download": {
+            "href": "/api/program/111111/environment/22222/logs/download?service=author&name=aemaccess&date=2024-10-17",
+            "templated": false
+          }
+        },
+        "service": "author",
+        "name": "aemaccess",
+        "date": "2024-10-17",
+        "programId": 111111,
+        "environmentId": 22222
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/logs/download": {
+            "href": "/api/program/111111/environment/22222/logs/download?service=author&name=aemaccess&date=2024-10-16",
+            "templated": false
+          }
+        },
+        "service": "author",
+        "name": "aemaccess",
+        "date": "2024-10-16",
+        "programId": 111111,
+        "environmentId": 22222
+      }
+    ]
+  },
+  "service": [
+    "author"
+  ],
+  "name": [
+    "aemaccess"
+  ],
+  "days": 2
+}

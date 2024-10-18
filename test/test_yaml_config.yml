@@ -1,0 +1,14 @@
+---
+programs:
+  - id: 222222
+    pipelines:
+      # DEV Deployment - Application Code
+      - id: 1010101010
+        variables:
+          - name: FOO
+            value: bar
+            type: string 
+          - name: VARIABLE
+            value: author_variable
+            type: string
+            service: build

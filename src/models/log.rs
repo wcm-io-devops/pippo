@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 
 use strum_macros::{EnumString, IntoStaticStr};
 
-use super::basic::Download;
 /// Possible types that a service can have
 #[derive(Clone, Deserialize, Serialize, IntoStaticStr, EnumString)]
 #[strum(serialize_all = "lowercase")]
@@ -69,4 +68,37 @@ pub struct LogTailResponse {
 #[serde(rename_all = "camelCase")]
 pub struct LogTailList {
     pub downloads: Vec<Download>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Download {
+    #[serde(rename = "_links")]
+    pub links: Links,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Links {
+    #[serde(rename = "http://ns.adobe.com/adobecloud/rel/logs/tail")]
+    pub http_ns_adobe_com_adobecloud_rel_logs_tail: Option<HttpNsAdobeComAdobecloudRelLogsTail>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HttpNsAdobeComAdobecloudRelLogsTail {
+    pub href: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::tests::read_json_from_file;
+
+    #[test]
+    fn serialize_bearer_response() {
+        let vobj: LogsResponse = read_json_from_file("test/test_log_response.json").unwrap();
+
+        assert_eq!(vobj.embedded.downloads.len(), 3);
+    }
 }

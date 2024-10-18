@@ -50,5 +50,40 @@ pub struct CreateDomainResponse {
     pub type_field: String,
     pub status: i64,
     pub title: String,
-    pub errors: Option<Vec<super::basic::Error>>,
+    pub errors: Option<Vec<Error>>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Error {
+    pub code: String,
+    pub message: String,
+    pub field: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::{fs::File, io::BufReader, path::Path};
+
+    fn read_user_from_file<P: AsRef<Path>>(
+        path: P,
+    ) -> Result<DomainResponse, Box<dyn std::error::Error>> {
+        // Open the file in read-only mode with buffer.
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+
+        // Read the JSON contents of the file as an instance of `User`.
+        let u = serde_json::from_reader(reader)?;
+
+        // Return the `User`.
+        Ok(u)
+    }
+
+    #[test]
+    fn serialize_domain_list() {
+        // Read the JSON contents of the file as an instance of `User`.
+        let vobj: DomainResponse = read_user_from_file("test/test_domain_response.json").unwrap();
+        assert_eq!(vobj.domain_list.list.len(), 20);
+    }
 }

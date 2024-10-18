@@ -31,3 +31,18 @@ pub struct Execution {
     pipeline_execution_mode: String,
     finished_at: Option<String>,
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use crate::models::tests::read_json_from_file;
+
+    #[test]
+    fn serialize_domain_config() {
+        let vobj: ExecutionResponse =
+            read_json_from_file("test/test_execution_response.json").unwrap();
+
+        assert_eq!(vobj.execution_list.list.first().unwrap().id, "66666");
+    }
+}

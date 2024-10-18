@@ -2,8 +2,6 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::{EnumString, IntoStaticStr};
 
-use super::environment::EnvironmentsList;
-
 /// Model for common cloud manager variables
 
 /// Possible types that a variable can have
@@ -100,13 +98,6 @@ impl PipelineVariableServiceType {
     fn default() -> Self {
         PipelineVariableServiceType::Build
     }
-}
-
-/// Struct that holds the response when requesting /api/program/{id}/environments
-#[derive(Deserialize, Serialize)]
-pub struct EnvironmentsResponse {
-    #[serde(rename(deserialize = "_embedded", serialize = "_embedded"))]
-    pub environments_list: EnvironmentsList,
 }
 
 /// Struct to serialize the response of requesting /api/program/{id}/environment/{id}/variables

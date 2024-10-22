@@ -262,7 +262,7 @@ mod tests {
             name: String::from("authorVarName"),
             variable_type: VariableType::String,
             service: EnvironmentVariableServiceType::All,
-            value: Some(String::from("authorVarValue"))
+            value: Some(String::from("authorVarValue")),
         };
         let under_test: String = serde_json::to_string(&variable).unwrap();
         assert_eq!(
@@ -277,7 +277,7 @@ mod tests {
             name: String::from("publishVarName"),
             variable_type: VariableType::SecretString,
             service: EnvironmentVariableServiceType::Publish,
-            value: Some(String::from("publishValue"))
+            value: Some(String::from("publishValue")),
         };
         let under_test: String = serde_json::to_string(&variable).unwrap();
         assert_eq!(
@@ -292,7 +292,7 @@ mod tests {
             name: String::from("previewVarName"),
             variable_type: VariableType::String,
             service: EnvironmentVariableServiceType::Preview,
-            value: Some(String::from("previewValue"))
+            value: Some(String::from("previewValue")),
         };
         let under_test: String = serde_json::to_string(&variable).unwrap();
         assert_eq!(

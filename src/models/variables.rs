@@ -255,4 +255,49 @@ mod tests {
         );
         assert_eq!(under_test.variable_type, VariableType::String,);
     }
+
+    #[test]
+    fn serialize_author_service_environment_variable() {
+        let variable: EnvironmentVariable = EnvironmentVariable {
+            name: String::from("authorVarName"),
+            variable_type: VariableType::String,
+            service: EnvironmentVariableServiceType::All,
+            value: Some(String::from("authorVarValue"))
+        };
+        let under_test: String = serde_json::to_string(&variable).unwrap();
+        assert_eq!(
+            under_test,
+            "{\"name\":\"authorVarName\",\"value\":\"authorVarValue\",\"type\":\"string\"}",
+        );
+    }
+
+    #[test]
+    fn serialize_publish_service_environment_variable() {
+        let variable: EnvironmentVariable = EnvironmentVariable {
+            name: String::from("publishVarName"),
+            variable_type: VariableType::SecretString,
+            service: EnvironmentVariableServiceType::Publish,
+            value: Some(String::from("publishValue"))
+        };
+        let under_test: String = serde_json::to_string(&variable).unwrap();
+        assert_eq!(
+            under_test,
+            "{\"name\":\"publishVarName\",\"value\":\"publishValue\",\"type\":\"secretString\",\"service\":\"publish\"}",
+        );
+    }
+
+    #[test]
+    fn serialize_preview_service_environment_variable() {
+        let variable: EnvironmentVariable = EnvironmentVariable {
+            name: String::from("previewVarName"),
+            variable_type: VariableType::String,
+            service: EnvironmentVariableServiceType::Preview,
+            value: Some(String::from("previewValue"))
+        };
+        let under_test: String = serde_json::to_string(&variable).unwrap();
+        assert_eq!(
+            under_test,
+            "{\"name\":\"previewVarName\",\"value\":\"previewValue\",\"type\":\"string\",\"service\":\"preview\"}",
+        );
+    }
 }

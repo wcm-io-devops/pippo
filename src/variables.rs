@@ -12,6 +12,8 @@ use crate::pipelines::get_pipeline;
 use crate::HOST_NAME;
 use colored::*;
 use reqwest::{Method, StatusCode};
+use std::collections::HashSet;
+use std::hash::{Hash, Hasher};
 use std::process;
 use std::thread::sleep;
 use std::time::Duration;
@@ -23,10 +25,69 @@ impl PartialEq for EnvironmentVariable {
     }
 }
 
+impl Eq for EnvironmentVariable {}
+
+impl Hash for EnvironmentVariable {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
+        self.service.hash(state);
+    }
+}
+
+impl Hash for EnvironmentVariableServiceType {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        match self {
+            EnvironmentVariableServiceType::All => {
+                state.write_u8(1);
+            }
+            EnvironmentVariableServiceType::Author => {
+                state.write_u8(2);
+            }
+            EnvironmentVariableServiceType::Publish => {
+                state.write_u8(3);
+            }
+            EnvironmentVariableServiceType::Preview => {
+                state.write_u8(4);
+            }
+            EnvironmentVariableServiceType::Invalid => {
+                state.write_u8(5);
+            }
+        }
+    }
+}
+
 // Make pipeline variables comparable - if they have the same name and same service they are the same.
 impl PartialEq for PipelineVariable {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name && self.service == other.service
+    }
+}
+
+impl Eq for PipelineVariable {}
+
+impl Hash for PipelineVariable {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
+        self.service.hash(state);
+    }
+}
+
+impl Hash for PipelineVariableServiceType {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        match self {
+            PipelineVariableServiceType::Build => {
+                state.write_u8(1);
+            }
+            PipelineVariableServiceType::FunctionalTest => {
+                state.write_u8(2);
+            }
+            PipelineVariableServiceType::UiTest => {
+                state.write_u8(3);
+            }
+            PipelineVariableServiceType::Invalid => {
+                state.write_u8(4);
+            }
+        }
     }
 }
 
@@ -133,6 +194,21 @@ pub async fn set_env_vars_from_file(
             let env = get_environment(client, p.id, e.id).await.unwrap();
 
             println!("{:>4} Environment: {} ({})", "⬛", e.id, env.name);
+
+            // ensure there are no duplicate environment variables
+            let duplicates = find_duplicates(e.variables.clone());
+            if duplicates.len() > 0 {
+                for dv in &duplicates {
+                    eprintln!(
+                        "{:>8} {}  name: '{}' service: {}",
+                        "❌".red(),
+                        "ERROR, duplicate variable definition found, please check your file!".red(),
+                        dv.name,
+                        dv.service
+                    );
+                }
+                process::exit(4);
+            }
 
             // The vector that holds the final variables that will be set or deleted. Will be constructed
             // by comparing the variables that are currently set in Cloud Manager and those in the local
@@ -375,6 +451,21 @@ pub async fn set_pipeline_vars_from_file(
 
             println!("{:>4} Pipeline: {} ({})", "⬛", l.id, pipeline.name);
 
+            // ensure there are no duplicate environment variables
+            let duplicates = find_duplicates(l.variables.clone());
+            if duplicates.len() > 0 {
+                for dv in &duplicates {
+                    eprintln!(
+                        "{:>8} {}  name: '{}' service: {}",
+                        "❌".red(),
+                        "ERROR, duplicate variable definition found, please check your file!".red(),
+                        dv.name,
+                        dv.service
+                    );
+                }
+                process::exit(4);
+            }
+
             // The vector that holds the final variables that will be set or deleted. Will be constructed
             // by comparing the variables that are currently set in Cloud Manager and those in the local
             // YAML config file.
@@ -514,4 +605,17 @@ pub async fn set_pipeline_vars_from_file(
         );
         process::exit(2);
     }
+}
+
+fn find_duplicates<T: Eq + Hash + Clone>(vec: Vec<T>) -> Vec<T> {
+    let mut seen = HashSet::new();
+    let mut duplicates = HashSet::new();
+
+    for item in vec {
+        if !seen.insert(item.clone()) {
+            duplicates.insert(item);
+        }
+    }
+
+    duplicates.into_iter().collect()
 }

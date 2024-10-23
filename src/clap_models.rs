@@ -192,8 +192,16 @@ pub enum PipelineVarsCommands {
 
 #[derive(Subcommand)]
 pub enum DomainCommands {
-    /// List all pipelines of the specified program
-    List,
+    /// List all domains of the specified program
+    List {
+        /// Pagination start parameter
+        #[clap(short, long, value_parser, default_value_t = 0)]
+        start: u32,
+        /// Pagination limit parameter
+        #[clap(short, long, value_parser, default_value_t = 1000)]
+        limit: u32,
+    },
+    /// Creates domains based upon a provided file
     Create {
         #[clap(value_parser, value_name = "FILE")]
         input: String,

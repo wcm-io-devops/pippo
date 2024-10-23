@@ -180,10 +180,11 @@ pub async fn init_cli() {
                 // Since all "domain" subcommands need a program ID, we can only run them when it was provided.
                 if let Some(program_id) = cli.program {
                     match &domain_command {
-                        DomainCommands::List => {
-                            let domains = domains::get_domains(&mut cm_client, program_id)
-                                .await
-                                .unwrap();
+                        DomainCommands::List { start, limit } => {
+                            let domains =
+                                domains::get_domains(&mut cm_client, program_id, start, limit)
+                                    .await
+                                    .unwrap();
                             if let Some(env_id) = cli.env {
                                 let env_i64 = env_id as i64;
                                 let filtered_domains: Vec<Domain> = domains

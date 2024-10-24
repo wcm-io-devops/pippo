@@ -96,7 +96,7 @@ mod tests {
     use crate::models::tests::read_json_from_file;
 
     #[test]
-    fn serialize_bearer_response() {
+    fn deserialize_logs_response() {
         let vobj: LogsResponse = read_json_from_file("test/test_log_response.json").unwrap();
 
         assert_eq!(vobj.embedded.downloads.len(), 3);

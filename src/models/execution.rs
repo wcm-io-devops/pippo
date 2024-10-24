@@ -39,7 +39,7 @@ mod tests {
     use crate::models::tests::read_json_from_file;
 
     #[test]
-    fn serialize_domain_config() {
+    fn deserialize_execution_response() {
         let vobj: ExecutionResponse =
             read_json_from_file("test/test_execution_response.json").unwrap();
 

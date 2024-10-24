@@ -30,7 +30,7 @@ mod tests {
     use crate::models::tests::read_json_from_file;
 
     #[test]
-    fn serialize_domain_config() {
+    fn deserialize_environments_response() {
         let vobj: EnvironmentsResponse =
             read_json_from_file("test/test_environment_response.json").unwrap();
 

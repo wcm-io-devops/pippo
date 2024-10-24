@@ -81,7 +81,7 @@ mod tests {
     }
 
     #[test]
-    fn serialize_domain_list() {
+    fn dedeserialize_domain_response() {
         // Read the JSON contents of the file as an instance of `User`.
         let vobj: DomainResponse = read_user_from_file("test/test_domain_response.json").unwrap();
         assert_eq!(vobj.domain_list.list.len(), 20);

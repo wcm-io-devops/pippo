@@ -34,7 +34,7 @@ mod tests {
     use crate::models::tests::read_json_from_file;
 
     #[test]
-    fn serialize_bearer_response() {
+    fn deserialize_program_response() {
         let vobj: PipelinesResponse =
             read_json_from_file("test/test_pipeline_response.json").unwrap();
 

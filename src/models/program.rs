@@ -34,7 +34,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn serialize_bearer_response() {
+    fn deserialize_bearer_response() {
         let vobj: ProgramsResponse =
             read_json_from_file("test/test_programs_response.json").unwrap();
 

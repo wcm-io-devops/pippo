@@ -25,14 +25,14 @@ mod tests {
     use crate::models::tests::read_json_from_file;
 
     #[test]
-    fn serialize_domain_list() {
+    fn deserialize_bearer_response() {
         // Read the JSON contents of the file as an instance of `User`.
         let vobj: BearerResponse =
             read_json_from_file("test/test_auth_bearer_response.json").unwrap();
         assert_eq!(vobj.access_token, "das.ist.ein.token");
     }
     #[test]
-    fn serialize_jwt_claims() {
+    fn deserialize_jwt_claims() {
         let vobj: JwtClaims = read_json_from_file("test/test_auth_jwt_response.json").unwrap();
 
         assert_eq!(vobj.aud, "https://ims-na1.adobelogin.com/c/4df5gh.....");

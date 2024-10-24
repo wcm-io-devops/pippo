@@ -44,7 +44,7 @@ mod tests {
     use crate::models::tests::read_yaml_from_file;
 
     #[test]
-    fn serialize_domain_config() {
+    fn deserialize_yaml_config() {
         let vobj: YamlConfig = read_yaml_from_file("test/test_yaml_config.yml").unwrap();
 
         assert_eq!(vobj.programs.len(), 1);

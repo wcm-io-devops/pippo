@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use super::variables::{EnvironmentVariable, PipelineVariable};
+
 /// Model for all programs that will be read from the configuration YAML
 #[derive(Debug, Deserialize, Serialize)]
 pub struct YamlConfig {
@@ -35,4 +36,19 @@ pub struct EnvironmentsConfig {
 pub struct PipelinesConfig {
     pub id: u32,
     pub variables: Vec<PipelineVariable>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::tests::read_yaml_from_file;
+
+    #[test]
+    fn deserialize_yaml_config() {
+        let vobj: YamlConfig = read_yaml_from_file("test/test_yaml_config.yml").unwrap();
+
+        assert_eq!(vobj.programs.len(), 1);
+        assert_eq!(vobj.programs.first().unwrap().id, 222222);
+        assert_eq!(vobj.programs.first().unwrap().pipelines.is_some(), true);
+    }
 }

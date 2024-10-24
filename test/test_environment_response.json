@@ -1,0 +1,498 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/program/11111/environments",
+      "templated": false
+    }
+  },
+  "_embedded": {
+    "environments": [
+      {
+        "_links": {
+          "http: //ns.adobe.com/adobecloud/rel/advancedNetworking": {
+            "href": "/api/program/11111/environment/88888/advancedNetworking",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/author": {
+            "href": "https://author-p11111-e222222.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/developerConsole": {
+            "href": "https://dev-console-ns-team-aem-cm-prd-n88888.ethos13-prod-nld2.dev.adobeaemcloud.com/#release-cm-p11111-e222222"
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment/domainNames": {
+            "href": "/api/program/11111/environment/88888/domainNames",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/logs": {
+            "href": "/api/program/11111/environment/88888/logs?service={service}&name={name}&days={days}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/pipeline": {
+            "href": "/api/program/11111/pipeline/999999",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/preview": {
+            "href": "https://preview-p11111-e222222.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/11111",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/publish": {
+            "href": "https://publish-p11111-e222222.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/regionDeployments": {
+            "href": "/api/program/11111/environment/88888/regionDeployments",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/11111/environment/88888/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/11111/environment/88888",
+            "templated": false
+          }
+        },
+        "id": "222222",
+        "programId": "11111",
+        "name": "demo-prod",
+        "description": "production environment for demo ",
+        "type": "prod",
+        "status": "ready",
+        "availableLogOptions": [
+          {
+            "service": "preview_dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "preview_dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "preview_dispatcher",
+            "name": "aemdispatcher"
+          },
+          {
+            "service": "author",
+            "name": "aemaccess"
+          },
+          {
+            "service": "author",
+            "name": "aemerror"
+          },
+          {
+            "service": "author",
+            "name": "aemrequest"
+          },
+          {
+            "service": "author",
+            "name": "cdn"
+          },
+          {
+            "service": "publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "publish",
+            "name": "cdn"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "preview_publish",
+            "name": "cdn"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "dispatcher",
+            "name": "aemdispatcher"
+          }
+        ],
+        "region": "nld2",
+        "additionalPublishMinReleaseId": 12142
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/advancedNetworking": {
+            "href": "/api/program/11111/environment/88888/advancedNetworking",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/author": {
+            "href": "https://author-p11111-e33333.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/developerConsole": {
+            "href": "https://dev-console-ns-team-aem-cm-prd-n88888.ethos14-prod-nld2.dev.adobeaemcloud.com/#release-cm-p11111-e33333"
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment/domainNames": {
+            "href": "/api/program/11111/environment/88888/domainNames",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/logs": {
+            "href": "/api/program/11111/environment/88888/logs?service={service}&name={name}&days={days}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/pipeline": {
+            "href": "/api/program/11111/pipeline/999999",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/preview": {
+            "href": "https://preview-p11111-e33333.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/11111",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/publish": {
+            "href": "https://publish-p11111-e33333.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/regionDeployments": {
+            "href": "/api/program/11111/environment/88888/regionDeployments",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/11111/environment/88888/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/11111/environment/88888",
+            "templated": false
+          }
+        },
+        "id": "33333",
+        "programId": "11111",
+        "name": "development",
+        "description": "",
+        "type": "dev",
+        "status": "ready",
+        "availableLogOptions": [
+          {
+            "service": "preview_dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "preview_dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "preview_dispatcher",
+            "name": "aemdispatcher"
+          },
+          {
+            "service": "author",
+            "name": "aemaccess"
+          },
+          {
+            "service": "author",
+            "name": "aemerror"
+          },
+          {
+            "service": "author",
+            "name": "aemrequest"
+          },
+          {
+            "service": "author",
+            "name": "cdn"
+          },
+          {
+            "service": "publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "publish",
+            "name": "cdn"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "preview_publish",
+            "name": "cdn"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "dispatcher",
+            "name": "aemdispatcher"
+          }
+        ],
+        "region": "nld2",
+        "additionalPublishMinReleaseId": 12142
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/advancedNetworking": {
+            "href": "/api/program/11111/environment/88888/advancedNetworking",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/author": {
+            "href": "https://author-p11111-e0000000.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/developerConsole": {
+            "href": "https://dev-console-ns-team-aem-cm-prd-n88888.ethos14-prod-deu6.dev.adobeaemcloud.com/#release-cm-p11111-e0000000"
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment/domainNames": {
+            "href": "/api/program/11111/environment/88888/domainNames",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/logs": {
+            "href": "/api/program/11111/environment/88888/logs?service={service}&name={name}&days={days}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/11111",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/publish": {
+            "href": "https://publish-p11111-e0000000.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/regionDeployments": {
+            "href": "/api/program/11111/environment/88888/regionDeployments",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/11111/environment/88888/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/11111/environment/88888",
+            "templated": false
+          }
+        },
+        "id": "1240104",
+        "programId": "11111",
+        "name": "demo-rde",
+        "description": "",
+        "type": "rde",
+        "status": "ready",
+        "availableLogOptions": [
+          {
+            "service": "author",
+            "name": "aemaccess"
+          },
+          {
+            "service": "author",
+            "name": "aemerror"
+          },
+          {
+            "service": "author",
+            "name": "aemrequest"
+          },
+          {
+            "service": "author",
+            "name": "cdn"
+          },
+          {
+            "service": "publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "publish",
+            "name": "cdn"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "dispatcher",
+            "name": "aemdispatcher"
+          }
+        ],
+        "region": "deu6",
+        "additionalPublishMinReleaseId": 12142
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/advancedNetworking": {
+            "href": "/api/program/11111/environment/88888/advancedNetworking",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/author": {
+            "href": "https://author-p11111-e117454.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/developerConsole": {
+            "href": "https://dev-console-ns-team-aem-cm-prd-n88888.ethos14-prod-nld2.dev.adobeaemcloud.com/#release-cm-p11111-e117454"
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment/domainNames": {
+            "href": "/api/program/11111/environment/88888/domainNames",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/logs": {
+            "href": "/api/program/11111/environment/88888/logs?service={service}&name={name}&days={days}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/pipeline": {
+            "href": "/api/program/11111/pipeline/999999",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/preview": {
+            "href": "https://preview-p11111-e117454.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/11111",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/publish": {
+            "href": "https://publish-p11111-e117454.adobeaemcloud.com"
+          },
+          "http://ns.adobe.com/adobecloud/rel/regionDeployments": {
+            "href": "/api/program/11111/environment/88888/regionDeployments",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/11111/environment/88888/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/11111/environment/88888",
+            "templated": false
+          }
+        },
+        "id": "117454",
+        "programId": "11111",
+        "name": "demo-stage",
+        "description": "stage environment for demo ",
+        "type": "stage",
+        "status": "ready",
+        "availableLogOptions": [
+          {
+            "service": "preview_dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "preview_dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "preview_dispatcher",
+            "name": "aemdispatcher"
+          },
+          {
+            "service": "author",
+            "name": "aemaccess"
+          },
+          {
+            "service": "author",
+            "name": "aemerror"
+          },
+          {
+            "service": "author",
+            "name": "aemrequest"
+          },
+          {
+            "service": "author",
+            "name": "cdn"
+          },
+          {
+            "service": "publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "publish",
+            "name": "cdn"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemaccess"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemerror"
+          },
+          {
+            "service": "preview_publish",
+            "name": "aemrequest"
+          },
+          {
+            "service": "preview_publish",
+            "name": "cdn"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpdaccess"
+          },
+          {
+            "service": "dispatcher",
+            "name": "httpderror"
+          },
+          {
+            "service": "dispatcher",
+            "name": "aemdispatcher"
+          }
+        ],
+        "region": "nld2",
+        "additionalPublishMinReleaseId": 12142
+      }
+    ]
+  },
+  "_totalNumberOfItems": 4
+}

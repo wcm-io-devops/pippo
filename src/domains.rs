@@ -7,6 +7,7 @@ extern crate uuid;
 use colored::Colorize;
 use reqwest::{Error, Method, StatusCode};
 use std::process;
+use std::str;
 use uuid::Uuid;
 
 /// Retrieves all domains.
@@ -24,10 +25,20 @@ use uuid::Uuid;
 pub async fn get_domains(
     client: &mut CloudManagerClient,
     program_id: u32,
+    start: &u32,
+    limit: &u32,
 ) -> Result<DomainList, Error> {
     let request_path = format!("{}/api/program/{}/domainNames", HOST_NAME, program_id);
+    let query_start: &str = &start.to_string();
+    let query_limit: &str = &limit.to_string();
+    let query_parameters = vec![("start", query_start), ("limit", query_limit)];
     let response = client
-        .perform_request(Method::GET, request_path, None::<()>, None)
+        .perform_request(
+            Method::GET,
+            request_path,
+            None::<()>,
+            Some(query_parameters),
+        )
         .await?
         .text()
         .await?;

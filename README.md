@@ -300,7 +300,11 @@ pippo -c <pippo.json> env vars set --ci <environment-variables.yml>
 The current state of implementation is only creating new domains. It will not update nor delete other domains.
 In case a domain is already there, error ALREADY_IN_USE is shown.
 
-#### Example Data:
+#### List arguments
+
+You can provide `--start` and limit `--limit` to `domain list` in order to limit / page the results.
+
+#### Example Data
 
 ```yaml
 ---
@@ -317,6 +321,8 @@ programs:
 
 ```bash
 pippo -c <pippo.json> -p <program-id> domain list
+pippo -c <pippo.json> -p <program-id> domain list --start 0 --limit 20 
+pippo -c <pippo.json> -p <program-id> domain list --start 20 --limit 20
 pippo -c <pippo.json> domain create <environment-domains.yml>
 ```
 

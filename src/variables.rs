@@ -609,13 +609,13 @@ pub async fn set_pipeline_vars_from_file(
 
 fn find_duplicates<T: Eq + Hash + Clone>(vec: Vec<T>) -> Vec<T> {
     let mut seen = HashSet::new();
-    let mut duplicates = HashSet::new();
+    let mut duplicates = Vec::new();
 
     for item in vec {
         if !seen.insert(item.clone()) {
-            duplicates.insert(item);
+            duplicates.push(item);
         }
     }
 
-    duplicates.into_iter().collect()
+    duplicates
 }

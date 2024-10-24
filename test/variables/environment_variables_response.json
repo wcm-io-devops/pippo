@@ -1,0 +1,70 @@
+{
+  "_links": {
+    "http://ns.adobe.com/adobecloud/rel/environment": {
+      "href": "/api/program/111111/environment/2222222"
+    },
+    "http://ns.adobe.com/adobecloud/rel/program": {
+      "href": "/api/program/111111",
+      "templated": false
+    },
+    "self": {
+      "href": "/api/program/111111/environment/2222222/variables"
+    }
+  },
+  "_embedded": {
+    "variables": [
+      {
+        "name": "VARIABLE",
+        "value": "no service specified",
+        "type": "string",
+        "status": "ready"
+      },
+      {
+        "name": "SECRET_VARIABLE",
+        "type": "secretString",
+        "service": "",
+        "status": "ready"
+      },
+      {
+        "name": "VARIABLE",
+        "value": "preview variable",
+        "type": "string",
+        "service": "preview",
+        "status": "ready"
+      },
+      {
+        "name": "VARIABLE",
+        "value": "publish variable",
+        "type": "string",
+        "service": "publish",
+        "status": "ready"
+      },
+      {
+        "name": "SECRET_VARIABLE",
+        "type": "secretString",
+        "service": "author",
+        "status": "ready"
+      },
+      {
+        "name": "SECRET_VARIABLE",
+        "type": "secretString",
+        "service": "publish",
+        "status": "ready"
+      },
+      {
+        "name": "SSECRET_VARIABLE",
+        "type": "secretString",
+        "service": "preview",
+        "status": "ready"
+      },
+      {
+        "name": "INVALID_SERVICE_VARIABLE",
+        "value": "invalid service variable",
+        "type": "string",
+        "service": "lorem",
+        "status": "ready"
+      }
+    ]
+  },
+  "_totalNumberOfItems": 8
+}

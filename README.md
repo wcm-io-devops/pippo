@@ -322,7 +322,7 @@ programs:
 ```bash
 pippo -c <pippo.json> -p <program-id> domain list
 pippo -c <pippo.json> -p <program-id> domain list --start 0 --limit 20 
-pippo -c <pippo.json> -p <program-id> domain list --start 20 -- limit 20
+pippo -c <pippo.json> -p <program-id> domain list --start 20 --limit 20
 pippo -c <pippo.json> domain create <environment-domains.yml>
 ```
 

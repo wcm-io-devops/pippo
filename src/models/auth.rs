@@ -29,7 +29,7 @@ mod tests {
         // Read the JSON contents of the file as an instance of `User`.
         let vobj: BearerResponse =
             read_json_from_file("test/test_auth_bearer_response.json").unwrap();
-        assert_eq!(vobj.access_token, "das.ist.ein.token");
+        assert_eq!(vobj.access_token, "ths.is.a.token");
     }
     #[test]
     fn deserialize_jwt_claims() {

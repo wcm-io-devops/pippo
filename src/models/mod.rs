@@ -18,33 +18,33 @@ mod tests {
     #[cfg(test)]
     pub fn read_json_from_file<T, P>(path: P) -> Result<T, Box<dyn std::error::Error>>
     where
-        T: DeserializeOwned, // Stellt sicher, dass der Typ T deserialisiert werden kann
-        P: AsRef<Path>,      // Der Pfad wird als Referenz auf einen Pfad übergeben
+        T: DeserializeOwned, // Verifies,that Type T can be deserialized
+        P: AsRef<Path>,      // reference to path
     {
-        // Öffne die Datei im Lese-Modus mit Puffer.
+        // opens teh file in read-mode with buffer
         let file = File::open(path)?;
         let reader = BufReader::new(file);
 
-        // Lese den JSON-Inhalt der Datei als Instanz des Typs T.
+        //  read the json content int instance of type T
         let value = serde_json::from_reader(reader)?;
 
-        // Rückgabe des deserialisierten Wertes.
+        // return deserialized object.
         Ok(value)
     }
     #[cfg(test)]
     pub fn read_yaml_from_file<T, P>(path: P) -> Result<T, Box<dyn std::error::Error>>
     where
-        T: DeserializeOwned, // Stellt sicher, dass der Typ T deserialisiert werden kann
-        P: AsRef<Path>,      // Der Pfad wird als Referenz auf einen Pfad übergeben
+        T: DeserializeOwned, // Verifies,that Type T can be deserialized
+        P: AsRef<Path>,      // reference to path
     {
-        // Öffne die Datei im Lese-Modus mit Puffer.
+        // opens teh file in read-mode with buffer
         let file = File::open(path)?;
         let reader = BufReader::new(file);
 
-        // Lese den JSON-Inhalt der Datei als Instanz des Typs T.
+        //  read the json content int instance of type T
         let value = serde_yaml::from_reader(reader)?;
 
-        // Rückgabe des deserialisierten Wertes.
+        // return deserialized object.
         Ok(value)
     }
 }

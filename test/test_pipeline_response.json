@@ -1,0 +1,474 @@
+{
+  "_links": {
+    "next": {
+      "href": "/api/program/22222/pipelines?start=500&limit=500"
+    },
+    "page": {
+      "href": "/api/program/22222/pipelines"
+    },
+    "prev": {
+      "href": "/api/program/22222/pipelines?start=0&limit=500"
+    },
+    "self": {
+      "href": "/api/program/22222/pipelines?start=0&limit=500"
+    }
+  },
+  "_embedded": {
+    "pipelines": [
+      {
+        "_links": {
+          "http: //ns.adobe.com/adobecloud/rel/artifacts": {
+            "href": "/api/program/22222/artifacts",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/cache": {
+            "href": "/api/program/22222/pipeline/55555555/cache",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution": {
+            "href": "/api/program/22222/pipeline/55555555/execution",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution/id": {
+            "href": "/api/program/22222/pipeline/55555555/execution/{executionId}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/executions": {
+            "href": "/api/program/22222/pipeline/55555555/executions",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/22222",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/22222/pipeline/55555555/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/22222/pipeline/55555555",
+            "templated": false
+          }
+        },
+        "id": "55555555",
+        "programId": "22222",
+        "name": "DEV Deployment - Application Code",
+        "trigger": "ON_COMMIT",
+        "type": "CI_CD",
+        "status": "IDLE",
+        "phases": [
+          {
+            "name": "VALIDATE",
+            "type": "VALIDATE"
+          },
+          {
+            "name": "BUILD_22222",
+            "type": "BUILD",
+            "repositoryId": "22222",
+            "branch": "develop",
+            "steps": [
+              {
+                "name": "build"
+              },
+              {
+                "name": "codeQuality"
+              }
+            ],
+            "options": {}
+          },
+          {
+            "name": "BUILD_IMAGE_9999",
+            "type": "BUILD_IMAGE",
+            "releaseId": "22222"
+          },
+          {
+            "name": "DEPLOY_22222",
+            "type": "DEPLOY",
+            "environmentId": "22222",
+            "environmentType": "dev",
+            "steps": [
+              {
+                "name": "deploy",
+                "options": {}
+              },
+              {
+                "name": "productTest"
+              },
+              {
+                "name": "functionalTest"
+              },
+              {
+                "name": "uiTest"
+              }
+            ]
+          }
+        ],
+        "createdAt": "2022-08-10T12:38:03.104+0000",
+        "updatedAt": "2024-10-14T14:30:51.166+0000",
+        "lastStartedAt": "2024-10-14T12:01:01.060+0000",
+        "lastFinishedAt": "2024-10-14T12:38:39.510+0000",
+        "options": {
+          "ignoreWebTierConfig": true,
+          "composable": false
+        }
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/artifacts": {
+            "href": "/api/program/22222/artifacts",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/cache": {
+            "href": "/api/program/22222/pipeline/4444444/cache",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution": {
+            "href": "/api/program/22222/pipeline/4444444/execution",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution/id": {
+            "href": "/api/program/22222/pipeline/4444444/execution/{executionId}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/executions": {
+            "href": "/api/program/22222/pipeline/4444444/executions",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/22222",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/22222/pipeline/4444444/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/22222/pipeline/4444444",
+            "templated": false
+          }
+        },
+        "id": "4444444",
+        "programId": "22222",
+        "name": "Code Quality Check - develop",
+        "trigger": "ON_COMMIT",
+        "type": "CI_CD",
+        "status": "IDLE",
+        "phases": [
+          {
+            "name": "VALIDATE",
+            "type": "VALIDATE"
+          },
+          {
+            "name": "BUILD_22222",
+            "type": "BUILD",
+            "repositoryId": "22222",
+            "branch": "develop",
+            "steps": [
+              {
+                "name": "build"
+              },
+              {
+                "name": "codeQuality"
+              }
+            ],
+            "options": {}
+          },
+          {
+            "name": "BUILD_IMAGE_9999",
+            "type": "BUILD_IMAGE",
+            "releaseId": "22222"
+          }
+        ],
+        "createdAt": "2022-07-05T09:16:54.943+0000",
+        "updatedAt": "2024-10-08T10:41:27.691+0000",
+        "lastStartedAt": "2024-10-08T10:28:07.857+0000",
+        "lastFinishedAt": "2024-10-08T10:41:27.678+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/artifacts": {
+            "href": "/api/program/22222/artifacts",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/cache": {
+            "href": "/api/program/22222/pipeline/4444444/cache",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution": {
+            "href": "/api/program/22222/pipeline/4444444/execution",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution/id": {
+            "href": "/api/program/22222/pipeline/4444444/execution/{executionId}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/executions": {
+            "href": "/api/program/22222/pipeline/4444444/executions",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/22222",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/22222/pipeline/4444444/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/22222/pipeline/4444444",
+            "templated": false
+          }
+        },
+        "id": "4444444",
+        "programId": "22222",
+        "name": "DEV Deployment - Dispatcher",
+        "trigger": "ON_COMMIT",
+        "type": "WEB_TIER",
+        "status": "IDLE",
+        "phases": [
+          {
+            "name": "VALIDATE",
+            "type": "VALIDATE"
+          },
+          {
+            "name": "BUILD_22222",
+            "type": "BUILD",
+            "repositoryId": "22222",
+            "branch": "develop",
+            "options": {
+              "codeLocation": "/dispatcher/src"
+            }
+          },
+          {
+            "name": "DEPLOY_22222",
+            "type": "DEPLOY",
+            "environmentId": "22222",
+            "environmentType": "dev",
+            "steps": [
+              {
+                "name": "deploy",
+                "options": {}
+              }
+            ]
+          }
+        ],
+        "createdAt": "2022-07-05T09:16:12.116+0000",
+        "updatedAt": "2024-10-08T10:49:49.162+0000",
+        "lastStartedAt": "2024-10-08T10:37:12.133+0000",
+        "lastFinishedAt": "2024-10-08T10:49:49.110+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/artifacts": {
+            "href": "/api/program/22222/artifacts",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/cache": {
+            "href": "/api/program/22222/pipeline/4444444/cache",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution": {
+            "href": "/api/program/22222/pipeline/4444444/execution",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution/id": {
+            "href": "/api/program/22222/pipeline/4444444/execution/{executionId}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/executions": {
+            "href": "/api/program/22222/pipeline/4444444/executions",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/22222",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/22222/pipeline/4444444/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/22222/pipeline/4444444",
+            "templated": false
+          }
+        },
+        "id": "4444444",
+        "programId": "22222",
+        "name": "PROD Deployment - Dispatcher",
+        "trigger": "MANUAL",
+        "type": "WEB_TIER",
+        "status": "IDLE",
+        "phases": [
+          {
+            "name": "VALIDATE",
+            "type": "VALIDATE"
+          },
+          {
+            "name": "BUILD_22222",
+            "type": "BUILD",
+            "repositoryId": "22222",
+            "branch": "master",
+            "options": {
+              "codeLocation": "/dispatcher/src"
+            }
+          },
+          {
+            "name": "DEPLOY_333333",
+            "type": "DEPLOY",
+            "environmentId": "333333",
+            "environmentType": "stage",
+            "steps": [
+              {
+                "name": "deploy",
+                "options": {}
+              }
+            ]
+          },
+          {
+            "name": "DEPLOY_333333",
+            "type": "DEPLOY",
+            "environmentId": "333333",
+            "environmentType": "prod",
+            "steps": [
+              {
+                "name": "approval"
+              },
+              {
+                "name": "deploy",
+                "options": {}
+              }
+            ]
+          }
+        ],
+        "createdAt": "2022-07-05T09:15:27.500+0000",
+        "updatedAt": "2024-10-08T11:10:56.777+0000",
+        "lastStartedAt": "2024-10-08T10:55:05.733+0000",
+        "lastFinishedAt": "2024-10-08T11:10:56.740+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/artifacts": {
+            "href": "/api/program/22222/artifacts",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/cache": {
+            "href": "/api/program/22222/pipeline/4444444/cache",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution": {
+            "href": "/api/program/22222/pipeline/4444444/execution",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/execution/id": {
+            "href": "/api/program/22222/pipeline/4444444/execution/{executionId}",
+            "templated": true
+          },
+          "http://ns.adobe.com/adobecloud/rel/executions": {
+            "href": "/api/program/22222/pipeline/4444444/executions",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/22222",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/variables": {
+            "href": "/api/program/22222/pipeline/4444444/variables",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/22222/pipeline/4444444",
+            "templated": false
+          }
+        },
+        "id": "4444444",
+        "programId": "22222",
+        "name": "PROD Deployment - Application Code",
+        "trigger": "MANUAL",
+        "type": "CI_CD",
+        "status": "IDLE",
+        "phases": [
+          {
+            "name": "VALIDATE",
+            "type": "VALIDATE"
+          },
+          {
+            "name": "BUILD_22222",
+            "type": "BUILD",
+            "repositoryId": "22222",
+            "branch": "master",
+            "steps": [
+              {
+                "name": "build"
+              },
+              {
+                "name": "codeQuality"
+              }
+            ],
+            "options": {}
+          },
+          {
+            "name": "BUILD_IMAGE_9999",
+            "type": "BUILD_IMAGE",
+            "releaseId": "22222"
+          },
+          {
+            "name": "DEPLOY_333333",
+            "type": "DEPLOY",
+            "environmentId": "333333",
+            "environmentType": "stage",
+            "steps": [
+              {
+                "name": "deploy",
+                "options": {}
+              },
+              {
+                "name": "productTest"
+              },
+              {
+                "name": "functionalTest"
+              },
+              {
+                "name": "uiTest"
+              },
+              {
+                "name": "contentAudit",
+                "options": {
+                  "pagePaths": []
+                }
+              }
+            ]
+          },
+          {
+            "name": "DEPLOY_333333",
+            "type": "DEPLOY",
+            "environmentId": "333333",
+            "environmentType": "prod",
+            "steps": [
+              {
+                "name": "approval"
+              },
+              {
+                "name": "deploy",
+                "options": {}
+              }
+            ]
+          }
+        ],
+        "createdAt": "2021-04-13T12:34:52.193+0000",
+        "updatedAt": "2024-10-15T06:14:44.906+0000",
+        "lastStartedAt": "2024-10-15T04:10:54.521+0000",
+        "lastFinishedAt": "2024-10-15T06:14:44.870+0000",
+        "options": {
+          "ignoreWebTierConfig": true,
+          "composable": false
+        }
+      }
+    ]
+  },
+  "_totalNumberOfItems": 5,
+  "_page": {
+    "limit": 500,
+    "next": 500,
+    "prev": 0
+  }
+}

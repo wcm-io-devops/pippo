@@ -26,3 +26,18 @@ pub struct Program {
     enabled: bool,
     status: String,
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::models::tests::read_json_from_file;
+
+    use super::*;
+
+    #[test]
+    fn deserialize_bearer_response() {
+        let vobj: ProgramsResponse =
+            read_json_from_file("test/test_programs_response.json").unwrap();
+
+        assert_eq!(vobj.programs_list.programs.first().unwrap().id, "22222");
+    }
+}

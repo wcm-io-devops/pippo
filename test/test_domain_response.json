@@ -1,0 +1,1073 @@
+{
+  "_links": {
+    "next": {
+      "href": "/api/program/00000/domainNames?start=20&limit=20"
+    },
+    "page": {
+      "href": "/api/program/00000/domainNames"
+    },
+    "prev": {
+      "href": "/api/program/00000/domainNames?start=0&limit=20"
+    },
+    "self": {
+      "href": "/api/program/00000/domainNames",
+      "templated": false
+    }
+  },
+  "_embedded": {
+    "domainNames": [
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.demo.ee/00000/54321/a9730213-9620-4e86-bace-fb65f3d41b1a",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2024-06-05T05:11:57.240+0000",
+        "updatedAt": "2024-06-06T07:58:49.110+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "demo.ee",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=demo.ee/00000/54321/13c961ee-3944-493e-8a36-5a0cc407fdff",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2024-06-05T05:10:43.977+0000",
+        "updatedAt": "2024-06-06T07:58:49.448+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.demo.uy/00000/54321/7d8b0a71-43ac-43da-b5dc-c0acaf43094a",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2024-06-05T05:09:32.125+0000",
+        "updatedAt": "2024-06-06T07:59:18.668+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "demo.uy",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=demo.uy/00000/54321/11162895-a94e-4ad6-9a7f-34becf27b255",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2024-06-05T05:08:48.624+0000",
+        "updatedAt": "2024-06-06T07:58:49.248+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "ca.aem-prod.demo.com",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=ca.aem-prod.demo.com/00000/54321/4300735b-8a17-486e-ade0-b5b702d51fad",
+        "dnsZone": "aem-prod.demo.com.",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 1000,
+        "certificateName": "aem-prod.demo.com",
+        "certificateExpireAt": "2025-06-05T23:59:59.000+0000",
+        "createdAt": "2024-04-18T06:43:17.022+0000",
+        "updatedAt": "2024-06-05T14:57:43.262+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.ve.demo.com/00000/54321/1860e248-01b1-4f66-b573-d1f28334a53c",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-09-12T07:19:06.422+0000",
+        "updatedAt": "2024-06-04T01:06:29.594+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "ve.demo.com",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=ve.demo.com/00000/54321/a590c409-b5b4-4c2d-8fd7-dae7256e48e9",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-09-12T07:18:13.840+0000",
+        "updatedAt": "2024-06-04T01:06:29.594+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "ee.aem-prod.demo.com",
+        "status": "not_verified",
+        "dnsTxtRecord": "adobe-aem-verification=ee.aem-prod.demo.com/00000/54321/7805e818-65e4-4c68-9ce0-a40a14023655",
+        "dnsZone": "aem-prod.demo.com.",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 1000,
+        "certificateName": "aem-prod.demo.com",
+        "certificateExpireAt": "2025-06-05T23:59:59.000+0000",
+        "createdAt": "2023-08-28T05:48:52.373+0000",
+        "updatedAt": "2024-04-26T12:30:53.536+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.atlas.demo.com/00000/54321/5d9e5d37-94e9-4092-8cea-c6cb76bb3a22",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-17T07:13:20.762+0000",
+        "updatedAt": "2024-06-04T01:06:29.592+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "atlas.demo.com",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=atlas.demo.com/00000/54321/954d354b-f489-45d6-a8fe-868025bdca09",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-17T07:12:52.562+0000",
+        "updatedAt": "2024-06-04T01:06:29.593+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.india.demo.com/00000/54321/0798acaf-c4d2-4fb8-8d17-d37c40cb5759",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-17T07:11:54.317+0000",
+        "updatedAt": "2024-06-04T01:06:29.592+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "india.demo.com",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=india.demo.com/00000/54321/02ff6b26-a77a-479e-8fc2-33f3ca3d6165",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-17T07:11:19.903+0000",
+        "updatedAt": "2024-06-04T01:06:29.593+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.demo.com.ve/00000/54321/f39170a6-3575-4a71-99dc-c826131de085",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-16T08:03:20.507+0000",
+        "updatedAt": "2024-06-04T01:06:29.594+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "demo.com.ve",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=demo.com.ve/00000/54321/a5d3a829-2eec-4668-8bc2-a614756a2397",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-16T08:02:24.496+0000",
+        "updatedAt": "2024-06-04T01:06:29.594+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.ca.demo.com/00000/54321/766eeec8-6500-4996-a54b-bf97bd519e9d",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-08-01T04:23:57.621+0000",
+        "updatedAt": "2024-06-04T01:06:29.592+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "ca.demo.com",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=ca.demo.com/00000/54321/28e7a93b-151e-467b-9f8c-aad5bf0dcc0e",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-07-31T10:33:06.924+0000",
+        "updatedAt": "2024-06-04T01:06:29.593+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "sa.demo.com",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=sa.demo.com/00000/54321/79a99436-861e-4f91-9a5c-241f7c21f950",
+        "dnsZone": "demo.com.",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-03-24T05:46:29.795+0000",
+        "updatedAt": "2024-06-04T01:06:29.592+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "ve.aem-prod.demo.com",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=ve.aem-prod.demo.com/00000/54321/df41a6fc-cc43-4137-8d9b-e987e43a9104",
+        "dnsZone": "aem-prod.demo.com.",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 1000,
+        "certificateName": "aem-prod.demo.com",
+        "certificateExpireAt": "2025-06-05T23:59:59.000+0000",
+        "createdAt": "2023-02-20T09:45:59.548+0000",
+        "updatedAt": "2024-06-05T14:57:43.262+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "www.demo.de",
+        "status": "ready",
+        "type": "CNAME",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=www.regis.demo.com/00000/54321/b6ac702e-c966-4823-9e43-4a0682ab1b7e",
+        "dnsZone": "demo.com.",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-02-06T07:09:18.916+0000",
+        "updatedAt": "2024-06-04T01:06:29.593+0000"
+      },
+      {
+        "_links": {
+          "http://ns.adobe.com/adobecloud/rel/domainName/certificates": {
+            "href": "/api/program/00000/certificates",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/deploy": {
+            "href": "/api/program/00000/domainName/000000/deploy",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/domainName/verify": {
+            "href": "/api/program/00000/domainName/000000/verify",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/environment": {
+            "href": "/api/program/00000/environment/000000",
+            "templated": false
+          },
+          "http://ns.adobe.com/adobecloud/rel/program": {
+            "href": "/api/program/00000",
+            "templated": false
+          },
+          "self": {
+            "href": "/api/program/00000/domainName/000000",
+            "templated": false
+          }
+        },
+        "id": 1,
+        "name": "regis.demo.com",
+        "status": "ready",
+        "type": "A",
+        "dnsResolution": [
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          },
+          {
+            "target": "127.0.0.1",
+            "detected": true
+          }
+        ],
+        "dnsTxtRecord": "adobe-aem-verification=regis.demo.com/00000/54321/8283beb6-a10a-4963-9ecb-025d9fd424e4",
+        "environmentId": 54321,
+        "environmentName": "demo-prod",
+        "tier": "publish",
+        "certificateId": 10253,
+        "certificateName": "group.demo.com",
+        "certificateExpireAt": "2025-07-01T23:59:59.000+0000",
+        "createdAt": "2023-02-06T07:04:38.538+0000",
+        "updatedAt": "2024-06-04T01:06:29.593+0000"
+      }
+    ]
+  },
+  "_totalNumberOfItems": 161,
+  "_page": {
+    "limit": 20,
+    "next": 20,
+    "prev": 0
+  }
+}

@@ -22,7 +22,7 @@ flate2 = "1.0.34"
 futures-lite = "2.3.0"
 jsonwebtoken = "9.3.0"
 log = "0.4.22"
-magic-crypt = "3.1.13"
+magic-crypt = "4.0.1"
 num = "0.4.3"
 serde = { version = "1.0.210", features = ["derive"] }
 

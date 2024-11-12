@@ -19,7 +19,7 @@ clap = { version = "3.2.25", features = ["derive", "yaml", "env"] }
 colored = "2.1.0"
 env_logger = "0.11.5"
 flate2 = "1.0.34"
-futures-lite = "2.4.0"
+futures-lite = "2.5.0"
 jsonwebtoken = "9.3.0"
 log = "0.4.22"
 magic-crypt = "4.0.1"

@@ -17,7 +17,7 @@ cargo-edit = "0.13.0"
 chrono = { version = "0.4.39", features = ["serde"] }
 clap = { version = "3.2.25", features = ["derive", "yaml", "env"] }
 colored = "2.2.0"
-env_logger = "0.11.5"
+env_logger = "0.11.6"
 flate2 = "1.0.35"
 futures-lite = "2.5.0"
 jsonwebtoken = "9.3.0"

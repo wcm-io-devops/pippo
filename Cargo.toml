@@ -13,7 +13,7 @@ repository = "https://github.com/wcm-io-devops/pippo"
 [dependencies]
 async-ctrlc = "1.2.0"
 async-trait = "0.1.88"
-cargo-edit = "0.13.2"
+cargo-edit = "0.13.3"
 chrono = { version = "0.4.40", features = ["serde"] }
 clap = { version = "3.2.25", features = ["derive", "yaml", "env"] }
 colored = "3.0.0"

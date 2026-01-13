@@ -94,6 +94,12 @@ pub enum Commands {
         #[clap(subcommand)]
         domain_command: DomainCommands,
     },
+
+    /// Tools to interact with Cloud Manager certificates
+    Certificates {
+        #[clap(subcommand)]
+        certificate_command: CertificateCommands,
+    },
 }
 
 #[derive(Subcommand)]
@@ -203,6 +209,24 @@ pub enum DomainCommands {
     },
     /// Creates domains based upon a provided file
     Create {
+        #[clap(value_parser, value_name = "FILE")]
+        input: String,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum CertificateCommands {
+    /// List all certificates of the specified program
+    List {
+        /// Pagination start parameter
+        #[clap(short, long, value_parser, default_value_t = 0)]
+        start: u32,
+        /// Pagination limit parameter
+        #[clap(short, long, value_parser, default_value_t = 1000)]
+        limit: u32,
+    },
+    /// Creates/Updates certificates
+    Manage {
         #[clap(value_parser, value_name = "FILE")]
         input: String,
     },

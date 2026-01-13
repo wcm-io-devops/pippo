@@ -24,6 +24,7 @@ mod models;
 mod pipelines;
 mod programs;
 mod variables;
+mod certificates;
 
 use crate::clap_app::init_cli;
 

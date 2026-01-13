@@ -7,6 +7,7 @@ pub mod log;
 pub mod pipeline;
 pub mod program;
 pub mod variables;
+pub mod certificates;
 
 #[cfg(test)]
 mod tests {

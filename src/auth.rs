@@ -76,7 +76,7 @@ async fn obtain_oauth_token(client: &mut CloudManagerClient) -> Result<(), reqwe
 
     let bearer_response: BearerResponse = serde_json::from_str(token)
         .unwrap_or_else(|_| panic!("Unable to authenticate: {}", token.as_str()));
-    client.config.access_token = bearer_response.access_token;
+    client.config.access_token = format!("Bearer {}", bearer_response.access_token);
     Ok(())
 }
 

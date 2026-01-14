@@ -176,9 +176,12 @@ pub async fn init_cli() {
         }) => {
             #[allow(clippy::collapsible_match)]
             if let CertificateCommands::Manage { input } = &certificate_command {
-                //let _ = domains::create_domains(input.to_string(), &mut cm_client).await;
-                //println!("🚀 Create Domains succeded. Please Check logs");
-                println!("🚀 NOT IMPLEMENTED");
+                if let Err(e) = certificates::manage_certificates(input.to_string(), &mut cm_client).await {
+                    eprintln!("❌ Manage Certificates failed: {e}");
+                    std::process::exit(1);
+                }
+
+                println!("🚀 Manage Certificates succeded. Please Check logs");
                 process::exit(0);
             } else {
                 // Since all "domain" subcommands need a program ID, we can only run them when it was provided.

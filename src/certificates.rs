@@ -115,9 +115,12 @@ pub async fn manage_certificates(
 
         if let Some(certs) = &program.certificates {
             for cert_cfg in certs {
-                let cert_path  = absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.certificate))?;
-                let chain_path = absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.chain))?;
-                let key_path   = absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.key))?;
+                let cert_path =
+                    absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.certificate))?;
+                let chain_path =
+                    absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.chain))?;
+                let key_path =
+                    absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.key))?;
 
                 println!(
                     "☁ Manage certificate: {} ({:#?})",
@@ -128,13 +131,9 @@ pub async fn manage_certificates(
                 println!("      chain       : {}", cert_cfg.chain);
                 println!("      key         : {}", cert_cfg.key);
 
-
-
-
                 println!("      certificate : {}", cert_path.display());
                 println!("      chain       : {}", chain_path.display());
                 println!("      key         : {}", key_path.display());
-
             }
         }
     }

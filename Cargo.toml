@@ -28,6 +28,8 @@ serde = { version = "1.0.228", features = ["derive"] }
 
 serde_json = "1.0.148"
 serde_yaml = "0.9.34"
+x509-parser = "0.16"
+time = "0.3.45"   # or latest compatible with x509-parser
 strum = "0.27.2"
 strum_macros = "0.27.2"
 tokio = { version = "1.49.0", features = ["full"] }

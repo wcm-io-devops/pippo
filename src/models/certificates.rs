@@ -40,7 +40,7 @@ pub enum CertificateStatus {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Certificate {
-    pub id: Option<i64>,
+    pub id: i64,
     //#[serde(skip_serializing)]
     //pub ssl_certificate_type: CertificateType,
     //#[serde(skip_serializing)]

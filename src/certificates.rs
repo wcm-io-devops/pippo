@@ -170,9 +170,15 @@ pub async fn manage_certificates(
                     println!("      found existing certificate");
                     println!("          name         : {}", existing_cert.name);
                     println!("          id           : {}", existing_cert.id);
-
-                    // update
                     println!("          serial_number: {}", existing_cert.serial_number);
+
+                    if (existing_cert.serial_number != meta.serial_dec) {
+                        println!("          serial number is different, not updating");
+                    } else {
+                        println!("          serial number is not different, not updating");
+                    }
+
+
                 } else {
                     println!(
                         "      no matching existing certificate found, create new certificate!"

@@ -1,4 +1,3 @@
-use x509_parser::prelude::FromDer;
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
 use crate::models::certificates::{Certificate, CertificateList, CertificateResponse};
@@ -13,10 +12,9 @@ use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::str;
 use std::{fs, io, process};
-use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
 use time::OffsetDateTime;
-
-
+use x509_parser::prelude::FromDer;
+use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
 
 /// Retrieves all certificates.
 ///
@@ -41,7 +39,12 @@ pub async fn get_certificates(
     let query_limit: &str = &limit.to_string();
     let query_parameters = vec![("start", query_start), ("limit", query_limit)];
     let response = client
-        .perform_request(Method::GET, request_path, None::<()>, Some(query_parameters))
+        .perform_request(
+            Method::GET,
+            request_path,
+            None::<()>,
+            Some(query_parameters),
+        )
         .await?
         .text()
         .await?;
@@ -136,7 +139,6 @@ pub async fn manage_certificates(
                     )
                 })?;
 
-
                 let chain_path =
                     absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.chain))?;
                 let key_path =
@@ -147,7 +149,10 @@ pub async fn manage_certificates(
                     cert_cfg.name, cert_cfg.id
                 );
 
-                println!("      certificate : {}, serial: {}", cert_cfg.certificate, meta.serial_dec);
+                println!(
+                    "      certificate : {}, serial: {}",
+                    cert_cfg.certificate, meta.serial_dec
+                );
                 println!("      chain       : {}", cert_cfg.chain);
                 println!("      key         : {}", cert_cfg.key);
 
@@ -155,7 +160,11 @@ pub async fn manage_certificates(
                 println!("      chain       : {}", chain_path.display());
                 println!("      key         : {}", key_path.display());
 
-                let found: Option<&Certificate> = find_existing_by_id_or_name(&existing_certificates.list, cert_cfg.id, &cert_cfg.name);
+                let found: Option<&Certificate> = find_existing_by_id_or_name(
+                    &existing_certificates.list,
+                    cert_cfg.id,
+                    &cert_cfg.name,
+                );
 
                 if let Some(existing_cert) = found {
                     println!("      found existing certificate");
@@ -165,7 +174,9 @@ pub async fn manage_certificates(
                     // update
                     println!("          serial_number: {}", existing_cert.serial_number);
                 } else {
-                    println!("      no matching existing certificate found, create new certificate!");
+                    println!(
+                        "      no matching existing certificate found, create new certificate!"
+                    );
                 }
             }
         }
@@ -177,7 +188,6 @@ pub async fn manage_certificates(
         Ok(StatusCode::NOT_MODIFIED)
     }
 }
-
 
 fn find_existing_by_id_or_name<'a>(
     list: &'a [Certificate],
@@ -191,13 +201,12 @@ fn find_existing_by_id_or_name<'a>(
     }
 }
 
-
 #[derive(Debug)]
 pub struct CertMeta {
     pub path: PathBuf,
-    pub serial_hex: String,        // uppercase, no colons, no leading zeros
-    pub serial_hex_colon: String,  // upper, colon-separated pairs
-    pub serial_dec: String,        // decimal string
+    pub serial_hex: String,       // uppercase, no colons, no leading zeros
+    pub serial_hex_colon: String, // upper, colon-separated pairs
+    pub serial_dec: String,       // decimal string
     pub not_before: OffsetDateTime,
     pub not_after: OffsetDateTime,
 }
@@ -206,7 +215,10 @@ pub struct CertMeta {
 
 pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
     let data = fs::read(path).map_err(|e| {
-        io::Error::new(e.kind(), format!("Failed to read certificate ({}): {}", path.display(), e))
+        io::Error::new(
+            e.kind(),
+            format!("Failed to read certificate ({}): {}", path.display(), e),
+        )
     })?;
 
     // Try PEM first: iterate over all PEM blocks, pick the first CERTIFICATE
@@ -217,7 +229,10 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
         })?;
         if pem.label == "CERTIFICATE" {
             let (_, cert) = X509Certificate::from_der(&pem.contents).map_err(|e| {
-                io::Error::new(io::ErrorKind::InvalidData, format!("Invalid DER in PEM: {e}"))
+                io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    format!("Invalid DER in PEM: {e}"),
+                )
             })?;
             return extract_meta_from_cert(path.to_path_buf(), &cert);
         }
@@ -225,16 +240,24 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
 
     // If no PEM CERTIFICATE block found, try DER directly
     let (_, cert) = X509Certificate::from_der(&data).map_err(|e| {
-        io::Error::new(io::ErrorKind::InvalidData, format!("Invalid DER X.509: {e}"))
+        io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!("Invalid DER X.509: {e}"),
+        )
     })?;
     extract_meta_from_cert(path.to_path_buf(), &cert)
 }
 
-
-
-fn extract_meta_from_cert(path: PathBuf, cert: &X509Certificate<'_>) -> Result<CertMeta, io::Error> {
+fn extract_meta_from_cert(
+    path: PathBuf,
+    cert: &X509Certificate<'_>,
+) -> Result<CertMeta, io::Error> {
     let raw = cert.tbs_certificate.raw_serial();
-    let raw_no_leading_zero = if raw.first() == Some(&0x00) { &raw[1..] } else { raw };
+    let raw_no_leading_zero = if raw.first() == Some(&0x00) {
+        &raw[1..]
+    } else {
+        raw
+    };
 
     let serial_hex = to_hex_no_colon_upper(raw_no_leading_zero);
     let serial_hex_colon = to_hex_colon_upper(raw_no_leading_zero);
@@ -243,21 +266,43 @@ fn extract_meta_from_cert(path: PathBuf, cert: &X509Certificate<'_>) -> Result<C
     let nb = cert.validity().not_before.to_datetime();
     let na = cert.validity().not_after.to_datetime();
 
-    Ok(CertMeta { path, serial_hex, serial_hex_colon, serial_dec, not_before: nb, not_after: na })
+    Ok(CertMeta {
+        path,
+        serial_hex,
+        serial_hex_colon,
+        serial_dec,
+        not_before: nb,
+        not_after: na,
+    })
 }
 
 fn to_hex_no_colon_upper(bytes: &[u8]) -> String {
-    if bytes.is_empty() { return "0".to_string(); }
+    if bytes.is_empty() {
+        return "0".to_string();
+    }
     let mut s = String::with_capacity(bytes.len() * 2);
-    for b in bytes { use std::fmt::Write; let _ = write!(s, "{:02X}", b); }
+    for b in bytes {
+        use std::fmt::Write;
+        let _ = write!(s, "{:02X}", b);
+    }
     let t = s.trim_start_matches('0');
-    if t.is_empty() { "0".into() } else { t.into() }
+    if t.is_empty() {
+        "0".into()
+    } else {
+        t.into()
+    }
 }
 
 fn to_hex_colon_upper(bytes: &[u8]) -> String {
     let hex = to_hex_no_colon_upper(bytes);
-    let padded = if hex.len() % 2 == 1 { format!("0{hex}") } else { hex };
-    padded.as_bytes().chunks(2)
+    let padded = if hex.len() % 2 == 1 {
+        format!("0{hex}")
+    } else {
+        hex
+    };
+    padded
+        .as_bytes()
+        .chunks(2)
         .map(std::str::from_utf8)
         .filter_map(Result::ok)
         .collect::<Vec<_>>()
@@ -265,7 +310,9 @@ fn to_hex_colon_upper(bytes: &[u8]) -> String {
 }
 
 fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
-    if bytes.is_empty() { return "0".into(); }
+    if bytes.is_empty() {
+        return "0".into();
+    }
     let mut digits = vec![0u8];
     for &b in bytes {
         let mut carry = b as u16;
@@ -281,7 +328,6 @@ fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
     }
     digits.iter().rev().map(|d| (b'0' + *d) as char).collect()
 }
-
 
 /// Structured return that contains absolute paths and the loaded contents.
 #[derive(Debug)]

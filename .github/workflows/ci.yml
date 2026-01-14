@@ -31,25 +31,25 @@ jobs:
       - name: cargo test
         run: cargo test
 
-  lint:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.7.3
-
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
-
-      - uses: mbrobbel/rustfmt-check@master
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          mode: commit
+#  lint:
+#    if: github.event_name != 'pull_request'
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Rust Cache
+#        uses: Swatinem/rust-cache@v2.7.3
+#
+#      - uses: dtolnay/rust-toolchain@stable
+#        with:
+#          components: rustfmt
+#
+#      - uses: mbrobbel/rustfmt-check@master
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          mode: commit
 
   lint-pr:
     if: github.event_name == 'pull_request'

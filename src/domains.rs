@@ -50,10 +50,7 @@ pub async fn get_domains(
     Ok(domains.domain_list)
 }
 
-/// Sets pipeline variables that are read from a given YAML file.
-///
-/// When the target pipeline is currently updating, the function will retry until its state
-/// is back to ready.
+/// Created domains that are read from a given YAML file.
 ///
 /// # Arguments
 ///

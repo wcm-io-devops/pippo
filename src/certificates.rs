@@ -4,14 +4,14 @@ use crate::models::certificates::{CertificateList, CertificateResponse};
 use crate::models::config::{CertificateConfig, ProgramsConfig, YamlConfig};
 use crate::models::domain::MinimumDomain;
 use crate::HOST_NAME;
+use anyhow::{Context, Result};
 use colored::Colorize;
 use reqwest::{Error, Method, StatusCode};
-use std::{fs, io, process};
 use std::any::Any;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::str;
-use anyhow::{Context, Result};
+use std::{fs, io, process};
 
 /// Retrieves all certificates.
 ///
@@ -61,7 +61,6 @@ pub async fn manage_certificates(
     file_path: String,
     client: &mut CloudManagerClient,
 ) -> anyhow::Result<StatusCode> {
-
     let mut ret_value = 0;
 
     // 1) Load YAML as you already do
@@ -73,7 +72,11 @@ pub async fn manage_certificates(
     let base_dir = match base_dir_from_yaml_path(yaml_path) {
         Ok(p) => p,
         Err(e) => {
-            eprintln!("{} {}", "❌ Failed to derive base dir from YAML path:".red(), e);
+            eprintln!(
+                "{} {}",
+                "❌ Failed to derive base dir from YAML path:".red(),
+                e
+            );
             std::process::exit(1);
         }
     };
@@ -82,7 +85,12 @@ pub async fn manage_certificates(
     match collect_all_missing_in_config(&base_dir, &config) {
         Ok(all_missing) => {
             if !all_missing.is_empty() {
-                eprintln!("{}", "❌ Preflight failed: missing certificate files found".red().bold());
+                eprintln!(
+                    "{}",
+                    "❌ Preflight failed: missing certificate files found"
+                        .red()
+                        .bold()
+                );
                 for m in all_missing {
                     eprintln!("  - {}", m);
                 }
@@ -105,16 +113,27 @@ pub async fn manage_certificates(
     for program in programs {
         println!("☁ Program: {}", program.id,);
 
-
         if let Some(certs) = &program.certificates {
             for cert_cfg in certs {
+                let cert_path  = absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.certificate))?;
+                let chain_path = absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.chain))?;
+                let key_path   = absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.key))?;
 
-                println!("☁ Manage certificate: {} ({:#?})", cert_cfg.name, cert_cfg.id);
+                println!(
+                    "☁ Manage certificate: {} ({:#?})",
+                    cert_cfg.name, cert_cfg.id
+                );
 
-                println!("      certificate : {}", cert_cfg.certificate);
+                println!("      certificate : {} ()", cert_cfg.certificate);
                 println!("      chain       : {}", cert_cfg.chain);
                 println!("      key         : {}", cert_cfg.key);
 
+
+
+
+                println!("      certificate : {}", cert_path.display());
+                println!("      chain       : {}", chain_path.display());
+                println!("      key         : {}", key_path.display());
 
             }
         }
@@ -127,7 +146,6 @@ pub async fn manage_certificates(
     }
 }
 
-
 /// Structured return that contains absolute paths and the loaded contents.
 #[derive(Debug)]
 pub struct LoadedCerts {
@@ -139,12 +157,14 @@ pub struct LoadedCerts {
     pub key: String,
 }
 
-
-
 // If not already present in your module:
 fn resolve_against_base<P: AsRef<Path>>(base_dir: &Path, p: P) -> PathBuf {
     let p = p.as_ref();
-    if p.is_absolute() { p.to_path_buf() } else { base_dir.join(p) }
+    if p.is_absolute() {
+        p.to_path_buf()
+    } else {
+        base_dir.join(p)
+    }
 }
 
 fn absolutize_for_errors(p: &Path) -> io::Result<PathBuf> {
@@ -167,22 +187,37 @@ pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
 }
 
 /// Preflight for *one* certificate: return a list of missing file messages (absolute paths).
-pub fn collect_missing_cert_paths(base_dir: &Path, cfg: &CertificateConfig) -> io::Result<Vec<String>> {
-    let cert_path  = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.certificate))?;
+pub fn collect_missing_cert_paths(
+    base_dir: &Path,
+    cfg: &CertificateConfig,
+) -> io::Result<Vec<String>> {
+    let cert_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.certificate))?;
     let chain_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.chain))?;
-    let key_path   = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.key))?;
+    let key_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.key))?;
 
     let mut missing = Vec::new();
-    if !cert_path.exists()  { missing.push(format!("certificate file is missing: {}", cert_path.display())); }
-    if !chain_path.exists() { missing.push(format!("chain file is missing: {}", chain_path.display())); }
-    if !key_path.exists()   { missing.push(format!("key file is missing: {}", key_path.display())); }
+    if !cert_path.exists() {
+        missing.push(format!(
+            "certificate file is missing: {}",
+            cert_path.display()
+        ));
+    }
+    if !chain_path.exists() {
+        missing.push(format!("chain file is missing: {}", chain_path.display()));
+    }
+    if !key_path.exists() {
+        missing.push(format!("key file is missing: {}", key_path.display()));
+    }
     Ok(missing)
 }
 
 /// Preflight across the *entire* YAML config (all programs / all certificates).
 /// Returns a flat list of human-readable messages with full context and absolute paths.
 /// If the vector is empty, everything exists.
-pub fn collect_all_missing_in_config(base_dir: &Path, config: &YamlConfig) -> io::Result<Vec<String>> {
+pub fn collect_all_missing_in_config(
+    base_dir: &Path,
+    config: &YamlConfig,
+) -> io::Result<Vec<String>> {
     let mut all_missing = Vec::new();
 
     for program in &config.programs {
@@ -204,7 +239,3 @@ pub fn collect_all_missing_in_config(base_dir: &Path, config: &YamlConfig) -> io
 
     Ok(all_missing)
 }
-
-
-
-

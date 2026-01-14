@@ -1,8 +1,8 @@
-use std::{fs, process};
+use super::variables::{EnvironmentVariable, PipelineVariable};
+use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
-use colored::Colorize;
-use super::variables::{EnvironmentVariable, PipelineVariable};
+use std::{fs, process};
 
 /// Model for all programs that will be read from the configuration YAML
 #[derive(Debug, Deserialize, Serialize)]

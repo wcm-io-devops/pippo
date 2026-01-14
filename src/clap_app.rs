@@ -176,7 +176,9 @@ pub async fn init_cli() {
         }) => {
             #[allow(clippy::collapsible_match)]
             if let CertificateCommands::Manage { input } = &certificate_command {
-                if let Err(e) = certificates::manage_certificates(input.to_string(), &mut cm_client).await {
+                if let Err(e) =
+                    certificates::manage_certificates(input.to_string(), &mut cm_client).await
+                {
                     eprintln!("❌ Manage Certificates failed: {e}");
                     std::process::exit(1);
                 }

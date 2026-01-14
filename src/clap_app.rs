@@ -174,41 +174,39 @@ pub async fn init_cli() {
         Some(Commands::Certificates {
             certificate_command,
         }) => {
-            #[allow(clippy::collapsible_match)]
-            if let CertificateCommands::Manage { input } = &certificate_command {
-                if let Err(e) =
-                    certificates::manage_certificates(input.to_string(), &mut cm_client).await
-                {
-                    eprintln!("❌ Manage Certificates failed: {e}");
-                    std::process::exit(1);
-                }
+            if let Some(program_id) = cli.program {
+                match &certificate_command {
+                    CertificateCommands::List { start, limit } => {
+                        let certificates: CertificateList = certificates::get_certificates(
+                            &mut cm_client,
+                            program_id,
+                            start,
+                            limit,
+                        )
+                        .await
+                        .unwrap();
 
-                println!("🚀 Manage Certificates succeded. Please Check logs");
-                process::exit(0);
-            } else {
-                // Since all "domain" subcommands need a program ID, we can only run them when it was provided.
-                if let Some(program_id) = cli.program {
-                    match &certificate_command {
-                        CertificateCommands::List { start, limit } => {
-                            let certificates: CertificateList = certificates::get_certificates(
-                                &mut cm_client,
-                                program_id,
-                                start,
-                                limit,
-                            )
-                            .await
-                            .unwrap();
-
-                            println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
-                        }
-                        CertificateCommands::Manage { input: _ } => {
-                            // must be implemented here, but is already run above in L163...
-                            process::exit(0);
-                        }
+                        println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
                     }
-                } else {
-                    eprintln!("❌ You have to provide a valid Cloud Manager program ID to run this command!");
+                    CertificateCommands::Manage { input } => {
+                        if let Err(e) = certificates::manage_certificates(
+                            input.to_string(),
+                            program_id,
+                            &mut cm_client,
+                        )
+                        .await
+                        {
+                            eprintln!("❌ Manage Certificates failed: {e}");
+                            std::process::exit(1);
+                        }
+                        // must be implemented here, but is already run above in L163...
+                        process::exit(0);
+                    }
                 }
+            } else {
+                eprintln!(
+                    "❌ You have to provide a valid Cloud Manager program ID to run this command!"
+                );
             }
         }
 

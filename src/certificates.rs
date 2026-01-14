@@ -59,6 +59,7 @@ pub async fn get_certificates(
 /// * `client` - A mutable reference to a CloudManagerClient instance
 pub async fn manage_certificates(
     file_path: String,
+    program_id: u32,
     client: &mut CloudManagerClient,
 ) -> anyhow::Result<StatusCode> {
     let mut ret_value = 0;
@@ -108,6 +109,11 @@ pub async fn manage_certificates(
             std::process::exit(1);
         }
     }
+
+    // get current certificate
+    let existing_certificates = get_certificates(client, program_id, &0, &1000)
+        .await
+        .unwrap();
 
     // manage certificates
     for program in programs {

@@ -48,7 +48,7 @@ jobs:
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          mode: pull
+          mode: commmit
 
   lint-pr:
     if: github.event_name == 'pull_request'

@@ -29,19 +29,15 @@ pub async fn get_certificates(
     let query_limit: &str = &limit.to_string();
     let query_parameters = vec![("start", query_start), ("limit", query_limit)];
     let response = client
-        .perform_request(
-            Method::GET,
-            request_path,
-            None::<()>,
-            None
-        )
+        .perform_request(Method::GET, request_path, None::<()>, None)
         .await?
         .text()
         .await?;
-    let certificates: CertificateResponse = serde_json::from_str(response.as_str()).unwrap_or_else(|_| {
-        throw_adobe_api_error(response);
-        process::exit(1);
-    });
+    let certificates: CertificateResponse =
+        serde_json::from_str(response.as_str()).unwrap_or_else(|_| {
+            throw_adobe_api_error(response);
+            process::exit(1);
+        });
 
     Ok(certificates.certificate_list)
 }

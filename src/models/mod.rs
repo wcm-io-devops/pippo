@@ -1,4 +1,5 @@
 pub mod auth;
+pub mod certificates;
 pub mod config;
 pub mod domain;
 pub mod environment;
@@ -7,7 +8,6 @@ pub mod log;
 pub mod pipeline;
 pub mod program;
 pub mod variables;
-pub mod certificates;
 
 #[cfg(test)]
 mod tests {

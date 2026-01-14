@@ -16,11 +16,11 @@ use crate::models::domain::Domain;
 use crate::models::log::{LogType, ServiceType};
 use crate::models::variables::{EnvironmentVariableServiceType, PipelineVariableServiceType};
 
+use crate::models::certificates::CertificateList;
 use crate::variables::{
     get_env_vars, get_pipeline_vars, set_env_vars_from_file, set_pipeline_vars_from_file,
 };
 use crate::{certificates, domains, environments, execution, pipelines, programs};
-use crate::models::certificates::CertificateList;
 
 pub async fn init_cli() {
     let cli = Cli::parse();
@@ -171,7 +171,9 @@ pub async fn init_cli() {
             }
         }
 
-        Some(Commands::Certificates { certificate_command }) => {
+        Some(Commands::Certificates {
+            certificate_command,
+        }) => {
             #[allow(clippy::collapsible_match)]
             if let CertificateCommands::Manage { input } = &certificate_command {
                 //let _ = domains::create_domains(input.to_string(), &mut cm_client).await;
@@ -183,14 +185,18 @@ pub async fn init_cli() {
                 if let Some(program_id) = cli.program {
                     match &certificate_command {
                         CertificateCommands::List { start, limit } => {
-                            let certificates: CertificateList =
-                                certificates::get_certificates(&mut cm_client, program_id, start, limit)
-                                    .await
-                                    .unwrap();
+                            let certificates: CertificateList = certificates::get_certificates(
+                                &mut cm_client,
+                                program_id,
+                                start,
+                                limit,
+                            )
+                            .await
+                            .unwrap();
 
                             println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
                         }
-                        CertificateCommands::Manage{ input: _ } => {
+                        CertificateCommands::Manage { input: _ } => {
                             // must be implemented here, but is already run above in L163...
                             process::exit(0);
                         }

@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc, serde::ts_seconds_option};
+use chrono::{serde::ts_seconds_option, DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
 
@@ -45,7 +45,7 @@ pub struct Certificate {
     //pub ssl_certificate_type: CertificateType,
     //#[serde(skip_serializing)]
     //pub certificate_status:Option<CertificateStatus>,
-    pub serial_number:String,
+    pub serial_number: String,
     pub name: String,
     pub issuer: String,
     #[serde(with = "ts_seconds_option")]

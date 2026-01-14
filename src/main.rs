@@ -10,6 +10,7 @@
 extern crate core;
 
 mod auth;
+mod certificates;
 mod clap_app;
 mod clap_models;
 mod client;
@@ -24,7 +25,6 @@ mod models;
 mod pipelines;
 mod programs;
 mod variables;
-mod certificates;
 
 use crate::clap_app::init_cli;
 

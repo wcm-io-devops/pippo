@@ -96,18 +96,23 @@ pub async fn manage_certificates(
         }
     };
 
+
+
+    println!("🚀 Preflight check - check if all refrenced certificate files are available...");
+
     // 3) Preflight: collect *all* missing files across the entire YAML
     match collect_all_missing_in_config(&base_dir, &config) {
         Ok(all_missing) => {
             if !all_missing.is_empty() {
                 eprintln!(
-                    "{}",
-                    "❌ Preflight failed: missing certificate files found"
+                    "{}  {}",
+                    "❌",
+                    "Preflight check failed: missing certificate files found"
                         .red()
                         .bold()
                 );
                 for m in all_missing {
-                    eprintln!("  - {}", m);
+                    eprintln!("{:>4} {}", "🚧", m);
                 }
                 eprintln!(
                     "\n{}",
@@ -116,10 +121,12 @@ pub async fn manage_certificates(
                         .yellow()
                 );
                 std::process::exit(1);
+            } else {
+                println!("{} {}", "🎉", "Preflight check succcessful.");
             }
         }
         Err(e) => {
-            eprintln!("{} {}", "❌ Preflight failed:".red(), e);
+            eprintln!("{} {} {}", "❌", "Preflight check failed:".red(), e);
             std::process::exit(1);
         }
     }
@@ -128,6 +135,8 @@ pub async fn manage_certificates(
     let existing_certificates = get_certificates(client, program_id, &0, &1000)
         .await
         .unwrap();
+
+    println!();
 
     // manage certificates
     for program in programs {
@@ -150,22 +159,19 @@ pub async fn manage_certificates(
                 let key_path =
                     absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.key))?;
 
-                println!(
-                    "☁ Manage certificate: {} ({:#?})",
-                    cert_cfg.name, cert_cfg.id
+                println!("{:>4} Manage certificate: {}", "🏅", cert_cfg.name);
+                println!("{:>6} id         : {:?}", "🆔" , cert_cfg.id);
+                println!("{:>6} serial     : {}", "🔢" , meta.serial_dec);
+                println!("{:>6} certificate: {}", "📜" , cert_cfg.certificate);
+                println!("{:>6} chain      : {}", "🔗" , cert_cfg.chain);
+                println!("{:>6} key        : {}", "🔑" , cert_cfg.key);
+                println!("{:>8} check for existing certificate", "🔎");
+
+                let found: Option<&Certificate> = find_existing_by_id_or_name(
+                    &existing_certificates.list,
+                    cert_cfg.id,
+                    &cert_cfg.name,
                 );
-
-                println!(
-                    "      certificate : {}, serial: {}",
-                    cert_cfg.certificate, meta.serial_dec
-                );
-                println!("      chain       : {}", cert_cfg.chain);
-                println!("      key         : {}", cert_cfg.key);
-
-                println!("      certificate : {}", cert_path.display());
-                println!("      chain       : {}", chain_path.display());
-                println!("      key         : {}", key_path.display());
-
 
                 let (certificate_pem, chain_pem, key_pem) = load_cert_files(&cert_path, &chain_path, &key_path)
                     .map_err(|e| {
@@ -174,13 +180,6 @@ pub async fn manage_certificates(
                             format!("Failed to read cert files for '{}': {}", cert_cfg.name, e),
                         )
                     })?;
-
-
-                let found: Option<&Certificate> = find_existing_by_id_or_name(
-                    &existing_certificates.list,
-                    cert_cfg.id,
-                    &cert_cfg.name,
-                );
 
                 let mut new_cert: CreateUpdateCertificate = CreateUpdateCertificate {
                     id: None,
@@ -199,6 +198,8 @@ pub async fn manage_certificates(
                     println!("          serial_number: {}", existing_cert.serial_number);
 
                     new_cert.id = Some(existing_cert.id);
+
+                    println!("{:>8} existing certificate ", "🔎");
 
                     if (existing_cert.serial_number != meta.serial_dec) {
                         println!("          serial number is different, updating");
@@ -495,7 +496,7 @@ pub fn collect_all_missing_in_config(
                     for msg in missing {
                         // tag each message with program/cert context
                         all_missing.push(format!(
-                            "program {} / cert '{}': {}",
+                            "program {} - cert '{}': {}",
                             program.id, cert_cfg.name, msg
                         ));
                     }

@@ -1,8 +1,8 @@
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
-use crate::models::certificates::{Certificate, CertificateList, CertificateResponse};
+use crate::models::certificates::{Certificate, CertificateList, CertificateResponse, CreateUpdateCertificate, StringValue};
 use crate::models::config::{CertificateConfig, ProgramsConfig, YamlConfig};
-use crate::models::domain::MinimumDomain;
+use crate::models::domain::{CreateDomainResponse, MinimumDomain};
 use crate::HOST_NAME;
 use anyhow::{Context, Result};
 use colored::Colorize;
@@ -13,6 +13,7 @@ use std::path::{Path, PathBuf};
 use std::str;
 use std::{fs, io, process};
 use time::OffsetDateTime;
+use x509_parser::nom::combinator::value;
 use x509_parser::prelude::FromDer;
 use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
 
@@ -71,6 +72,11 @@ pub async fn manage_certificates(
     client: &mut CloudManagerClient,
 ) -> anyhow::Result<StatusCode> {
     let mut ret_value = 0;
+
+    let mut certs_updated: Vec<&CertificateConfig> = Vec::new();
+    let mut certs_created: Vec<&CertificateConfig> = Vec::new();
+    let mut certs_skipped: Vec<&CertificateConfig> = Vec::new();
+    let mut cert_errors: Vec<&CertificateConfig> = Vec::new();
 
     // 1) Load YAML as you already do
     let config: YamlConfig = YamlConfig::from_file(file_path.clone());
@@ -160,33 +166,62 @@ pub async fn manage_certificates(
                 println!("      chain       : {}", chain_path.display());
                 println!("      key         : {}", key_path.display());
 
+
+                let (certificate_pem, chain_pem, key_pem) = load_cert_files(&cert_path, &chain_path, &key_path)
+                    .map_err(|e| {
+                        io::Error::new(
+                            io::ErrorKind::InvalidInput,
+                            format!("Failed to read cert files for '{}': {}", cert_cfg.name, e),
+                        )
+                    })?;
+
+
                 let found: Option<&Certificate> = find_existing_by_id_or_name(
                     &existing_certificates.list,
                     cert_cfg.id,
                     &cert_cfg.name,
                 );
 
+                let mut new_cert: CreateUpdateCertificate = CreateUpdateCertificate {
+                    id: None,
+                    name: cert_cfg.name.clone(),
+                    certificate: certificate_pem,
+                    chain: chain_pem,
+                    private_key : StringValue {
+                        value: key_pem
+                    },
+                };
+
                 if let Some(existing_cert) = found {
                     println!("      found existing certificate");
                     println!("          name         : {}", existing_cert.name);
-                    println!("          id           : {}", existing_cert.id);
+                    println!("          id           : {:?}", existing_cert.id);
                     println!("          serial_number: {}", existing_cert.serial_number);
 
+                    new_cert.id = Some(existing_cert.id);
+
                     if (existing_cert.serial_number != meta.serial_dec) {
-                        println!("          serial number is different, not updating");
+                        println!("          serial number is different, updating");
+                        create_update_cert(new_cert, program_id, client).await?;
                     } else {
                         println!("          serial number is not different, not updating");
+                        certs_skipped.push(cert_cfg);
                     }
-
-
                 } else {
                     println!(
                         "      no matching existing certificate found, create new certificate!"
                     );
+                    create_update_cert(new_cert, program_id, client).await?;
                 }
             }
         }
     }
+
+    println!("      Management of certificates complete.");
+    println!("        Skipped: {}", certs_skipped.len());
+    println!("        Updated: {}", certs_updated.len());
+    println!("        Created: {}", certs_created.len());
+    println!("        Errors : {}", cert_errors.len());
 
     if ret_value == 0 {
         Ok(StatusCode::OK)
@@ -194,6 +229,49 @@ pub async fn manage_certificates(
         Ok(StatusCode::NOT_MODIFIED)
     }
 }
+
+async fn create_update_cert(cert: CreateUpdateCertificate, program_id: u32, client: &mut CloudManagerClient) -> std::result::Result<StatusCode, Error> {
+    println!("          creating/updating cert {}", cert.name);
+
+    let request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
+
+    let create_certificate_response = client
+        .perform_request(Method::POST, request_path, Some(cert), None)
+        .await?;
+    let status_code = create_certificate_response.status();
+    let response_text = create_certificate_response.text().await?;
+    if status_code != StatusCode::CREATED {
+        let created_cert: Certificate =
+            serde_json::from_str(response_text.as_str()).unwrap_or_else(|_| {
+                throw_adobe_api_error(response_text.clone());
+                process::exit(1);
+            });
+        /*if let Some(error_vec) = &create_certificate_response.errors {
+            for error in error_vec {
+                eprintln!(
+                    "{:>8} Warning {} not created, Reason: {}",
+                    "⚠", cert_cfg.name, error.code
+                );
+            }
+            Ok(StatusCode::CONFLICT)
+        } else {
+            eprintln!("Created: {}", cert_cfg.name);
+            Ok(StatusCode::OK)
+        }*/
+        eprintln!("Created: {}", created_cert.name);
+        return Ok(StatusCode::OK);
+    } else {
+        return Ok(StatusCode::OK);
+    }
+}
+
+fn load_cert_files(cert_path: &PathBuf, chain_path: &PathBuf, key_path: &PathBuf) -> Result<(String, String, String), io::Error> {
+    let certificate = fs::read_to_string(cert_path)?.replace("\n", "");
+    let chain = fs::read_to_string(chain_path)?.replace("\n", "");
+    let key = fs::read_to_string(key_path)?.replace("\n", "");
+    Ok((certificate, chain, key))
+}
+
 
 fn find_existing_by_id_or_name<'a>(
     list: &'a [Certificate],

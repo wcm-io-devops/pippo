@@ -59,3 +59,20 @@ pub struct Certificate {
     #[serde(with = "ts_seconds_option")]
     pub updated_at: Option<DateTime<Utc>>,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateUpdateCertificate {
+    pub id: Option<i64>,
+    pub name: String,
+
+    pub certificate:String,
+    pub chain:String,
+    pub private_key:StringValue,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StringValue {
+    pub value: String,
+}

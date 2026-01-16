@@ -1,6 +1,7 @@
 use chrono::{serde::ts_seconds_option, DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
+use crate::models::domain::Error;
 
 /// Model for a list of certificates
 #[derive(Debug, Deserialize, Serialize)]
@@ -69,6 +70,31 @@ pub struct CreateUpdateCertificate {
     pub certificate:String,
     pub chain:String,
     pub private_key:StringValue,
+}
+
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateUpdateCertificateResponse {
+    #[serde(rename = "type")]
+    pub type_field: String,
+    pub status: i64,
+    pub title: String,
+    pub additional_properties: Option<AdditionalProperties>
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AdditionalProperties {
+    pub errors: Option<Vec<FieldError>>,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FieldError {
+    pub field: String,
+    pub code: String,
+    pub message: String
+
 }
 
 #[derive(Debug, Deserialize, Serialize)]

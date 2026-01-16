@@ -1,6 +1,6 @@
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
-use crate::models::certificates::{Certificate, CertificateList, CertificateResponse, CreateUpdateCertificate, StringValue};
+use crate::models::certificates::{Certificate, CertificateList, CertificateResponse, CreateUpdateCertificate, CreateUpdateCertificateResponse, StringValue};
 use crate::models::config::{CertificateConfig, ProgramsConfig, YamlConfig};
 use crate::models::domain::{CreateDomainResponse, MinimumDomain};
 use crate::HOST_NAME;
@@ -12,6 +12,7 @@ use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::str;
 use std::{fs, io, process};
+use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 use x509_parser::nom::combinator::value;
 use x509_parser::prelude::FromDer;
@@ -76,7 +77,7 @@ pub async fn manage_certificates(
     let mut certs_updated: Vec<&CertificateConfig> = Vec::new();
     let mut certs_created: Vec<&CertificateConfig> = Vec::new();
     let mut certs_skipped: Vec<&CertificateConfig> = Vec::new();
-    let mut cert_errors: Vec<&CertificateConfig> = Vec::new();
+    let mut certs_failed: Vec<&CertificateConfig> = Vec::new();
 
     // 1) Load YAML as you already do
     let config: YamlConfig = YamlConfig::from_file(file_path.clone());
@@ -95,8 +96,6 @@ pub async fn manage_certificates(
             std::process::exit(1);
         }
     };
-
-
 
     println!("🚀 Preflight check - check if all refrenced certificate files are available...");
 
@@ -165,9 +164,10 @@ pub async fn manage_certificates(
                 println!("{:>6} certificate: {}", "📜" , cert_cfg.certificate);
                 println!("{:>6} chain      : {}", "🔗" , cert_cfg.chain);
                 println!("{:>6} key        : {}", "🔑" , cert_cfg.key);
+                println!();
                 println!("{:>8} check for existing certificate", "🔎");
 
-                let found: Option<&Certificate> = find_existing_by_id_or_name(
+                let found_existing_cert: Option<&Certificate> = find_existing_by_id_or_name(
                     &existing_certificates.list,
                     cert_cfg.id,
                     &cert_cfg.name,
@@ -181,6 +181,8 @@ pub async fn manage_certificates(
                         )
                     })?;
 
+                let mut certificate_action = CertificateAction::SKIP;
+
                 let mut new_cert: CreateUpdateCertificate = CreateUpdateCertificate {
                     id: None,
                     name: cert_cfg.name.clone(),
@@ -191,38 +193,61 @@ pub async fn manage_certificates(
                     },
                 };
 
-                if let Some(existing_cert) = found {
-                    println!("      found existing certificate");
+                if let Some(existing_cert) = found_existing_cert {
+                    /*println!("      found existing certificate");
                     println!("          name         : {}", existing_cert.name);
                     println!("          id           : {:?}", existing_cert.id);
-                    println!("          serial_number: {}", existing_cert.serial_number);
+                    println!("          serial_number: {}", existing_cert.serial_number);*/
 
                     new_cert.id = Some(existing_cert.id);
 
-                    println!("{:>8} existing certificate ", "🔎");
-
                     if (existing_cert.serial_number != meta.serial_dec) {
-                        println!("          serial number is different, updating");
-                        create_update_cert(new_cert, program_id, client).await?;
+                        println!("{:>8} existing certificate found and serial number is different:", "🔦");
+
+
+                        // println!("          serial number is different, updating");
+                        certificate_action = CertificateAction::UPDATE;
+
                     } else {
-                        println!("          serial number is not different, not updating");
+                        println!("{:>8} existing certificate found and serial number matches:", "🔦");
+                        // println!("          serial number is not different, not updating");
                         certs_skipped.push(cert_cfg);
                     }
+
+                    println!("{:>12} existing: {}", "🔢", existing_cert.serial_number);
+                    println!("{:>12} new     : {}", "🔢", meta.serial_dec);
                 } else {
-                    println!(
-                        "      no matching existing certificate found, create new certificate!"
-                    );
-                    create_update_cert(new_cert, program_id, client).await?;
+                    certificate_action = CertificateAction::CREATE;
                 }
+
+                println!("{:>8} action: {:?} ", "🔨", certificate_action);
+
+                if certificate_action == CertificateAction::CREATE || certificate_action == CertificateAction::UPDATE {
+                    let result = perform_create_update(&new_cert, program_id, client).await?;
+                    if result != StatusCode::OK {
+                        certs_failed.push(cert_cfg);
+                    } else {
+                        if certificate_action == CertificateAction::CREATE {
+                            certs_created.push(cert_cfg);
+                        } else {
+                            certs_updated.push(cert_cfg);
+                        }
+                    }
+                }
+
+
+                println!();
             }
+
         }
+
     }
 
     println!("      Management of certificates complete.");
     println!("        Skipped: {}", certs_skipped.len());
     println!("        Updated: {}", certs_updated.len());
     println!("        Created: {}", certs_created.len());
-    println!("        Errors : {}", cert_errors.len());
+    println!("        Failed : {}", certs_failed.len());
 
     if ret_value == 0 {
         Ok(StatusCode::OK)
@@ -231,38 +256,58 @@ pub async fn manage_certificates(
     }
 }
 
-async fn create_update_cert(cert: CreateUpdateCertificate, program_id: u32, client: &mut CloudManagerClient) -> std::result::Result<StatusCode, Error> {
+async fn perform_create_update(cert: &CreateUpdateCertificate, program_id: u32, client: &mut CloudManagerClient) -> core::result::Result<StatusCode, Error> {
     println!("          creating/updating cert {}", cert.name);
 
     let request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
 
-    let create_certificate_response = client
+    let response = client
         .perform_request(Method::POST, request_path, Some(cert), None)
         .await?;
-    let status_code = create_certificate_response.status();
-    let response_text = create_certificate_response.text().await?;
+    let status_code = response.status();
+    let response_text = response.text().await?;
+
+    // println!("{}", response_text);
+
     if status_code != StatusCode::CREATED {
-        let created_cert: Certificate =
+        let create_certificate_response: CreateUpdateCertificateResponse =
             serde_json::from_str(response_text.as_str()).unwrap_or_else(|_| {
                 throw_adobe_api_error(response_text.clone());
                 process::exit(1);
             });
-        /*if let Some(error_vec) = &create_certificate_response.errors {
-            for error in error_vec {
-                eprintln!(
-                    "{:>8} Warning {} not created, Reason: {}",
-                    "⚠", cert_cfg.name, error.code
-                );
+
+        eprintln!(
+            "{:>8}  {} {}",
+            "❌", cert.name, "not created!".red().bold()
+        );
+
+        if let Some(additional_properties) = &create_certificate_response.additional_properties {
+            if let Some(error_vec) = &additional_properties.errors {
+
+
+                for error in error_vec {
+                    eprintln!(
+                        "{:>12} {} {}",
+                        "⚠️", "Field:".yellow().bold(), error.field
+                    );
+                    eprintln!(
+                        "{:>19} {}",
+                        "Code:".yellow().bold(), error.code
+                    );
+                    eprintln!(
+                        "{:>19} {}",
+                        "Message:".yellow().bold(), error.message
+                    );
+                }
+
             }
-            Ok(StatusCode::CONFLICT)
+            Ok(StatusCode::NOT_ACCEPTABLE)
         } else {
-            eprintln!("Created: {}", cert_cfg.name);
-            Ok(StatusCode::OK)
-        }*/
-        eprintln!("Created: {}", created_cert.name);
-        return Ok(StatusCode::OK);
+            eprintln!("{} {} reponse: {}", "Unknown error while creating".yellow(), cert.name, response_text);
+            Ok(StatusCode::NOT_ACCEPTABLE)
+        }
     } else {
-        return Ok(StatusCode::OK);
+        Ok(StatusCode::OK)
     }
 }
 
@@ -286,6 +331,13 @@ fn find_existing_by_id_or_name<'a>(
     }
 }
 
+#[derive(Debug)]
+#[derive(PartialEq)]
+pub enum CertificateAction {
+    CREATE,
+    UPDATE,
+    SKIP,
+}
 #[derive(Debug)]
 pub struct CertMeta {
     pub path: PathBuf,

@@ -11,6 +11,7 @@ It enables you to
  * invalidate pipeline cache
  * download and tail logs
  * create Domains
+ * manage OV and EV certificates
  * get an access token which can be reused e.g. by `curl` commands in CI/CD pipelines
 
 ## Installation
@@ -324,6 +325,58 @@ pippo -c <pippo.json> -p <program-id> domain list
 pippo -c <pippo.json> -p <program-id> domain list --start 0 --limit 20 
 pippo -c <pippo.json> -p <program-id> domain list --start 20 --limit 20
 pippo -c <pippo.json> domain create <environment-domains.yml>
+```
+
+### Certicates
+
+* List all certificates (**GET** /api/program/{programId}/certificates)
+* Create certificates from certificates.yaml (**POST** /api/program/{programId}/certificates )
+* Update certificates from certificates.yaml (**PUT** /api/program/{programId}/certificate/{certificateId} )
+
+#### Prerequisites:
+
+* Certificate data (certificate, chain and key) need to present unencrypted in the local filesystem
+  * There is no tooling available that is requesting new certificate data from your CA. 
+* Certificates in chain are in correct order (pippo is currently not sorting them)
+* Certificate pathes in the `certificates.yaml` need to be relative to the `certificates.yaml` file. 
+
+#### Create/update flow
+
+Pippo will read and parse the provided `certificates.yaml` and will then perform a preflight check which checks if all certificate files in the `certificate.yaml` do exist.
+
+Afterwards pippo will iterate over all certificates and perform the following steps:
+* Check for existing certificate in CloudManager based on name and/or id
+  * When existing certificate is found it will check if the serial number differs
+    * If yes the existing certificate will be updated
+    * If not, the existing certificate will not be updated
+  * When no existing certificate is found a new certificate will be created
+  * In case of any issues the issues are logged and after all certificates are handled the program will either exit with success or an error code
+
+
+
+#### Example Data
+
+```yaml
+---
+programs:
+  - id: 56712
+    certificates: 
+      - name: prod-cert
+        certificate: prod/prod-cert.pem
+        chain: prod/prod-cert-chain.pem
+        key: prod/prod-cert-key.pem
+      - name: stage-cert
+        certificate: stage/prod-cert.pem
+        chain: stage/prod-cert-chain.pem
+        key: stage/prod-cert-key.pem
+            
+```
+
+#### Example usage
+
+```bash
+pippo -c <pippo.json> -p <program-id> certificates list
+pippo -c <pippo.json> -p <program-id> certificates manage <path-to-certificates.yaml>  
 ```
 
 ## Development

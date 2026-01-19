@@ -292,7 +292,7 @@ pub async fn manage_certificates(
                 if certificate_action == CertificateAction::CREATE
                     || certificate_action == CertificateAction::UPDATE
                 {
-                    let result = perform_create_update(&new_cert, program_id, client).await?;
+                    let result = perform_create_update(&new_cert, program_id, client, &certificate_action).await?;
                     if result != StatusCode::OK {
                         certs_failed.push(cert_cfg);
                     } else {
@@ -331,39 +331,85 @@ pub async fn manage_certificates(
     }
 }
 
-/// Creates or updates a certificate for a given program via the Cloud Manager API.
+/// Creates or updates a certificate via the Cloud Manager API, depending on the requested action.
 ///
-/// This function sends a POST request to the
-/// `/api/program/{program_id}/certificates` endpoint. Depending on the API
-/// response, it prints success or detailed error information to the console.
+/// This function decides between a **create** (`POST`) and an **update** (`PUT`)
+/// based on the supplied [`CertificateAction`]. It then calls the corresponding
+/// API endpoint and reports the outcome:
+///
+/// * **Create** (`CertificateAction::CREATE`):
+///   `POST {HOST_NAME}/api/program/{program_id}/certificates`
+///   Expects `201 CREATED` on success.
+///
+/// * **Update** (`CertificateAction::UPDATE`):
+///   `PUT  {HOST_NAME}/api/program/{program_id}/certificate/{id}`
+///   Expects `200 OK` on success.
+///   Requires `cert.id` to be `Some`, otherwise the function will panic due to `unwrap()`.
 ///
 /// # Parameters
-/// - `cert`: The certificate payload used for creation or update.
-/// - `program_id`: The ID of the program the certificate belongs to.
-/// - `client`: A mutable CloudManagerClient used to perform the HTTP request.
+/// * `cert` – The certificate payload for creation or update. For updates, `cert.id` **must** be set.
+/// * `program_id` – The Adobe Cloud Manager program ID.
+/// * `client` – The HTTP client used to perform the request.
+/// * `action` – The desired operation: `CREATE` or `UPDATE`.
 ///
 /// # Returns
-/// - `Ok(StatusCode::OK)` if the certificate was successfully created or updated.
-/// - `Ok(StatusCode::NOT_ACCEPTABLE)` if the API returned a validation or logical error.
-/// - `Err(Error)` if the request itself failed (e.g. network errors).
+/// * `Ok(StatusCode::CREATED)` when a create operation succeeds (`201 CREATED`).
+/// * `Ok(StatusCode::OK)` when an update operation succeeds (`200 OK`).
+/// * `Ok(StatusCode::NOT_ACCEPTABLE)` when the API indicates a validation or logical error and
+///   the error response was successfully parsed and printed.
+/// * `Err(Error)` if the HTTP request or reading the response body fails.
+///
+/// # Errors
+/// * Transport, I/O, or HTTP errors are returned as `Err(Error)`.
+/// * If JSON deserialization of an error response fails, the function emits the raw API error
+///   (`throw_adobe_api_error`) and **terminates the process** with `process::exit(1)`.
 ///
 /// # Notes
-/// - On JSON deserialization failure of an error response, the function will
-///   emit an Adobe API error and terminate the process.
+/// * On `UPDATE`, this function calls `.unwrap()` on `cert.id`. If `id` is `None`, it will panic.
+///   Ensure `cert.id` is set for updates.
+/// * Non‑success HTTP responses are parsed into `CreateUpdateCertificateResponse` and printed
+///   with field‑level diagnostics when available.
+/// * This function performs **user‑facing printing** (stdout/stderr) intended for CLI usage.
+/// * Status code handling is strict: only `201` (create) and `200` (update) are considered success.
+///   All other codes are treated as errors and reported.
+///
+
 async fn perform_create_update(
     cert: &CreateUpdateCertificate,
     program_id: u32,
     client: &mut CloudManagerClient,
+    action: &CertificateAction
 ) -> core::result::Result<StatusCode, Error> {
-    let request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
+    let mut request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
+    let mut method = Method::POST;
+    if action == &CertificateAction::UPDATE {
+        request_path = format!("{}/api/program/{}/certificate/{}", HOST_NAME, program_id, cert.id.unwrap());
+        method = Method::PUT;
+    }
 
     let response = client
-        .perform_request(Method::POST, request_path, Some(cert), None)
+        .perform_request(method, request_path, Some(cert), None)
         .await?;
     let status_code = response.status();
     let response_text = response.text().await?;
 
-    if status_code != StatusCode::CREATED {
+    if status_code == StatusCode::CREATED {
+        println!(
+            "{:>8}  Certificate {} {} {}",
+            "✨",
+            cert.name,
+            "created.".green().bold(), "✅"
+        );
+        Ok(StatusCode::CREATED)
+    } else if status_code == StatusCode::OK {
+        println!(
+            "{:>8}  Certificate {} {} {}",
+            "🔄",
+            cert.name,
+            "updated.".green().bold(), "✅"
+        );
+        Ok(StatusCode::OK)
+    } else {
         let create_certificate_response: CreateUpdateCertificateResponse =
             serde_json::from_str(response_text.as_str()).unwrap_or_else(|_| {
                 throw_adobe_api_error(response_text.clone());

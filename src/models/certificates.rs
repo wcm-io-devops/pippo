@@ -42,7 +42,7 @@ pub enum CertificateStatus {
 pub struct Certificate {
     pub id: i64,
     pub ssl_certificate_type: CertificateType,
-    pub certificate_status:Option<CertificateStatus>,
+    pub certificate_status: Option<CertificateStatus>,
     pub serial_number: String,
     pub name: String,
     pub issuer: String,
@@ -62,9 +62,9 @@ pub struct CreateUpdateCertificate {
     pub id: Option<i64>,
     pub name: String,
 
-    pub certificate:String,
-    pub chain:String,
-    pub private_key:StringValue,
+    pub certificate: String,
+    pub chain: String,
+    pub private_key: StringValue,
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -74,7 +74,7 @@ pub struct CreateUpdateCertificateResponse {
     pub type_field: String,
     pub status: i64,
     pub title: String,
-    pub additional_properties: Option<AdditionalProperties>
+    pub additional_properties: Option<AdditionalProperties>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -88,8 +88,7 @@ pub struct AdditionalProperties {
 pub struct FieldError {
     pub field: String,
     pub code: String,
-    pub message: String
-
+    pub message: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

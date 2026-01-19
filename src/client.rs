@@ -80,6 +80,7 @@ impl AdobeConnector for CloudManagerClient {
             }
 
             Method::PUT => {
+                let request_body = serde_json::to_string(&body.unwrap()).unwrap();
                 let response = self
                     .client
                     .put(path)
@@ -87,6 +88,7 @@ impl AdobeConnector for CloudManagerClient {
                     .header("x-gw-ims-org-id", &self.config.organization_id)
                     .header("x-api-key", &self.config.client_id)
                     .header("Content-Type", "application/json")
+                    .body(request_body)
                     .send()
                     .await?;
                 Ok(response)

@@ -76,6 +76,7 @@ jobs:
 
   build:
     runs-on: ${{ matrix.os }}
+
     
     strategy:
       matrix:
@@ -94,6 +95,14 @@ jobs:
             target: x86_64-pc-windows-msvc
 
     steps:
+    - name: Determine git sha to checkout
+      uses: haya14busa/action-cond@v1
+      id: gitsha
+      with:
+        cond: ${{ github.event_name == 'pull_request' }}
+        if_true: ${{ github.event.pull_request.head.sha }}
+        if_false: ${{ github.sha }}
+
     - uses: actions/checkout@v4
 
     - name: Rust Cache
@@ -119,6 +128,6 @@ jobs:
     - name: Archive debug binary
       uses: actions/upload-artifact@v4
       with:
-        name: pippo-build-${{ matrix.target }}-${GITHUB_SHA}
+        name: pippo-build-${{ matrix.target }}-${{ steps.gitsha.outputs.value }}
         path: target/${{ matrix.target }}/release/pippo
 

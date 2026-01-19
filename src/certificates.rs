@@ -233,7 +233,7 @@ pub async fn manage_certificates(
                 println!("{:>6} id         : {:?}", "🆔", cert_cfg.id);
                 println!("{:>6} serial     : {}", "🔢", meta.serial_dec);
                 println!("{:>6} not before : {}", "📆", meta.not_before);
-                println!("{:>6} not after  : {}", "⏳ ", meta.not_after);
+                println!("{:>6} not after  : {}", "📆", meta.not_after);
                 println!("{:>6} certificate: {}", "📜", cert_cfg.certificate);
                 println!("{:>6} chain      : {}", "🔗", cert_cfg.chain);
                 println!("{:>6} key        : {}", "🔑", cert_cfg.key);
@@ -266,18 +266,18 @@ pub async fn manage_certificates(
 
                 if let Some(existing_cert) = found_existing_cert {
                     new_cert.id = Some(existing_cert.id);
-
                     if existing_cert.serial_number != meta.serial_dec {
                         println!(
-                            "{:>8} existing certificate found and serial number is different:",
-                            "🔦"
+                            "{:>8} existing certificate with id {} found and serial number is different:",
+                            "🔦", existing_cert.id
                         );
                         certificate_action = CertificateAction::UPDATE;
                     } else {
                         println!(
-                            "{:>8} existing certificate found and serial number matches:",
-                            "🔦"
+                            "{:>8} existing certificate with id {} found and serial number matches:",
+                            "🔦", existing_cert.id
                         );
+                        certificate_action = CertificateAction::UPDATE;
                         certs_skipped.push(cert_cfg);
                     }
 
@@ -320,7 +320,7 @@ pub async fn manage_certificates(
         eprintln!(
             "{}  {}",
             "❌",
-            "Issues found, please check logs".red().bold()
+            "Issues found, please check the logs!".red().bold()
         );
         Err(anyhow!(
             "Failure during creating/updating certificates, check logs for details"

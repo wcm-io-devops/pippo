@@ -119,6 +119,6 @@ jobs:
     - name: Archive debug binary
       uses: actions/upload-artifact@v4
       with:
-        name: pippo-debug-${{ matrix.target }}
+        name: pippo-build-${{ matrix.target }}-${GITHUB_SHA}
         path: target/${{ matrix.target }}/release/pippo
 

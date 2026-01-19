@@ -265,7 +265,7 @@ async fn perform_create_update(cert: &CreateUpdateCertificate, program_id: u32, 
 
         eprintln!(
             "{:>8}  {} {}",
-            "❌", cert.name, "not created!".red().bold()
+            "❌", cert.name, "not created/updated!".red().bold()
         );
 
         if let Some(additional_properties) = &create_certificate_response.additional_properties {
@@ -332,9 +332,6 @@ pub enum CertificateAction {
 }
 #[derive(Debug)]
 pub struct CertMeta {
-    pub path: PathBuf,
-    pub serial_hex: String,       // uppercase, no colons, no leading zeros
-    pub serial_hex_colon: String, // upper, colon-separated pairs
     pub serial_dec: String,       // decimal string
     pub not_before: OffsetDateTime,
     pub not_after: OffsetDateTime,
@@ -388,54 +385,16 @@ fn extract_meta_from_cert(
         raw
     };
 
-    let serial_hex = to_hex_no_colon_upper(raw_no_leading_zero);
-    let serial_hex_colon = to_hex_colon_upper(raw_no_leading_zero);
     let serial_dec = big_endian_bytes_to_decimal(raw_no_leading_zero);
 
     let nb = cert.validity().not_before.to_datetime();
     let na = cert.validity().not_after.to_datetime();
 
     Ok(CertMeta {
-        path,
-        serial_hex,
-        serial_hex_colon,
         serial_dec,
         not_before: nb,
         not_after: na,
     })
-}
-
-fn to_hex_no_colon_upper(bytes: &[u8]) -> String {
-    if bytes.is_empty() {
-        return "0".to_string();
-    }
-    let mut s = String::with_capacity(bytes.len() * 2);
-    for b in bytes {
-        use std::fmt::Write;
-        let _ = write!(s, "{:02X}", b);
-    }
-    let t = s.trim_start_matches('0');
-    if t.is_empty() {
-        "0".into()
-    } else {
-        t.into()
-    }
-}
-
-fn to_hex_colon_upper(bytes: &[u8]) -> String {
-    let hex = to_hex_no_colon_upper(bytes);
-    let padded = if hex.len() % 2 == 1 {
-        format!("0{hex}")
-    } else {
-        hex
-    };
-    padded
-        .as_bytes()
-        .chunks(2)
-        .map(std::str::from_utf8)
-        .filter_map(Result::ok)
-        .collect::<Vec<_>>()
-        .join(":")
 }
 
 fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
@@ -456,17 +415,6 @@ fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
         }
     }
     digits.iter().rev().map(|d| (b'0' + *d) as char).collect()
-}
-
-/// Structured return that contains absolute paths and the loaded contents.
-#[derive(Debug)]
-pub struct LoadedCerts {
-    pub certificate_path: PathBuf,
-    pub chain_path: PathBuf,
-    pub key_path: PathBuf,
-    pub certificate: String, // PEM text; switch to Vec<u8> + fs::read for DER/binary
-    pub chain: String,
-    pub key: String,
 }
 
 // If not already present in your module:

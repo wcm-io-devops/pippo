@@ -128,6 +128,6 @@ jobs:
     - name: Archive debug binary
       uses: actions/upload-artifact@v4
       with:
-        name: pippo-build-${{ matrix.target }}-${{ steps.gitsha.outputs.value }}
+        name: pippo-build-${{ matrix.target }}
         path: target/${{ matrix.target }}/release/pippo
 

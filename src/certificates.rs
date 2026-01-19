@@ -442,14 +442,6 @@ async fn perform_create_update(
             eprintln!("{:>18} {}", "reponse: ".red(), response_text);
             Ok(StatusCode::NOT_ACCEPTABLE)
         }
-    } else {
-        println!(
-            "{:>8}  Certificate {} {}",
-            "✅",
-            cert.name,
-            "created/updated.".green().bold()
-        );
-        Ok(StatusCode::OK)
     }
 }
 

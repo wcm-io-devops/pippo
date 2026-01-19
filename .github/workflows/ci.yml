@@ -108,11 +108,11 @@ jobs:
       with:
         use-cross: true
         command: run
-        args: --verbose --target ${{ matrix.target }} help
+        args: --release --verbose --target ${{ matrix.target }} help
 
     - name: Archive debug binary
       uses: actions/upload-artifact@v4
       with:
         name: pippo-debug-${{ matrix.target }}
         path: |
-          target/**/debug/**/*
+          target/${{ matrix.target }}/debug/pippo

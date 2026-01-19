@@ -16,18 +16,42 @@ use time::OffsetDateTime;
 use x509_parser::prelude::FromDer;
 use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
 
-/// Retrieves all certificates.
+
+/// Retrieves a list of certificates for a given program from the Cloud Manager API.
 ///
-/// # Arguments
+/// This function performs an HTTP `GET` request against the
+/// `/api/program/{program_id}/certificates` endpoint and returns a paginated
+/// list of certificates.
 ///
-/// * `client` - A mutable reference to a CloudManagerClient instance
-/// * `program_id` - A u32 that holds the program ID
+/// Pagination is controlled via the `start` and `limit` query parameters, which
+/// are forwarded directly to the API.
 ///
-/// # Performed API Request
+/// # Parameters
+/// * `client` – A mutable `CloudManagerClient` used to execute the HTTP request.
+/// * `program_id` – The ID of the program whose certificates should be fetched.
+/// * `start` – The zero‑based index of the first certificate to retrieve.
+/// * `limit` – The maximum number of certificates to return.
 ///
-/// ```
-/// GET https://cloudmanager.adobe.io/api/program/{}/certificates
-/// ```
+/// # Returns
+/// * `Ok(CertificateList)` containing the list of certificates returned by the API.
+/// * `Err(Error)` if the request fails or the response cannot be read.
+///
+/// # Errors
+/// This function may fail in the following situations:
+///
+/// * Network or transport errors during the HTTP request
+/// * The API response body cannot be read
+/// * The API returns invalid or unexpected JSON
+///
+/// If JSON deserialization fails, the raw Adobe API error is emitted and the
+/// process terminates.
+///
+/// # Notes
+/// * The function assumes that the API response conforms to the
+///   `CertificateResponse` schema.
+/// * No retry or pagination logic is implemented; callers must handle paging.
+/// * A fatal deserialization error causes an immediate process exit.
+/// * The `start` and `limit` parameters are passed verbatim and are not validated.
 pub async fn get_certificates(
     client: &mut CloudManagerClient,
     program_id: u32,
@@ -57,14 +81,67 @@ pub async fn get_certificates(
     Ok(certificates.certificate_list)
 }
 
-/// Manages a list of certificates.
+
+/// Manages the lifecycle of certificates defined in a YAML configuration file.
 ///
-/// Manage currently only supports creating/updating an existing certificate with a new one
+/// This function orchestrates the full certificate management workflow:
 ///
-/// # Arguments
+/// 1. Loads and parses a YAML configuration file.
+/// 2. Performs a preflight check to ensure all referenced certificate files exist.
+/// 3. Fetches existing certificates from the Cloud Manager API.
+/// 4. Compares local certificates with existing ones based on serial numbers.
+/// 5. Creates, updates, or skips certificates as needed.
+/// 6. Prints a summarized result of all operations.
 ///
-/// * `file_path` - String slice that holds the path to the YAML variables config
-/// * `client` - A mutable reference to a CloudManagerClient instance
+/// The function is designed to be used by a CLI and performs user‑facing output
+/// throughout the process.
+///
+/// # Parameters
+/// * `file_path` – Path to the YAML configuration file.
+/// * `program_id` – The Cloud Manager program ID under which certificates
+///   are managed.
+/// * `client` – A mutable `CloudManagerClient` used to communicate with the API.
+///
+/// # Returns
+/// * `Ok(StatusCode::OK)` if all certificates were processed successfully and
+///   no errors occurred.
+/// * `Err(anyhow::Error)` if one or more certificates failed to be created or
+///   updated, or if a fatal error occurred during processing.
+///
+/// # Errors
+/// This function may return or trigger errors in the following situations:
+///
+/// * The YAML configuration file cannot be parsed.
+/// * One or more referenced certificate files are missing.
+/// * Certificate parsing or metadata extraction fails.
+/// * API communication or certificate creation/update fails.
+///
+/// Some fatal errors (such as preflight validation failures) terminate the
+/// process early with `std::process::exit`.
+///
+/// # Workflow Overview
+///
+/// ```text
+/// YAML file
+///    ↓
+/// Preflight validation (file existence)
+///    ↓
+/// Fetch existing certificates
+///    ↓
+/// For each configured certificate:
+///    ├─ Read certificate metadata
+///    ├─ Compare with existing certificates
+///    ├─ Decide CREATE / UPDATE / SKIP
+///    └─ Execute API call if required
+///    ↓
+/// Print summary and final status
+/// ```
+///
+/// # Notes
+/// * Certificate matching is done by ID (if present) or by name.
+/// * Updates are determined by comparing certificate serial numbers.
+/// * Only one certificate per configuration entry is processed.
+
 pub async fn manage_certificates(
     file_path: String,
     program_id: u32,
@@ -256,6 +333,26 @@ pub async fn manage_certificates(
     }
 }
 
+
+/// Creates or updates a certificate for a given program via the Cloud Manager API.
+///
+/// This function sends a POST request to the
+/// `/api/program/{program_id}/certificates` endpoint. Depending on the API
+/// response, it prints success or detailed error information to the console.
+///
+/// # Parameters
+/// - `cert`: The certificate payload used for creation or update.
+/// - `program_id`: The ID of the program the certificate belongs to.
+/// - `client`: A mutable CloudManagerClient used to perform the HTTP request.
+///
+/// # Returns
+/// - `Ok(StatusCode::OK)` if the certificate was successfully created or updated.
+/// - `Ok(StatusCode::NOT_ACCEPTABLE)` if the API returned a validation or logical error.
+/// - `Err(Error)` if the request itself failed (e.g. network errors).
+///
+/// # Notes
+/// - On JSON deserialization failure of an error response, the function will
+///   emit an Adobe API error and terminate the process.
 async fn perform_create_update(
     cert: &CreateUpdateCertificate,
     program_id: u32,
@@ -313,6 +410,37 @@ async fn perform_create_update(
     }
 }
 
+/// Loads certificate-related files from disk and returns their contents as strings.
+///
+/// This function reads three files:
+/// - the certificate file
+/// - the certificate chain file
+/// - the private key file
+///
+/// All files are read as UTF‑8 text. Newline characters (`\n`) are removed from
+/// each file’s contents before returning the result, producing single‑line
+/// strings suitable for API transmission or embedding in JSON payloads.
+///
+/// # Parameters
+/// - `cert_path`: Path to the certificate file (e.g. `cert.pem`).
+/// - `chain_path`: Path to the certificate chain file (e.g. `chain.pem`).
+/// - `key_path`: Path to the private key file (e.g. `private.key`).
+///
+/// # Returns
+/// - `Ok((certificate, chain, key))` containing the contents of all three files
+///   as newline‑free `String`s, in the order:
+///   `(certificate, chain, key)`.
+/// - `Err(io::Error)` if any of the files cannot be read.
+///
+/// # Errors
+/// This function returns an `io::Error` in the following cases:
+/// - One or more files do not exist
+/// - Insufficient file permissions
+/// - The file contents are not valid UTF‑8
+///
+/// # Notes
+/// - All newline characters are removed unconditionally.
+/// - No validation of the certificate or key contents is performed.
 fn load_cert_files(
     cert_path: &PathBuf,
     chain_path: &PathBuf,
@@ -324,6 +452,34 @@ fn load_cert_files(
     Ok((certificate, chain, key))
 }
 
+/// Finds an existing certificate by ID or, if no ID is provided, by name.
+///
+/// This helper function searches through a slice of `Certificate` objects and
+/// returns a reference to the first matching entry. The lookup strategy depends
+/// on the provided parameters:
+///
+/// * If `yaml_id` is `Some`, the function searches for a certificate with a
+///   matching `id`.
+/// * If `yaml_id` is `None`, the function falls back to searching by `name`
+///   using `yaml_name`.
+///
+/// # Parameters
+/// * `list` – A slice of existing certificates to search.
+/// * `yaml_id` – An optional certificate ID, typically provided via configuration
+///   (e.g. a YAML file). When present, it takes precedence over the name.
+/// * `yaml_name` – The certificate name used as a fallback lookup key when no
+///   ID is provided.
+///
+/// # Returns
+/// * `Some(&Certificate)` – A reference to the first matching certificate found
+///   in the list.
+/// * `None` – If no certificate matches the given ID or name.
+///
+///
+/// # Notes
+/// * If both an ID and a name refer to different certificates, the ID always wins.
+/// * Name matching is performed using strict equality and is case‑sensitive.
+/// * The function stops searching as soon as a match is found.
 fn find_existing_by_id_or_name<'a>(
     list: &'a [Certificate],
     yaml_id: Option<i64>,
@@ -336,12 +492,15 @@ fn find_existing_by_id_or_name<'a>(
     }
 }
 
+/// Enum for performed action on a certificate
 #[derive(Debug, PartialEq)]
 pub enum CertificateAction {
     CREATE,
     UPDATE,
     SKIP,
 }
+
+/// Struct for holding certificate metadata
 #[derive(Debug)]
 pub struct CertMeta {
     pub serial_dec: String, // decimal string
@@ -349,7 +508,46 @@ pub struct CertMeta {
     pub not_after: OffsetDateTime,
 }
 
-/// Read first CERTIFICATE from a file (PEM bundle or DER), extract serial + validity.
+
+/// Reads an X.509 certificate file and extracts its metadata.
+///
+/// This function loads a certificate from disk and attempts to parse it in
+/// **PEM** format first. If no PEM `CERTIFICATE` block is found, it falls back
+/// to parsing the file contents directly as **DER‑encoded** X.509 data.
+///
+/// Once a valid certificate is successfully parsed, the function extracts
+/// selected metadata fields (such as serial number and validity period) by
+/// delegating to [`extract_meta_from_cert`].
+///
+/// # Parameters
+/// * `path` – Path to the certificate file. The file may be in PEM or DER format.
+///
+/// # Returns
+/// * `Ok(CertMeta)` containing extracted metadata from the certificate.
+/// * `Err(io::Error)` if the file cannot be read, parsed, or does not contain a
+///   valid X.509 certificate.
+///
+/// # Errors
+/// This function may return an `io::Error` in the following situations:
+/// * The certificate file cannot be read from disk
+/// * PEM parsing fails due to invalid formatting
+/// * No PEM `CERTIFICATE` block is present and DER parsing fails
+/// * The certificate contains invalid ASN.1 or DER data
+///
+/// All errors include contextual information such as the file path or parsing
+/// failure reason to improve diagnostics.
+///
+/// # Parsing Strategy
+/// 1. Read the file as raw bytes.
+/// 2. Attempt to parse PEM blocks and select the first `CERTIFICATE` block.
+/// 3. If no PEM certificate is found, attempt to parse the file as DER directly.
+/// 4. Extract certificate metadata from the parsed X.509 structure.
+///
+/// # Notes
+/// * Only the **first** PEM `CERTIFICATE` block is used if multiple blocks exist.
+/// * No certificate chain validation or signature verification is performed.
+/// * The function does not distinguish between end‑entity and CA certificates.
+/// * The file extension is ignored; detection is based solely on content.
 
 pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
     let data = fs::read(path).map_err(|e| {
@@ -386,6 +584,39 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
     extract_meta_from_cert(&cert)
 }
 
+
+/// Extracts metadata from an X.509 certificate.
+///
+/// This function reads selected metadata fields from the **To‑Be‑Signed (TBS)**
+/// section of an X.509 certificate:
+///
+/// * the certificate serial number (converted to a decimal string)
+/// * the `notBefore` validity timestamp
+/// * the `notAfter` validity timestamp
+///
+/// The serial number is returned without a leading zero byte if present.
+/// This is necessary because X.509 serial numbers may be encoded as signed
+/// integers in ASN.1, which can introduce a leading `0x00` byte.
+///
+/// # Parameters
+/// * `cert` – A parsed `X509Certificate` reference from which metadata is extracted.
+///
+/// # Returns
+/// * `Ok(CertMeta)` containing the extracted certificate metadata:
+///   * `serial_dec` – The serial number represented as a decimal string
+///   * `not_before` – The start of the certificate validity period
+///   * `not_after` – The end of the certificate validity period
+/// * `Err(io::Error)` if metadata extraction or conversion fails
+///
+/// # Errors
+/// This function may return an `io::Error` if:
+/// * Serial number conversion fails
+/// * Date/time conversion fails
+///
+/// # Notes
+/// * Leading zero bytes in the serial number are stripped before conversion.
+/// * The returned timestamps are converted to `chrono::DateTime`.
+/// * No validation of the certificate signature or trust chain is performed.
 fn extract_meta_from_cert(cert: &X509Certificate<'_>) -> Result<CertMeta, io::Error> {
     let raw = cert.tbs_certificate.raw_serial();
     let raw_no_leading_zero = if raw.first() == Some(&0x00) {
@@ -406,6 +637,23 @@ fn extract_meta_from_cert(cert: &X509Certificate<'_>) -> Result<CertMeta, io::Er
     })
 }
 
+
+/// Converts a big‑endian byte slice representing an unsigned integer
+/// into its decimal string representation.
+///
+/// This function interprets `bytes` as an **unsigned integer encoded in
+/// big‑endian order** (most significant byte first) and converts it into
+/// a base‑10 string without using big‑integer or arbitrary‑precision libraries.
+///
+/// The conversion is performed manually by repeatedly multiplying the
+/// current decimal representation by 256 and adding the next byte.
+///
+/// # Parameters
+/// * `bytes` – A slice of bytes representing an unsigned big‑endian integer.
+///
+/// # Returns
+/// * A `String` containing the decimal representation of the input value.
+/// * Returns `"0"` if the input slice is empty.
 fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
     if bytes.is_empty() {
         return "0".into();
@@ -426,7 +674,28 @@ fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
     digits.iter().rev().map(|d| (b'0' + *d) as char).collect()
 }
 
-// If not already present in your module:
+
+/// Resolves a path against a base directory if it is relative.
+///
+/// This helper function takes a base directory and a path and ensures that
+/// the returned `PathBuf` is correctly resolved:
+///
+/// * If `p` is already an absolute path, it is returned unchanged.
+/// * If `p` is a relative path, it is joined with `base_dir`.
+///
+/// This is useful when working with configuration files or user input that
+/// may contain a mix of absolute and relative paths.
+///
+/// # Type Parameters
+/// * `P` – Any type that can be referenced as a `Path` (e.g. `&Path`, `PathBuf`,
+///   or `&str`).
+///
+/// # Parameters
+/// * `base_dir` – The base directory used to resolve relative paths.
+/// * `p` – The path to resolve, either absolute or relative.
+///
+/// # Returns
+/// * A `PathBuf` containing the resolved path.
 fn resolve_against_base<P: AsRef<Path>>(base_dir: &Path, p: P) -> PathBuf {
     let p = p.as_ref();
     if p.is_absolute() {
@@ -436,6 +705,31 @@ fn resolve_against_base<P: AsRef<Path>>(base_dir: &Path, p: P) -> PathBuf {
     }
 }
 
+
+/// Converts a path into an absolute path for error reporting purposes.
+///
+/// This function ensures that the returned path is absolute, making it
+/// suitable for use in error messages, logs, or diagnostics:
+///
+/// * If the input path is already absolute, it is returned unchanged.
+/// * If the input path is relative, it is resolved against the current
+///   working directory.
+///
+/// Unlike `resolve_against_base`, this function uses the process’s
+/// current directory instead of a caller-provided base directory.
+///
+/// # Parameters
+/// * `p` – The path to convert into an absolute path.
+///
+/// # Returns
+/// * `Ok(PathBuf)` containing the absolute path.
+/// * `Err(io::Error)` if the current working directory cannot be determined.
+///
+/// # Errors
+/// This function fails if:
+/// * The current working directory cannot be retrieved
+///   (e.g. due to permission or filesystem errors).
+///
 fn absolutize_for_errors(p: &Path) -> io::Result<PathBuf> {
     if p.is_absolute() {
         Ok(p.to_path_buf())
@@ -444,8 +738,38 @@ fn absolutize_for_errors(p: &Path) -> io::Result<PathBuf> {
     }
 }
 
-/// Derive the base directory from the YAML file path used to load config.
-/// If the path has no parent, fall back to current_dir().
+
+/// Determines the base directory associated with a YAML configuration file path.
+///
+/// This function derives a base directory that can be used to resolve relative
+/// paths referenced within a YAML configuration file:
+///
+/// * If `yaml_path` has a non‑empty parent directory, that directory is returned.
+/// * If `yaml_path` has no parent (e.g. the file name is relative and located in
+///   the current directory), the process’s current working directory is returned.
+///
+/// This logic ensures a sensible and consistent base directory for resolving
+/// relative paths inside configuration files, regardless of how the YAML file
+/// path itself was specified.
+///
+/// # Parameters
+/// * `yaml_path` – The path to the YAML configuration file.
+///
+/// # Returns
+/// * `Ok(PathBuf)` containing the resolved base directory.
+/// * `Err(io::Error)` if the current working directory cannot be determined.
+///
+/// # Errors
+/// This function may return an `io::Error` if:
+/// * The current working directory cannot be retrieved (e.g. due to permission
+///   or filesystem issues).
+///
+/// # Notes
+/// * The returned path is not canonicalized.
+/// * No filesystem access is performed beyond querying the current working
+///   directory when needed.
+/// * This function does not verify that the YAML file itself exists.
+
 pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
     if let Some(parent) = yaml_path.parent() {
         if !parent.as_os_str().is_empty() {
@@ -455,7 +779,44 @@ pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
     std::env::current_dir()
 }
 
-/// Preflight for *one* certificate: return a list of missing file messages (absolute paths).
+
+/// Collects missing certificate‑related file paths referenced by a certificate
+/// configuration.
+///
+/// This function resolves the certificate, chain, and private key paths from the
+/// given `CertificateConfig` against a base directory, converts them into absolute
+/// paths, and checks whether the referenced files exist on disk.
+///
+/// Any missing files are reported as human‑readable error messages that include
+/// the resolved absolute file path, making them suitable for diagnostics and
+/// CLI output.
+///
+/// # Parameters
+/// * `base_dir` – The base directory used to resolve relative paths found in the
+///   certificate configuration.
+/// * `cfg` – The certificate configuration containing paths to the certificate,
+///   chain, and private key files.
+///
+/// # Returns
+/// * `Ok(Vec<String>)` containing zero or more error messages describing missing
+///   files.
+///   * An empty vector indicates that all required files exist.
+/// * `Err(io::Error)` if path resolution or retrieval of the current working
+///   directory fails.
+///
+/// # Errors
+/// This function may return an `io::Error` if:
+/// * The current working directory cannot be determined
+/// * Path resolution for error reporting fails
+///
+/// # Notes
+/// * Paths are resolved in three steps:
+///   1. Relative paths are resolved against `base_dir`.
+///   2. The result is converted into an absolute path for clear error messages.
+///   3. The filesystem is queried using `Path::exists`.
+/// * No attempt is made to open or validate the contents of the files.
+/// * The returned messages are user‑facing and intended for display.
+///
 pub fn collect_missing_cert_paths(
     base_dir: &Path,
     cfg: &CertificateConfig,
@@ -480,9 +841,39 @@ pub fn collect_missing_cert_paths(
     Ok(missing)
 }
 
-/// Preflight across the *entire* YAML config (all programs / all certificates).
-/// Returns a flat list of human-readable messages with full context and absolute paths.
-/// If the vector is empty, everything exists.
+
+/// Collects all missing certificate file references across an entire YAML
+/// configuration.
+///
+/// This function iterates over all programs and their associated certificate
+/// configurations, checks whether the referenced certificate files exist on disk,
+/// and aggregates all missing files into a single list.
+///
+/// Each missing file is reported with contextual information, including the
+/// program ID and certificate name, making the output suitable for user‑friendly
+/// error reporting.
+///
+/// # Parameters
+/// * `base_dir` – The base directory used to resolve relative paths defined in the
+///   configuration.
+/// * `config` – The parsed YAML configuration containing program and certificate
+///   definitions.
+///
+/// # Returns
+/// * `Ok(Vec<String>)` containing zero or more error messages describing missing
+///   files across all programs.
+///   * An empty vector indicates that no certificate files are missing.
+/// * `Err(io::Error)` if path resolution or environment‑dependent operations fail.
+///
+/// # Errors
+/// This function may return an `io::Error` if:
+/// * Resolving or absolutizing certificate paths fails
+/// * Accessing the current working directory fails
+///
+/// # Notes
+/// * Programs without certificates are skipped.
+/// * Missing files are reported individually and not deduplicated.
+/// * The returned messages are intended for diagnostics or CLI output.
 pub fn collect_all_missing_in_config(
     base_dir: &Path,
     config: &YamlConfig,

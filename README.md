@@ -366,9 +366,9 @@ RUST_LOG="trace"; cargo run
 
 ```bash
 # apply
-rustfmt --edition 2018 src/main.rs
+cargo fmt
 # check only
-rustfmt --edition 2018 --check src/main.rs
+cargo fmt --check
 ```
 
 ## Release

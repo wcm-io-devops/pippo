@@ -1,21 +1,15 @@
-use core::net;
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
 use crate::models::certificates::{Certificate, CertificateList, CertificateResponse, CreateUpdateCertificate, CreateUpdateCertificateResponse, StringValue};
 use crate::models::config::{CertificateConfig, ProgramsConfig, YamlConfig};
-use crate::models::domain::{CreateDomainResponse, MinimumDomain};
 use crate::HOST_NAME;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use colored::Colorize;
 use reqwest::{Error, Method, StatusCode};
-use std::any::Any;
-use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::str;
 use std::{fs, io, process};
-use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
-use x509_parser::nom::combinator::value;
 use x509_parser::prelude::FromDer;
 use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
 
@@ -73,8 +67,6 @@ pub async fn manage_certificates(
     program_id: u32,
     client: &mut CloudManagerClient,
 ) -> anyhow::Result<StatusCode> {
-    let mut ret_value = 0;
-
     let mut certs_updated: Vec<&CertificateConfig> = Vec::new();
     let mut certs_created: Vec<&CertificateConfig> = Vec::new();
     let mut certs_skipped: Vec<&CertificateConfig> = Vec::new();
@@ -197,18 +189,13 @@ pub async fn manage_certificates(
                 if let Some(existing_cert) = found_existing_cert {
                     new_cert.id = Some(existing_cert.id);
 
-                    if (existing_cert.serial_number != meta.serial_dec) {
+                    if existing_cert.serial_number != meta.serial_dec {
                         println!("{:>8} existing certificate found and serial number is different:", "🔦");
-
-
-                        // println!("          serial number is different, updating");
                         certificate_action = CertificateAction::UPDATE;
 
                     } else {
                         println!("{:>8} existing certificate found and serial number matches:", "🔦");
-                        // println!("          serial number is not different, not updating");
-                        certificate_action = CertificateAction::UPDATE;
-                        // certs_skipped.push(cert_cfg);
+                        certs_skipped.push(cert_cfg);
                     }
 
                     println!("{:>12} existing: {}", "🔢", existing_cert.serial_number);

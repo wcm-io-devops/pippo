@@ -1,7 +1,6 @@
 use chrono::{serde::ts_seconds_option, DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
-use crate::models::domain::Error;
 
 /// Model for a list of certificates
 #[derive(Debug, Deserialize, Serialize)]

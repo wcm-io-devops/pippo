@@ -55,6 +55,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
+
     steps:
       - uses: actions/checkout@v4
 
@@ -106,3 +107,10 @@ jobs:
         use-cross: true
         command: run
         args: --verbose --target ${{ matrix.target }} help
+
+    - name: Archive debug binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: binary
+        path: |
+          /target/**/debug/pippo

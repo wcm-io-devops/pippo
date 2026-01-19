@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.7.3
+        uses: Swatinem/rust-cache@v2
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -44,7 +44,7 @@ jobs:
 #      - uses: actions/checkout@v4
 #
 #      - name: Rust Cache
-#        uses: Swatinem/rust-cache@v2.7.3
+#        uses: Swatinem/rust-cache@v2
 #
 #      - uses: dtolnay/rust-toolchain@stable
 #        with:
@@ -97,7 +97,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Rust Cache
-      uses: Swatinem/rust-cache@v2.7.3
+      uses: Swatinem/rust-cache@v2
 
     - uses: dtolnay/rust-toolchain@stable
       with: 

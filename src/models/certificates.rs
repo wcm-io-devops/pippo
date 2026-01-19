@@ -41,10 +41,8 @@ pub enum CertificateStatus {
 #[serde(rename_all = "camelCase")]
 pub struct Certificate {
     pub id: i64,
-    //#[serde(skip_serializing)]
-    //pub ssl_certificate_type: CertificateType,
-    //#[serde(skip_serializing)]
-    //pub certificate_status:Option<CertificateStatus>,
+    pub ssl_certificate_type: CertificateType,
+    pub certificate_status:Option<CertificateStatus>,
     pub serial_number: String,
     pub name: String,
     pub issuer: String,
@@ -52,8 +50,6 @@ pub struct Certificate {
     pub expire_at: Option<DateTime<Utc>>,
     pub common_name: String,
     pub subject_alternative_names: Vec<String>,
-    //pub certificate:String,
-    //pub chain:String,
     #[serde(with = "ts_seconds_option")]
     pub created_at: Option<DateTime<Utc>>,
     #[serde(with = "ts_seconds_option")]

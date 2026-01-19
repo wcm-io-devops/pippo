@@ -16,7 +16,6 @@ use time::OffsetDateTime;
 use x509_parser::prelude::FromDer;
 use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
 
-
 /// Retrieves a list of certificates for a given program from the Cloud Manager API.
 ///
 /// This function performs an HTTP `GET` request against the
@@ -80,7 +79,6 @@ pub async fn get_certificates(
 
     Ok(certificates.certificate_list)
 }
-
 
 /// Manages the lifecycle of certificates defined in a YAML configuration file.
 ///
@@ -333,7 +331,6 @@ pub async fn manage_certificates(
     }
 }
 
-
 /// Creates or updates a certificate for a given program via the Cloud Manager API.
 ///
 /// This function sends a POST request to the
@@ -508,7 +505,6 @@ pub struct CertMeta {
     pub not_after: OffsetDateTime,
 }
 
-
 /// Reads an X.509 certificate file and extracts its metadata.
 ///
 /// This function loads a certificate from disk and attempts to parse it in
@@ -584,7 +580,6 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
     extract_meta_from_cert(&cert)
 }
 
-
 /// Extracts metadata from an X.509 certificate.
 ///
 /// This function reads selected metadata fields from the **To‑Be‑Signed (TBS)**
@@ -637,7 +632,6 @@ fn extract_meta_from_cert(cert: &X509Certificate<'_>) -> Result<CertMeta, io::Er
     })
 }
 
-
 /// Converts a big‑endian byte slice representing an unsigned integer
 /// into its decimal string representation.
 ///
@@ -674,7 +668,6 @@ fn big_endian_bytes_to_decimal(bytes: &[u8]) -> String {
     digits.iter().rev().map(|d| (b'0' + *d) as char).collect()
 }
 
-
 /// Resolves a path against a base directory if it is relative.
 ///
 /// This helper function takes a base directory and a path and ensures that
@@ -704,7 +697,6 @@ fn resolve_against_base<P: AsRef<Path>>(base_dir: &Path, p: P) -> PathBuf {
         base_dir.join(p)
     }
 }
-
 
 /// Converts a path into an absolute path for error reporting purposes.
 ///
@@ -737,7 +729,6 @@ fn absolutize_for_errors(p: &Path) -> io::Result<PathBuf> {
         Ok(std::env::current_dir()?.join(p))
     }
 }
-
 
 /// Determines the base directory associated with a YAML configuration file path.
 ///
@@ -778,7 +769,6 @@ pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
     }
     std::env::current_dir()
 }
-
 
 /// Collects missing certificate‑related file paths referenced by a certificate
 /// configuration.
@@ -840,7 +830,6 @@ pub fn collect_missing_cert_paths(
     }
     Ok(missing)
 }
-
 
 /// Collects all missing certificate file references across an entire YAML
 /// configuration.

@@ -120,5 +120,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: pippo-debug-${{ matrix.target }}
-        path: |
-          target/*/release/pippo
+        path: target/${{ matrix.target }}/release/pippo
+

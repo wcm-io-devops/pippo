@@ -292,7 +292,9 @@ pub async fn manage_certificates(
                 if certificate_action == CertificateAction::CREATE
                     || certificate_action == CertificateAction::UPDATE
                 {
-                    let result = perform_create_update(&new_cert, program_id, client, &certificate_action).await?;
+                    let result =
+                        perform_create_update(&new_cert, program_id, client, &certificate_action)
+                            .await?;
                     if result != StatusCode::OK {
                         certs_failed.push(cert_cfg);
                     } else {
@@ -378,12 +380,17 @@ async fn perform_create_update(
     cert: &CreateUpdateCertificate,
     program_id: u32,
     client: &mut CloudManagerClient,
-    action: &CertificateAction
+    action: &CertificateAction,
 ) -> core::result::Result<StatusCode, Error> {
     let mut request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
     let mut method = Method::POST;
     if action == &CertificateAction::UPDATE {
-        request_path = format!("{}/api/program/{}/certificate/{}", HOST_NAME, program_id, cert.id.unwrap());
+        request_path = format!(
+            "{}/api/program/{}/certificate/{}",
+            HOST_NAME,
+            program_id,
+            cert.id.unwrap()
+        );
         method = Method::PUT;
     }
 
@@ -398,7 +405,8 @@ async fn perform_create_update(
             "{:>8}  Certificate {} {} {}",
             "✨",
             cert.name,
-            "created.".green().bold(), "✅"
+            "created.".green().bold(),
+            "✅"
         );
         Ok(StatusCode::CREATED)
     } else if status_code == StatusCode::OK {
@@ -406,7 +414,8 @@ async fn perform_create_update(
             "{:>8}  Certificate {} {} {}",
             "🔄",
             cert.name,
-            "updated.".green().bold(), "✅"
+            "updated.".green().bold(),
+            "✅"
         );
         Ok(StatusCode::OK)
     } else {

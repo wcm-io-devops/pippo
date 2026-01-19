@@ -110,9 +110,14 @@ jobs:
         command: run
         args: --release --verbose --target ${{ matrix.target }} help
 
+    - name: List results
+      id: list_results
+      run: |
+        ls -laR
+
     - name: Archive debug binary
       uses: actions/upload-artifact@v4
       with:
         name: pippo-debug-${{ matrix.target }}
         path: |
-          target/${{ matrix.target }}/debug/pippo
+          target/${{ matrix.target }}/**/*

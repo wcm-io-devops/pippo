@@ -1,10 +1,11 @@
+use core::net;
 use crate::client::{AdobeConnector, CloudManagerClient};
 use crate::errors::throw_adobe_api_error;
 use crate::models::certificates::{Certificate, CertificateList, CertificateResponse, CreateUpdateCertificate, CreateUpdateCertificateResponse, StringValue};
 use crate::models::config::{CertificateConfig, ProgramsConfig, YamlConfig};
 use crate::models::domain::{CreateDomainResponse, MinimumDomain};
 use crate::HOST_NAME;
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use colored::Colorize;
 use reqwest::{Error, Method, StatusCode};
 use std::any::Any;
@@ -194,11 +195,6 @@ pub async fn manage_certificates(
                 };
 
                 if let Some(existing_cert) = found_existing_cert {
-                    /*println!("      found existing certificate");
-                    println!("          name         : {}", existing_cert.name);
-                    println!("          id           : {:?}", existing_cert.id);
-                    println!("          serial_number: {}", existing_cert.serial_number);*/
-
                     new_cert.id = Some(existing_cert.id);
 
                     if (existing_cert.serial_number != meta.serial_dec) {
@@ -211,7 +207,8 @@ pub async fn manage_certificates(
                     } else {
                         println!("{:>8} existing certificate found and serial number matches:", "🔦");
                         // println!("          serial number is not different, not updating");
-                        certs_skipped.push(cert_cfg);
+                        certificate_action = CertificateAction::UPDATE;
+                        // certs_skipped.push(cert_cfg);
                     }
 
                     println!("{:>12} existing: {}", "🔢", existing_cert.serial_number);
@@ -242,23 +239,28 @@ pub async fn manage_certificates(
         }
 
     }
+    println!("\n🚀 Management of certificates complete.\n");
 
-    println!("      Management of certificates complete.");
-    println!("        Skipped: {}", certs_skipped.len());
-    println!("        Updated: {}", certs_updated.len());
-    println!("        Created: {}", certs_created.len());
-    println!("        Failed : {}", certs_failed.len());
+    println!("{:>12} {}","Skipped:", certs_skipped.len());
+    println!("{:>12} {}","Updated:", certs_updated.len());
+    println!("{:>12} {}","Created:", certs_created.len());
+    println!("{:>12} {}","Failed:", certs_failed.len());
+    println!("\n");
 
-    if ret_value == 0 {
-        Ok(StatusCode::OK)
+    if !certs_failed.is_empty() {
+        eprintln!("{}  {}", "❌", "Issues found, please check logs".red().bold());
+        Err(anyhow!(
+        "Failure during creating/updating certificates, check logs for details"
+        ))
+
     } else {
-        Ok(StatusCode::NOT_MODIFIED)
+        println!("{} {}", "🎉", "No issues found.");
+        Ok(StatusCode::OK)
     }
+
 }
 
 async fn perform_create_update(cert: &CreateUpdateCertificate, program_id: u32, client: &mut CloudManagerClient) -> core::result::Result<StatusCode, Error> {
-    println!("          creating/updating cert {}", cert.name);
-
     let request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
 
     let response = client
@@ -266,8 +268,6 @@ async fn perform_create_update(cert: &CreateUpdateCertificate, program_id: u32, 
         .await?;
     let status_code = response.status();
     let response_text = response.text().await?;
-
-    // println!("{}", response_text);
 
     if status_code != StatusCode::CREATED {
         let create_certificate_response: CreateUpdateCertificateResponse =
@@ -283,7 +283,6 @@ async fn perform_create_update(cert: &CreateUpdateCertificate, program_id: u32, 
 
         if let Some(additional_properties) = &create_certificate_response.additional_properties {
             if let Some(error_vec) = &additional_properties.errors {
-
 
                 for error in error_vec {
                     eprintln!(
@@ -303,10 +302,16 @@ async fn perform_create_update(cert: &CreateUpdateCertificate, program_id: u32, 
             }
             Ok(StatusCode::NOT_ACCEPTABLE)
         } else {
-            eprintln!("{} {} reponse: {}", "Unknown error while creating".yellow(), cert.name, response_text);
+            eprintln!("{:>8}  {} {}",
+                      "❌", "Unknown error while creating".red().bold(), cert.name);
+            eprintln!("{:>18} {}","reponse: ".red(), response_text);
             Ok(StatusCode::NOT_ACCEPTABLE)
         }
     } else {
+        println!(
+            "{:>8}  Certificate {} {}",
+            "✅", cert.name, "created/updated.".green().bold()
+        );
         Ok(StatusCode::OK)
     }
 }

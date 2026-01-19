@@ -196,8 +196,7 @@ pub async fn init_cli() {
                         )
                         .await
                         {
-                            eprintln!("❌ Manage Certificates failed: {e}");
-                            std::process::exit(1);
+                            std::process::exit(100);
                         }
                         // must be implemented here, but is already run above in L163...
                         process::exit(0);

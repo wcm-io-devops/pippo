@@ -361,6 +361,24 @@ Possible values:
 export RUST_LOG="debug" # or
 RUST_LOG="trace"; cargo run
 ```
+### Debugging communication
+
+Example using mitmproxy.
+Update `src/main.rs` with:
+
+```
+//const HOST_NAME: &str = "https://cloudmanager.adobe.io";
+const HOST_NAME: &str = "http://localhost:8443";
+```
+
+```
+mitmproxy \
+  --mode reverse:https://cloudmanager.adobe.io \
+  --listen-host 127.0.0.1 \
+  --listen-port 8443
+``` 
+ 
+Compile and run the application. You should see the communication in mitmproxy.
 
 ### Apply formatting
 

@@ -189,7 +189,7 @@ pub async fn init_cli() {
                         println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
                     }
                     CertificateCommands::Manage { input } => {
-                        if let Err(e) = certificates::manage_certificates(
+                        if let Err(_e) = certificates::manage_certificates(
                             input.to_string(),
                             program_id,
                             &mut cm_client,

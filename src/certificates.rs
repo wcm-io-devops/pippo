@@ -154,6 +154,8 @@ pub async fn manage_certificates(
                 println!("{:>4} Manage certificate: {}", "🏅", cert_cfg.name);
                 println!("{:>6} id         : {:?}", "🆔" , cert_cfg.id);
                 println!("{:>6} serial     : {}", "🔢" , meta.serial_dec);
+                println!("{:>6} not before : {}", "📆" , meta.not_before);
+                println!("{:>6} not after  : {}", "⏳ " , meta.not_after);
                 println!("{:>6} certificate: {}", "📜" , cert_cfg.certificate);
                 println!("{:>6} chain      : {}", "🔗" , cert_cfg.chain);
                 println!("{:>6} key        : {}", "🔑" , cert_cfg.key);
@@ -218,7 +220,6 @@ pub async fn manage_certificates(
                         }
                     }
                 }
-
 
                 println!();
             }
@@ -360,7 +361,7 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
                     format!("Invalid DER in PEM: {e}"),
                 )
             })?;
-            return extract_meta_from_cert(path.to_path_buf(), &cert);
+            return extract_meta_from_cert(&cert);
         }
     }
 
@@ -371,11 +372,10 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
             format!("Invalid DER X.509: {e}"),
         )
     })?;
-    extract_meta_from_cert(path.to_path_buf(), &cert)
+    extract_meta_from_cert(&cert)
 }
 
 fn extract_meta_from_cert(
-    path: PathBuf,
     cert: &X509Certificate<'_>,
 ) -> Result<CertMeta, io::Error> {
     let raw = cert.tbs_certificate.raw_serial();

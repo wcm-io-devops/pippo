@@ -111,6 +111,6 @@ jobs:
     - name: Archive debug binary
       uses: actions/upload-artifact@v4
       with:
-        name: binary
+        name: pippo-debug
         path: |
           /target/**/debug/pippo

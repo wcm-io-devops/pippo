@@ -338,7 +338,7 @@ pippo -c <pippo.json> domain create <environment-domains.yml>
 * Certificate data (certificate, chain and key) need to present unencrypted in the local filesystem
   * There is no tooling available that is requesting new certificate data from your CA. 
 * Certificates in chain are in correct order (pippo is currently not sorting them)
-* Certificate pathes in the `certificates.yaml` need to be relative to the `certificates.yaml` file. 
+* Certificate paths in the `certificates.yaml` need to be relative to the `certificates.yaml` file. 
 
 #### Create/update flow
 

@@ -48,7 +48,7 @@ fn generate_jwt(client: &CloudManagerClient) -> String {
 /// POST https://ims-na1.adobelogin.com/ims/exchange/jwt/
 /// ```
 pub async fn obtain_access_token(client: &mut CloudManagerClient) -> Result<(), reqwest::Error> {
-    if client.config.auth_strategy == AuthStrategy::JWT {
+    if client.config.auth_strategy == AuthStrategy::Jwt {
         obtain_jwt_token(client).await?;
     } else {
         obtain_oauth_token(client).await?;

@@ -26,7 +26,7 @@ pub enum AuthStrategy {
     #[serde(rename(deserialize = "oauth2", serialize = "oauth2"))]
     OAuth2,
     #[serde(rename(deserialize = "jwt", serialize = "jwt"))]
-    JWT,
+    Jwt,
 }
 
 /// Possible types that the scope can have

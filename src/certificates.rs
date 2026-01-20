@@ -176,8 +176,7 @@ pub async fn manage_certificates(
         Ok(all_missing) => {
             if !all_missing.is_empty() {
                 eprintln!(
-                    "{}  {}",
-                    "❌",
+                    "❌ {}",
                     "Preflight check failed: issues with certificate files found"
                         .red()
                         .bold()
@@ -193,11 +192,11 @@ pub async fn manage_certificates(
                 );
                 std::process::exit(1);
             } else {
-                println!("{} {}", "🎉", "Preflight check successful.");
+                println!("🎉 Preflight check successful.");
             }
         }
         Err(e) => {
-            eprintln!("{} {} {}", "❌", "Preflight check failed:".red(), e);
+            eprintln!("❌ {} {}", "Preflight check failed:".red(), e);
             std::process::exit(1);
         }
     }
@@ -309,12 +308,10 @@ pub async fn manage_certificates(
                             .await?;
                     if result != StatusCode::OK {
                         certs_failed.push(cert_cfg);
+                    } else if certificate_action == CertificateAction::Create {
+                        certs_created.push(cert_cfg);
                     } else {
-                        if certificate_action == CertificateAction::Create {
-                            certs_created.push(cert_cfg);
-                        } else {
-                            certs_updated.push(cert_cfg);
-                        }
+                        certs_updated.push(cert_cfg);
                     }
                 }
 
@@ -332,15 +329,14 @@ pub async fn manage_certificates(
 
     if !certs_failed.is_empty() {
         eprintln!(
-            "{}  {}",
-            "❌",
+            "❌ {}",
             "Issues found, please check the logs!".red().bold()
         );
         Err(anyhow!(
             "Failure during creating/updating certificates, check logs for details"
         ))
     } else {
-        println!("{} {}", "🎉", "No issues found.");
+        println!("🎉 No issues found.");
         Ok(StatusCode::OK)
     }
 }
@@ -413,20 +409,18 @@ async fn perform_create_update(
 
     if status_code == StatusCode::CREATED {
         println!(
-            "{:>8}  Certificate {} {} {}",
+            "{:>8}  Certificate {} {} ✅",
             "✨",
             cert.name,
-            "created.".green().bold(),
-            "✅"
+            "created.".green().bold()
         );
         Ok(StatusCode::CREATED)
     } else if status_code == StatusCode::OK {
         println!(
-            "{:>8}  Certificate {} {} {}",
+            "{:>8}  Certificate {} {} ✅",
             "🔄",
             cert.name,
-            "updated.".green().bold(),
-            "✅"
+            "updated.".green().bold()
         );
         Ok(StatusCode::OK)
     } else {

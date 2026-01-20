@@ -30,11 +30,14 @@ pub enum CertificateType {
 /// Possible status that a certificate can have
 #[derive(Clone, Debug, PartialEq, EnumString, Deserialize, Serialize)]
 pub enum CertificateStatus {
-    PENDING,
-    VALID,
-    EXPIRED,
+    #[serde(rename(deserialize = "PENDING", serialize = "PENDING"))]
+    Pending,
+    #[serde(rename(deserialize = "VALID", serialize = "VALID"))]
+    Valid,
+    #[serde(rename(deserialize = "EXPIRED", serialize = "EXPIRED"))]
+    Expired,
     #[serde(other)]
-    UNKNOWN,
+    Unknown,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

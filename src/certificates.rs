@@ -224,6 +224,8 @@ pub async fn manage_certificates(
                     )
                 })?;
 
+                let cert_is_valid = cert_is_valid(&meta);
+
                 let chain_path =
                     absolutize_for_errors(&resolve_against_base(&base_dir, &cert_cfg.chain))?;
                 let key_path =
@@ -234,10 +236,21 @@ pub async fn manage_certificates(
                 println!("{:>6} serial     : {}", "🔢", meta.serial_dec);
                 println!("{:>6} not before : {}", "📆", meta.not_before);
                 println!("{:>6} not after  : {}", "📆", meta.not_after);
+                println!("{:>7} valid      : {}", "⌛ ", cert_is_valid);
                 println!("{:>6} certificate: {}", "📜", cert_cfg.certificate);
                 println!("{:>6} chain      : {}", "🔗", cert_cfg.chain);
                 println!("{:>6} key        : {}", "🔑", cert_cfg.key);
                 println!();
+
+                if !cert_is_valid {
+                    println!(
+                        "{:>8}  certificate is not valid, skipping! \n",
+                        "❌",
+                    );
+                    certs_failed.push(cert_cfg);
+                    continue;
+                }
+
                 println!("{:>8} check for existing certificate", "🔎");
 
                 let found_existing_cert: Option<&Certificate> = find_existing_by_id_or_name(
@@ -454,6 +467,34 @@ async fn perform_create_update(
         }
     }
 }
+
+
+/// Checks whether the certificate is currently valid based on its
+/// `not_before` and `not_after` timestamps.
+///
+/// A certificate is considered valid if the current UTC time is
+/// *greater than or equal to* `not_before` **and**
+/// *less than or equal to* `not_after`.
+///
+/// # Parameters
+///
+/// * `meta` – The certificate metadata containing the validity period.
+///
+/// # Returns
+///
+/// * `true` if the certificate is valid at the current time
+/// * `false` if the certificate is not yet valid or already expired
+///
+/// # Notes
+///
+/// * The current time is obtained using [`OffsetDateTime::now_utc`].
+/// * All comparisons are performed in UTC, as required by X.509.
+///
+fn cert_is_valid(meta: &CertMeta) -> bool {
+    let now = OffsetDateTime::now_utc();
+    now >= meta.not_before && now <= meta.not_after
+}
+
 
 /// Loads certificate-related files from disk and returns their contents as strings.
 ///

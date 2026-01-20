@@ -265,7 +265,7 @@ pub async fn manage_certificates(
                         )
                     })?;
 
-                let mut certificate_action = CertificateAction::SKIP;
+                let mut certificate_action = CertificateAction::Skip;
 
                 let mut new_cert: CreateUpdateCertificate = CreateUpdateCertificate {
                     id: None,
@@ -282,7 +282,7 @@ pub async fn manage_certificates(
                             "{:>8} existing certificate with id {} found and serial number is different:",
                             "🔦", existing_cert.id
                         );
-                        certificate_action = CertificateAction::UPDATE;
+                        certificate_action = CertificateAction::Update;
                     } else {
                         println!(
                             "{:>8} existing certificate with id {} found and serial number matches:",
@@ -296,13 +296,13 @@ pub async fn manage_certificates(
                     println!("{:>12} existing: {}", "🔢", existing_cert.serial_number);
                     println!("{:>12} new     : {}", "🔢", meta.serial_dec);
                 } else {
-                    certificate_action = CertificateAction::CREATE;
+                    certificate_action = CertificateAction::Create;
                 }
 
                 println!("{:>8} action: {:?} ", "🔨", certificate_action);
 
-                if certificate_action == CertificateAction::CREATE
-                    || certificate_action == CertificateAction::UPDATE
+                if certificate_action == CertificateAction::Create
+                    || certificate_action == CertificateAction::Update
                 {
                     let result =
                         perform_create_update(&new_cert, program_id, client, &certificate_action)
@@ -310,7 +310,7 @@ pub async fn manage_certificates(
                     if result != StatusCode::OK {
                         certs_failed.push(cert_cfg);
                     } else {
-                        if certificate_action == CertificateAction::CREATE {
+                        if certificate_action == CertificateAction::Create {
                             certs_created.push(cert_cfg);
                         } else {
                             certs_updated.push(cert_cfg);
@@ -395,7 +395,7 @@ async fn perform_create_update(
 ) -> core::result::Result<StatusCode, Error> {
     let mut request_path = format!("{}/api/program/{}/certificates", HOST_NAME, program_id);
     let mut method = Method::POST;
-    if action == &CertificateAction::UPDATE {
+    if action == &CertificateAction::Update {
         request_path = format!(
             "{}/api/program/{}/certificate/{}",
             HOST_NAME,
@@ -576,9 +576,9 @@ fn find_existing_by_id_or_name<'a>(
 /// Enum for performed action on a certificate
 #[derive(Debug, PartialEq)]
 pub enum CertificateAction {
-    CREATE,
-    UPDATE,
-    SKIP,
+    Create,
+    Update,
+    Skip,
 }
 
 /// Struct for holding certificate metadata

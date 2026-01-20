@@ -98,7 +98,7 @@ pub async fn create_domains(
                                         "Warning, check output above".yellow(),
                                         "⚠".yellow()
                                     );
-                                    ret_value = ret_value + 1;
+                                    ret_value += 1;
                                 }
                             },
                             Err(error) => {
@@ -171,5 +171,5 @@ fn generate_txt_record(domain: String, program_id: u32, env_id: i64) -> String {
         &env_id,
         &uuid.hyphenated().to_string(),
     );
-    return txt_record;
+    txt_record
 }

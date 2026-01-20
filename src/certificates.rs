@@ -168,7 +168,7 @@ pub async fn manage_certificates(
         }
     };
 
-    println!("🚀 Preflight check - check if all refrenced certificate files are available...");
+    println!("🚀 Preflight check - check if all referenced certificate files are available...");
 
     // 3) Preflight: collect *all* missing files across the entire YAML
     match collect_all_missing_in_config(&base_dir, &config) {

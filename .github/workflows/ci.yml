@@ -20,12 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: clippy
 
@@ -35,44 +32,17 @@ jobs:
       - name: cargo test
         run: cargo test
 
-#  lint:
-#    if: github.event_name != 'pull_request'
-#    runs-on: ubuntu-latest
-#    permissions:
-#      contents: write
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Rust Cache
-#        uses: Swatinem/rust-cache@v2
-#
-#      - uses: dtolnay/rust-toolchain@stable
-#        with:
-#          components: rustfmt
-#
-#      - uses: mbrobbel/rustfmt-check@master
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          mode: commit
-
-  lint:
+  formatting:
+    name: cargo fmt
     runs-on: ubuntu-latest
-
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
-
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: actions/checkout@v6
+      # Ensure rustfmt is installed and setup problem matcher
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt
-
-      - uses: mbrobbel/rustfmt-check@master
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          mode: review
+      - name: Rustfmt Check
+        uses: actions-rust-lang/rustfmt@v1
 
   build:
     runs-on: ${{ matrix.os }}
@@ -103,14 +73,11 @@ jobs:
         if_true: ${{ github.event.pull_request.head.sha }}
         if_false: ${{ github.sha }}
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
-    - name: Rust Cache
-      uses: Swatinem/rust-cache@v2
-
-    - uses: dtolnay/rust-toolchain@stable
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
       with: 
-        targets: ${{ matrix.target }}
+        target: ${{ matrix.target }}
 
     - name: Build
       uses: actions-rs/cargo@v1

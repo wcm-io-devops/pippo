@@ -277,7 +277,8 @@ pub async fn manage_certificates(
                             "{:>8} existing certificate with id {} found and serial number matches:",
                             "🔦", existing_cert.id
                         );
-                        certificate_action = CertificateAction::UPDATE;
+                        // only for testing update functionality
+                        //certificate_action = CertificateAction::UPDATE;
                         certs_skipped.push(cert_cfg);
                     }
 

@@ -3,8 +3,6 @@ use serde::{de, Deserialize, Deserializer, Serialize};
 use std::fmt;
 use strum_macros::{EnumString, IntoStaticStr};
 
-/// Model for common cloud manager variables
-
 /// Possible types that a variable can have
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]

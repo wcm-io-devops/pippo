@@ -139,7 +139,6 @@ pub async fn get_certificates(
 /// * Certificate matching is done by ID (if present) or by name.
 /// * Updates are determined by comparing certificate serial numbers.
 /// * Only one certificate per configuration entry is processed.
-
 pub async fn manage_certificates(
     file_path: String,
     program_id: u32,
@@ -388,7 +387,6 @@ pub async fn manage_certificates(
 /// * Status code handling is strict: only `201` (create) and `200` (update) are considered success.
 ///   All other codes are treated as errors and reported.
 ///
-
 async fn perform_create_update(
     cert: &CreateUpdateCertificate,
     program_id: u32,
@@ -630,7 +628,6 @@ pub struct CertMeta {
 /// * No certificate chain validation or signature verification is performed.
 /// * The function does not distinguish between end‑entity and CA certificates.
 /// * The file extension is ignored; detection is based solely on content.
-
 pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
     let data = fs::read(path).map_err(|e| {
         io::Error::new(
@@ -846,7 +843,6 @@ fn absolutize_for_errors(p: &Path) -> io::Result<PathBuf> {
 /// * No filesystem access is performed beyond querying the current working
 ///   directory when needed.
 /// * This function does not verify that the YAML file itself exists.
-
 pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
     if let Some(parent) = yaml_path.parent() {
         if !parent.as_os_str().is_empty() {
@@ -883,7 +879,6 @@ pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
 /// filesystem permissions), or if any other I/O error arises during path handling.
 /// Errors from `read_cert_meta` are **captured** as issue strings instead of
 /// bubbling up, allowing validation to proceed.
-
 pub fn collect_cert_issues(base_dir: &Path, cfg: &CertificateConfig) -> io::Result<Vec<String>> {
     let cert_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.certificate))?;
     let chain_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.chain))?;

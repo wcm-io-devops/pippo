@@ -37,8 +37,9 @@ jobs:
         with:
           components: clippy
 
-      - name: Run clippy
-        run: cargo clippy --no-deps
+      - uses: auguwu/clippy-action@1.4.0
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
 
   formatting:
     name: cargo fmt

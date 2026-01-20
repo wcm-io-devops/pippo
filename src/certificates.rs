@@ -632,7 +632,7 @@ pub fn read_cert_meta(path: &Path) -> Result<CertMeta, io::Error> {
 
     // Try PEM first: iterate over all PEM blocks, pick the first CERTIFICATE
     let mut pem_iter = Pem::iter_from_buffer(&data);
-    while let Some(item) = pem_iter.next() {
+    for item in pem_iter {
         let pem = item.map_err(|e| {
             io::Error::new(io::ErrorKind::InvalidData, format!("PEM parse error: {e}"))
         })?;

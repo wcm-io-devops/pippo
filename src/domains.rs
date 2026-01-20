@@ -82,7 +82,7 @@ pub async fn create_domains(
                                 d.id,
                                 e.id.into(),
                             ),
-                            certificate_id: dom.certificate_id.clone(),
+                            certificate_id: dom.certificate_id,
                             environment_id: e.id.into(),
                             dns_zone: String::from("adobe.com."),
                         };

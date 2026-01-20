@@ -239,7 +239,7 @@ pub async fn get_tail_log_url(
         .text()
         .await?;
     let response: LogTailResponse =
-        serde_json::from_str(&response_obj.as_str()).unwrap_or_else(|_| {
+        serde_json::from_str(response_obj.as_str()).unwrap_or_else(|_| {
             throw_adobe_api_error(response_obj);
             process::exit(1);
         });

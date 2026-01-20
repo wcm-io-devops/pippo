@@ -168,16 +168,16 @@ pub async fn manage_certificates(
         }
     };
 
-    println!("🚀 Preflight check - check if all referenced certificate files are available...");
+    println!("🚀 Preflight check - check if all referenced certificate files are available/valid...");
 
     // 3) Preflight: collect *all* missing files across the entire YAML
-    match collect_all_missing_in_config(&base_dir, &config) {
+    match collect_all_cert_issues(&base_dir, &config) {
         Ok(all_missing) => {
             if !all_missing.is_empty() {
                 eprintln!(
                     "{}  {}",
                     "❌",
-                    "Preflight check failed: missing certificate files found"
+                    "Preflight check failed: issues with certificate files found"
                         .red()
                         .bold()
                 );
@@ -859,44 +859,35 @@ pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
     std::env::current_dir()
 }
 
-/// Collects missing certificate‑related file paths referenced by a certificate
-/// configuration.
+/// Validates a single certificate tuple (certificate, chain, key) and reports issues.
 ///
-/// This function resolves the certificate, chain, and private key paths from the
-/// given `CertificateConfig` against a base directory, converts them into absolute
-/// paths, and checks whether the referenced files exist on disk.
+/// This function verifies the existence of certificate, chain, and key files, and
+/// performs a basic validity check on certificate and chain files by attempting to
+/// read their metadata via [`read_cert_meta`]. Any detected problems are returned as
+/// human-readable messages.
 ///
-/// Any missing files are reported as human‑readable error messages that include
-/// the resolved absolute file path, making them suitable for diagnostics and
-/// CLI output.
+/// The checks performed:
+/// 1. **Existence** of `certificate`, `chain`, and `key` files.
+/// 2. **Parsability/validity** of `certificate` and `chain` via `read_cert_meta`.
+///
+/// Paths in the provided [`CertificateConfig`] are resolved relative to `base_dir`
+/// using [`resolve_against_base`], then normalized for user-friendly display via
+/// [`absolutize_for_errors`].
 ///
 /// # Parameters
-/// * `base_dir` – The base directory used to resolve relative paths found in the
-///   certificate configuration.
-/// * `cfg` – The certificate configuration containing paths to the certificate,
-///   chain, and private key files.
+/// - `base_dir`: Base directory used to resolve relative certificate paths.
+/// - `cfg`: The certificate configuration containing paths to `certificate`, `chain`, and `key`.
 ///
 /// # Returns
-/// * `Ok(Vec<String>)` containing zero or more error messages describing missing
-///   files.
-///   * An empty vector indicates that all required files exist.
-/// * `Err(io::Error)` if path resolution or retrieval of the current working
-///   directory fails.
+/// A vector of issue strings. If no issues are found, the vector is empty.
 ///
 /// # Errors
-/// This function may return an `io::Error` if:
-/// * The current working directory cannot be determined
-/// * Path resolution for error reporting fails
-///
-/// # Notes
-/// * Paths are resolved in three steps:
-///   1. Relative paths are resolved against `base_dir`.
-///   2. The result is converted into an absolute path for clear error messages.
-///   3. The filesystem is queried using `Path::exists`.
-/// * No attempt is made to open or validate the contents of the files.
-/// * The returned messages are user‑facing and intended for display.
-///
-pub fn collect_missing_cert_paths(
+/// Returns an `io::Error` if path resolution or normalization fails (e.g., due to
+/// filesystem permissions), or if any other I/O error arises during path handling.
+/// Errors from `read_cert_meta` are **captured** as issue strings instead of
+/// bubbling up, allowing validation to proceed.
+
+pub fn collect_cert_issues(
     base_dir: &Path,
     cfg: &CertificateConfig,
 ) -> io::Result<Vec<String>> {
@@ -904,68 +895,72 @@ pub fn collect_missing_cert_paths(
     let chain_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.chain))?;
     let key_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.key))?;
 
-    let mut missing = Vec::new();
+    let mut issues = Vec::new();
     if !cert_path.exists() {
-        missing.push(format!(
+        issues.push(format!(
             "certificate file is missing: {}",
             cert_path.display()
         ));
+    } else {
+        let _meta = read_cert_meta(&cert_path).map_err(|_e| {
+            issues.push(format!(
+                "certificate file is invalid: {}",
+                cert_path.display()
+            ));
+        });
     }
     if !chain_path.exists() {
-        missing.push(format!("chain file is missing: {}", chain_path.display()));
+        issues.push(format!("chain file is missing: {}", chain_path.display()));
+    } else {
+        let _meta = read_cert_meta(&chain_path).map_err(|_e| {
+            issues.push(format!(
+                "chain file is invalid: {}",
+                chain_path.display()
+            ));
+        });
     }
     if !key_path.exists() {
-        missing.push(format!("key file is missing: {}", key_path.display()));
+        issues.push(format!("key file is missing: {}", key_path.display()));
     }
-    Ok(missing)
+    Ok(issues)
 }
 
-/// Collects all missing certificate file references across an entire YAML
-/// configuration.
+
+/// Collects certificate issues across all configured programs.
 ///
-/// This function iterates over all programs and their associated certificate
-/// configurations, checks whether the referenced certificate files exist on disk,
-/// and aggregates all missing files into a single list.
+/// This function iterates over all `programs` defined in the provided [`YamlConfig`],
+/// and for each program's certificates, it calls [`collect_cert_issues`]. Any issues
+/// found are tagged with the corresponding `program.id` and certificate name for
+/// clearer context in the returned messages.
 ///
-/// Each missing file is reported with contextual information, including the
-/// program ID and certificate name, making the output suitable for user‑friendly
-/// error reporting.
+/// Each message has the form:
+/// `program {PROGRAM_ID} - cert '{CERT_NAME}': {ISSUE_TEXT}`
 ///
 /// # Parameters
-/// * `base_dir` – The base directory used to resolve relative paths defined in the
-///   configuration.
-/// * `config` – The parsed YAML configuration containing program and certificate
-///   definitions.
+/// - `base_dir`: Base directory to resolve relative paths contained in the config.
+/// - `config`: The loaded YAML configuration that includes programs and their certificates.
 ///
 /// # Returns
-/// * `Ok(Vec<String>)` containing zero or more error messages describing missing
-///   files across all programs.
-///   * An empty vector indicates that no certificate files are missing.
-/// * `Err(io::Error)` if path resolution or environment‑dependent operations fail.
+/// A list of human-readable issue strings across all certificates in the config.
+/// If no issues are found, the returned vector is empty.
 ///
 /// # Errors
-/// This function may return an `io::Error` if:
-/// * Resolving or absolutizing certificate paths fails
-/// * Accessing the current working directory fails
-///
-/// # Notes
-/// * Programs without certificates are skipped.
-/// * Missing files are reported individually and not deduplicated.
-/// * The returned messages are intended for diagnostics or CLI output.
-pub fn collect_all_missing_in_config(
+/// Returns an `io::Error` if any underlying I/O operation performed by
+/// [`collect_cert_issues`] fails.
+pub fn collect_all_cert_issues(
     base_dir: &Path,
     config: &YamlConfig,
 ) -> io::Result<Vec<String>> {
-    let mut all_missing = Vec::new();
+    let mut all_issues = Vec::new();
 
     for program in &config.programs {
         if let Some(certs) = &program.certificates {
             for cert_cfg in certs {
-                let missing = collect_missing_cert_paths(base_dir, cert_cfg)?;
-                if !missing.is_empty() {
-                    for msg in missing {
+                let issues = collect_cert_issues(base_dir, cert_cfg)?;
+                if !issues.is_empty() {
+                    for msg in issues {
                         // tag each message with program/cert context
-                        all_missing.push(format!(
+                        all_issues.push(format!(
                             "program {} - cert '{}': {}",
                             program.id, cert_cfg.name, msg
                         ));
@@ -975,5 +970,5 @@ pub fn collect_all_missing_in_config(
         }
     }
 
-    Ok(all_missing)
+    Ok(all_issues)
 }

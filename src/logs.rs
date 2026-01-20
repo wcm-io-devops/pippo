@@ -1,7 +1,7 @@
 use std::io::Cursor;
+use std::process;
 use std::thread::sleep;
 use std::time::Duration;
-use std::{process};
 
 use chrono::NaiveDate;
 use colored::*;

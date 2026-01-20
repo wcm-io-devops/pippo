@@ -328,10 +328,7 @@ pub async fn manage_certificates(
     println!("\n");
 
     if !certs_failed.is_empty() {
-        eprintln!(
-            "❌ {}",
-            "Issues found, please check the logs!".red().bold()
-        );
+        eprintln!("❌ {}", "Issues found, please check the logs!".red().bold());
         Err(anyhow!(
             "Failure during creating/updating certificates, check logs for details"
         ))

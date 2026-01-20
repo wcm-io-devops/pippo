@@ -168,7 +168,9 @@ pub async fn manage_certificates(
         }
     };
 
-    println!("🚀 Preflight check - check if all referenced certificate files are available/valid...");
+    println!(
+        "🚀 Preflight check - check if all referenced certificate files are available/valid..."
+    );
 
     // 3) Preflight: collect *all* missing files across the entire YAML
     match collect_all_cert_issues(&base_dir, &config) {
@@ -243,10 +245,7 @@ pub async fn manage_certificates(
                 println!();
 
                 if !cert_is_valid {
-                    println!(
-                        "{:>8}  certificate is not valid, skipping! \n",
-                        "❌",
-                    );
+                    println!("{:>8}  certificate is not valid, skipping! \n", "❌",);
                     certs_failed.push(cert_cfg);
                     continue;
                 }
@@ -468,7 +467,6 @@ async fn perform_create_update(
     }
 }
 
-
 /// Checks whether the certificate is currently valid based on its
 /// `not_before` and `not_after` timestamps.
 ///
@@ -494,7 +492,6 @@ fn cert_is_valid(meta: &CertMeta) -> bool {
     let now = OffsetDateTime::now_utc();
     now >= meta.not_before && now <= meta.not_after
 }
-
 
 /// Loads certificate-related files from disk and returns their contents as strings.
 ///
@@ -887,10 +884,7 @@ pub fn base_dir_from_yaml_path(yaml_path: &Path) -> io::Result<PathBuf> {
 /// Errors from `read_cert_meta` are **captured** as issue strings instead of
 /// bubbling up, allowing validation to proceed.
 
-pub fn collect_cert_issues(
-    base_dir: &Path,
-    cfg: &CertificateConfig,
-) -> io::Result<Vec<String>> {
+pub fn collect_cert_issues(base_dir: &Path, cfg: &CertificateConfig) -> io::Result<Vec<String>> {
     let cert_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.certificate))?;
     let chain_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.chain))?;
     let key_path = absolutize_for_errors(&resolve_against_base(base_dir, &cfg.key))?;
@@ -913,10 +907,7 @@ pub fn collect_cert_issues(
         issues.push(format!("chain file is missing: {}", chain_path.display()));
     } else {
         let _meta = read_cert_meta(&chain_path).map_err(|_e| {
-            issues.push(format!(
-                "chain file is invalid: {}",
-                chain_path.display()
-            ));
+            issues.push(format!("chain file is invalid: {}", chain_path.display()));
         });
     }
     if !key_path.exists() {
@@ -924,7 +915,6 @@ pub fn collect_cert_issues(
     }
     Ok(issues)
 }
-
 
 /// Collects certificate issues across all configured programs.
 ///
@@ -947,10 +937,7 @@ pub fn collect_cert_issues(
 /// # Errors
 /// Returns an `io::Error` if any underlying I/O operation performed by
 /// [`collect_cert_issues`] fails.
-pub fn collect_all_cert_issues(
-    base_dir: &Path,
-    config: &YamlConfig,
-) -> io::Result<Vec<String>> {
+pub fn collect_all_cert_issues(base_dir: &Path, config: &YamlConfig) -> io::Result<Vec<String>> {
     let mut all_issues = Vec::new();
 
     for program in &config.programs {

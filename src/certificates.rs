@@ -192,7 +192,7 @@ pub async fn manage_certificates(
                 );
                 std::process::exit(1);
             } else {
-                println!("{} {}", "🎉", "Preflight check succcessful.");
+                println!("{} {}", "🎉", "Preflight check successful.");
             }
         }
         Err(e) => {

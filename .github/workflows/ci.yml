@@ -66,14 +66,17 @@ jobs:
           - build: linux
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            binary: "pippo"
 
           - build: macos_x86_64
             os: macos-latest
             target: x86_64-apple-darwin
+            binary: "pippo"
 
           - build: windows
             os: windows-latest
             target: x86_64-pc-windows-msvc
+            binary: "pippo.exe"
 
     steps:
     - name: Determine git sha
@@ -106,9 +109,9 @@ jobs:
     #    /target/x86_64-unknown-linux-gnu/release/pippo
     #    ls -laR
 
-    - name: Archive debug binary
+    - name: Archive snapshot binary
       uses: actions/upload-artifact@v4
       with:
         name: pippo-build-${{ matrix.target }}
-        path: target/${{ matrix.target }}/release/pippo
+        path: target/${{ matrix.target }}/release/${{ matrix.binary }}
 

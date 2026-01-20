@@ -327,7 +327,7 @@ pippo -c <pippo.json> -p <program-id> domain list --start 20 --limit 20
 pippo -c <pippo.json> domain create <environment-domains.yml>
 ```
 
-### Certicates
+### Certificates
 
 * List all certificates (**GET** /api/program/{programId}/certificates)
 * Create certificates from certificates.yaml (**POST** /api/program/{programId}/certificates )

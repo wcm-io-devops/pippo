@@ -11,9 +11,6 @@ env:
   CARGO_TERM_COLOR: always
   # enable incremental cargo builds
   CARGO_INCREMENTAL: 1
-  # sccache: global defaults
-  RUSTC_WRAPPER: sccache
-  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
 
@@ -45,9 +42,6 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-
-      - name: Start sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
 
       - name: Install cargo edit
         uses: actions-rs/cargo@v1

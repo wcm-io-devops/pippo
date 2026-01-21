@@ -94,6 +94,7 @@ jobs:
     - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         target: ${{ matrix.target }}
+        components: cross
 
     #- name: Build
     #  uses: actions-rs/cargo@v1

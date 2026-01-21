@@ -9,8 +9,7 @@ env:
   # sccache: global defaults
   RUSTC_WRAPPER: sccache
   SCCACHE_CACHE_SIZE: 1G
-  SCCACHE_DIR: ${{ runner.temp }}/sccache
-
+  SCCACHE_DIR: .cache/sccache
 
 permissions:
   pull-requests: write

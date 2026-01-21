@@ -6,12 +6,11 @@ permissions:
 on:
   release:
     types: [published]
-  #push:
-  #  tags:
-  #    # Regex for a version number such as 0.2.1
-  #    - "[0-9]+.[0-9]+.[0-9]+"
-  #    # Regex for a version number such as 0.2.1-RC1
-  #    - "[0-9]+.[0-9]+.[0-9]+.*RC.*"
+
+env:
+  CARGO_TERM_COLOR: always
+  # enable incremental cargo builds
+  CARGO_INCREMENTAL: 1
 
 jobs:
 
@@ -35,7 +34,7 @@ jobs:
             target: x86_64-pc-windows-msvc
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2

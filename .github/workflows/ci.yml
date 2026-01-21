@@ -6,13 +6,11 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  # enable incremental cargo builds
+  CARGO_INCREMENTAL: 1
 
 permissions:
   pull-requests: write
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   tests:
@@ -56,7 +54,6 @@ jobs:
 
   build:
     runs-on: ${{ matrix.os }}
-
     
     strategy:
       matrix:
@@ -78,35 +75,17 @@ jobs:
             binary: "pippo.exe"
 
     steps:
-    - name: Determine git sha
-      uses: haya14busa/action-cond@v1
-      id: gitsha
-      with:
-        cond: ${{ github.event_name == 'pull_request' }}
-        if_true: ${{ github.event.pull_request.head.sha }}
-        if_false: ${{ github.sha }}
 
     - uses: actions/checkout@v6
 
-    - name: Rust Cache
-      uses: Swatinem/rust-cache@v2
-
-    - uses: dtolnay/rust-toolchain@stable
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        targets: ${{ matrix.target }}
+        target: ${{ matrix.target }}
 
-    - name: Build
-      uses: actions-rs/cargo@v1
-      with:
-        use-cross: true
-        command: run
-        args: --release --verbose --target ${{ matrix.target }} help
-
-    #- name: List results
-    #  id: list_results
-    #  run: |
-    #    /target/x86_64-unknown-linux-gnu/release/pippo
-    #    ls -laR
+    - name: Build binary
+      run: |
+        cargo install cross
+        cross run --release --verbose --target ${{ matrix.target }} help
 
     - name: Archive snapshot binary
       uses: actions/upload-artifact@v4

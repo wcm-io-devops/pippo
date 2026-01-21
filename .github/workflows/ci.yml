@@ -29,7 +29,10 @@ jobs:
 
 
       - name: Prepare sccache dir
-        run: mkdir -p "${SCCACHE_DIR}"
+        run: | 
+          mkdir -p "${SCCACHE_DIR}"
+          chmod -R +rwx ${SCCACHE_DIR}
+            
 
       - name: Cache sccache
         uses: actions/cache@v4

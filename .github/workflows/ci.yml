@@ -61,16 +61,16 @@ jobs:
         with:
           components: clippy
 
-      - name: Cache sccache
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.SCCACHE_DIR }}
-          key: sccache-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            sccache-${{ runner.os }}-
+     # - name: Cache sccache
+     #   uses: actions/cache@v4
+     #   with:
+     #     path: ${{ env.SCCACHE_DIR }}
+     #     key: sccache-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+     #     restore-keys: |
+     #       sccache-${{ runner.os }}-
 
       - name: Start sccache
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.9
 
       - uses: auguwu/clippy-action@1.4.0
         with:

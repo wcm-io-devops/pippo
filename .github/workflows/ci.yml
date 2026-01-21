@@ -104,8 +104,7 @@ jobs:
 
     - name: Build binary
       run: |
-        # cargo install cross
-        cargo binstall cross
+        cargo install cross
         cross run --release --verbose --target ${{ matrix.target }} help
 
     #- name: List results

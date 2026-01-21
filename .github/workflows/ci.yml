@@ -56,7 +56,6 @@ jobs:
 
   build:
     runs-on: ${{ matrix.os }}
-
     
     strategy:
       matrix:
@@ -78,18 +77,8 @@ jobs:
             binary: "pippo.exe"
 
     steps:
-    - name: Determine git sha
-      uses: haya14busa/action-cond@v1
-      id: gitsha
-      with:
-        cond: ${{ github.event_name == 'pull_request' }}
-        if_true: ${{ github.event.pull_request.head.sha }}
-        if_false: ${{ github.sha }}
 
     - uses: actions/checkout@v6
-
-    - name: Rust Cache
-      uses: Swatinem/rust-cache@v2
 
     - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:

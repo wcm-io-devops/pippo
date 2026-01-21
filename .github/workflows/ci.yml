@@ -91,16 +91,20 @@ jobs:
     - name: Rust Cache
       uses: Swatinem/rust-cache@v2
 
-    - uses: dtolnay/rust-toolchain@stable
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        targets: ${{ matrix.target }}
+        target: ${{ matrix.target }}
 
-    - name: Build
-      uses: actions-rs/cargo@v1
-      with:
-        use-cross: true
-        command: run
-        args: --release --verbose --target ${{ matrix.target }} help
+    #- name: Build
+    #  uses: actions-rs/cargo@v1
+    #  with:
+    #    use-cross: true
+    #    command: run
+    #    args: --release --verbose --target ${{ matrix.target }} help
+
+    - name: Build binary
+      run: |
+        cross run --release --verbose --target ${{ matrix.target }} help
 
     #- name: List results
     #  id: list_results

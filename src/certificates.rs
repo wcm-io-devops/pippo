@@ -14,7 +14,9 @@ use std::str;
 use std::{fs, io, process};
 use time::OffsetDateTime;
 use x509_parser::prelude::FromDer;
-use x509_parser::prelude::{Pem, X509Certificate}; // X509Certificate, etc.
+use x509_parser::prelude::{Pem, X509Certificate};
+use crate::clap_models::DomainCommands::Create;
+// X509Certificate, etc.
 
 /// Retrieves a list of certificates for a given program from the Cloud Manager API.
 ///
@@ -306,7 +308,7 @@ pub async fn manage_certificates(
                     let result =
                         perform_create_update(&new_cert, program_id, client, &certificate_action)
                             .await?;
-                    if result != StatusCode::OK {
+                    if result == StatusCode::NOT_ACCEPTABLE {
                         certs_failed.push(cert_cfg);
                     } else if certificate_action == CertificateAction::Create {
                         certs_created.push(cert_cfg);

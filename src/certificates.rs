@@ -15,7 +15,6 @@ use std::{fs, io, process};
 use time::OffsetDateTime;
 use x509_parser::prelude::FromDer;
 use x509_parser::prelude::{Pem, X509Certificate};
-use crate::clap_models::DomainCommands::Create;
 // X509Certificate, etc.
 
 /// Retrieves a list of certificates for a given program from the Cloud Manager API.

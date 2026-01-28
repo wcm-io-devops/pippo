@@ -181,7 +181,7 @@ pub async fn tail_log(
                 }
                 // sum with current content length because we need a new range start value
                 // for our next request
-                last_content_length += last_content_length;
+                last_content_length += current_content_length;
                 sleep(Duration::from_secs(5));
             }
             StatusCode::RANGE_NOT_SATISFIABLE => {

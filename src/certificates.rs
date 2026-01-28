@@ -451,7 +451,7 @@ async fn perform_create_update(
                 "Unknown error while creating".red().bold(),
                 cert.name
             );
-            eprintln!("{:>18} {}", "reponse: ".red(), response_text);
+            eprintln!("{:>18} {}", "response: ".red(), response_text);
             Ok(StatusCode::NOT_ACCEPTABLE)
         }
     }

@@ -7,6 +7,8 @@ use strum_macros::{EnumString, IntoStaticStr};
 pub struct CloudManagerConfig {
     #[serde(skip_deserializing)]
     pub access_token: String,
+    #[serde(skip_deserializing)]
+    pub authorization_header: String,
     pub client_id: String,
     pub client_secret: String,
     #[serde(skip_deserializing)]

@@ -196,9 +196,8 @@ pub async fn init_cli() {
                         )
                         .await
                         {
-                            std::process::exit(100);
+                            process::exit(100);
                         }
-                        // must be implemented here, but is already run above in L163...
                         process::exit(0);
                     }
                 }

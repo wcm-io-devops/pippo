@@ -10,6 +10,7 @@
 extern crate core;
 
 mod auth;
+mod certificates;
 mod clap_app;
 mod clap_models;
 mod client;

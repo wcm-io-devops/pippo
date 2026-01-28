@@ -2,12 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    # branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
+  # enable incremental cargo builds
+  CARGO_INCREMENTAL: 1
 
 permissions:
   pull-requests: write
@@ -17,61 +17,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.7.3
-
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
-
-      - name: Run clippy
-        run: cargo clippy --no-deps
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - name: cargo test
         run: cargo test
 
-  lint:
-    if: github.event_name != 'pull_request'
+  clippy:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.7.3
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          components: rustfmt
+          components: clippy
 
-      - uses: mbrobbel/rustfmt-check@master
+      - uses: auguwu/clippy-action@1.4.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          mode: pull
+          token: ${{secrets.GITHUB_TOKEN}}
 
-  lint-pr:
-    if: github.event_name == 'pull_request'
+  formatting:
+    name: cargo fmt
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2.7.3
-
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: actions/checkout@v6
+      # Ensure rustfmt is installed and setup problem matcher
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt
-
-      - uses: mbrobbel/rustfmt-check@master
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          mode: review
+      - name: Rustfmt Check
+        uses: actions-rust-lang/rustfmt@v1
 
   build:
-    
     runs-on: ${{ matrix.os }}
     
     strategy:
@@ -81,28 +62,34 @@ jobs:
           - build: linux
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            binary: "pippo"
 
           - build: macos_x86_64
             os: macos-latest
             target: x86_64-apple-darwin
+            binary: "pippo"
 
           - build: windows
             os: windows-latest
             target: x86_64-pc-windows-msvc
+            binary: "pippo.exe"
 
     steps:
-    - uses: actions/checkout@v4
 
-    - name: Rust Cache
-      uses: Swatinem/rust-cache@v2.7.3
+    - uses: actions/checkout@v6
 
-    - uses: dtolnay/rust-toolchain@stable
-      with: 
-        targets: ${{ matrix.target }}
-
-    - name: Build
-      uses: actions-rs/cargo@v1
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        use-cross: true
-        command: run
-        args: --verbose --target ${{ matrix.target }} help
+        target: ${{ matrix.target }}
+
+    - name: Build binary
+      run: |
+        cargo install cross
+        cross run --release --verbose --target ${{ matrix.target }} help
+
+    - name: Archive snapshot binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: pippo-build-${{ matrix.target }}
+        path: target/${{ matrix.target }}/release/${{ matrix.binary }}
+

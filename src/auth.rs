@@ -48,7 +48,7 @@ fn generate_jwt(client: &CloudManagerClient) -> String {
 /// POST https://ims-na1.adobelogin.com/ims/exchange/jwt/
 /// ```
 pub async fn obtain_access_token(client: &mut CloudManagerClient) -> Result<(), reqwest::Error> {
-    if client.config.auth_strategy == AuthStrategy::JWT {
+    if client.config.auth_strategy == AuthStrategy::Jwt {
         obtain_jwt_token(client).await?;
     } else {
         obtain_oauth_token(client).await?;
@@ -76,7 +76,8 @@ async fn obtain_oauth_token(client: &mut CloudManagerClient) -> Result<(), reqwe
 
     let bearer_response: BearerResponse = serde_json::from_str(token)
         .unwrap_or_else(|_| panic!("Unable to authenticate: {}", token.as_str()));
-    client.config.access_token = bearer_response.access_token;
+    client.config.access_token = bearer_response.access_token.clone();
+    client.config.authorization_header = format!("Bearer {}", bearer_response.access_token.clone());
     Ok(())
 }
 
@@ -99,6 +100,7 @@ async fn obtain_jwt_token(client: &mut CloudManagerClient) -> Result<(), reqwest
 
     let bearer_response: BearerResponse = serde_json::from_str(token)
         .unwrap_or_else(|_| panic!("Unable to authenticate: {}", token.as_str()));
-    client.config.access_token = bearer_response.access_token;
+    client.config.access_token = bearer_response.access_token.clone();
+    client.config.authorization_header = format!("Bearer {}", bearer_response.access_token.clone());
     Ok(())
 }

@@ -16,10 +16,11 @@ use crate::models::domain::Domain;
 use crate::models::log::{LogType, ServiceType};
 use crate::models::variables::{EnvironmentVariableServiceType, PipelineVariableServiceType};
 
+use crate::models::certificates::CertificateList;
 use crate::variables::{
     get_env_vars, get_pipeline_vars, set_env_vars_from_file, set_pipeline_vars_from_file,
 };
-use crate::{domains, environments, execution, pipelines, programs};
+use crate::{certificates, domains, environments, execution, pipelines, programs};
 
 pub async fn init_cli() {
     let cli = Cli::parse();
@@ -166,6 +167,45 @@ pub async fn init_cli() {
                             println!("{}", "👋 Quitting...".magenta());
                         }
                     }
+                }
+            }
+        }
+
+        Some(Commands::Certificates {
+            certificate_command,
+        }) => {
+            if let CertificateCommands::Manage { input } = &certificate_command {
+                if let Err(_e) =
+                    certificates::manage_certificates(input.to_string(), &mut cm_client).await
+                {
+                    process::exit(100);
+                }
+                process::exit(0);
+            } else {
+                // Since all "domain" subcommands need a program ID, we can only run them when it was provided.
+                if let Some(program_id) = cli.program {
+                    match &certificate_command {
+                        CertificateCommands::List { start, limit } => {
+                            let certificates: CertificateList = certificates::get_certificates(
+                                &mut cm_client,
+                                program_id,
+                                start,
+                                limit,
+                            )
+                            .await
+                            .unwrap();
+
+                            println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
+                        }
+                        CertificateCommands::Manage { input: _ } => {
+                            // must be implemented here, but is already run above
+                            process::exit(0);
+                        }
+                    }
+                } else {
+                    eprintln!(
+                        "❌ You have to provide a valid Cloud Manager program ID to run this command!"
+                    );
                 }
             }
         }

@@ -1,7 +1,7 @@
 use std::io::Cursor;
+use std::process;
 use std::thread::sleep;
 use std::time::Duration;
-use std::{i64, process};
 
 use chrono::NaiveDate;
 use colored::*;
@@ -181,7 +181,7 @@ pub async fn tail_log(
                 }
                 // sum with current content length because we need a new range start value
                 // for our next request
-                last_content_length = current_content_length + last_content_length;
+                last_content_length += current_content_length;
                 sleep(Duration::from_secs(5));
             }
             StatusCode::RANGE_NOT_SATISFIABLE => {
@@ -239,7 +239,7 @@ pub async fn get_tail_log_url(
         .text()
         .await?;
     let response: LogTailResponse =
-        serde_json::from_str(&response_obj.as_str()).unwrap_or_else(|_| {
+        serde_json::from_str(response_obj.as_str()).unwrap_or_else(|_| {
             throw_adobe_api_error(response_obj);
             process::exit(1);
         });

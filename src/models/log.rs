@@ -1,3 +1,4 @@
+#[cfg(test)]
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
@@ -33,6 +34,7 @@ pub enum LogType {
 
 /// Struct that holds the response when requesting /api/program/{id}/environment/{id}/logs
 #[derive(Deserialize, Serialize)]
+#[cfg(test)]
 pub struct LogsResponse {
     days: u32,
     name: Vec<String>,
@@ -43,12 +45,14 @@ pub struct LogsResponse {
 
 /// Helper struct that is used because of the JSON structure that LogsResponse has
 #[derive(Deserialize, Serialize)]
+#[cfg(test)]
 pub struct LogsEmbedment {
     pub downloads: Vec<Log>,
 }
 
 /// Struct that represents an available logfile
 #[derive(Deserialize, Serialize)]
+#[cfg(test)]
 pub struct Log {
     name: LogType,
     service: ServiceType,

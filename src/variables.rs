@@ -197,7 +197,7 @@ pub async fn set_env_vars_from_file(
 
             // ensure there are no duplicate environment variables
             let duplicates = find_duplicates(e.variables.clone());
-            if duplicates.len() > 0 {
+            if !duplicates.is_empty() {
                 for dv in &duplicates {
                     eprintln!(
                         "{:>8} {}  name: '{}' service: {}",
@@ -338,10 +338,9 @@ pub async fn set_env_vars_from_file(
         }
     }
 
-    if skipped_environment == true {
+    if skipped_environment {
         eprintln!(
-            "\n{} Not all environments were changed because they were updating and --ci mode is active!",
-            "⚠️"
+            "\n⚠️ Not all environments were changed because they were updating and --ci mode is active!",
         );
         process::exit(2);
     }
@@ -453,7 +452,7 @@ pub async fn set_pipeline_vars_from_file(
 
             // ensure there are no duplicate environment variables
             let duplicates = find_duplicates(l.variables.clone());
-            if duplicates.len() > 0 {
+            if !duplicates.is_empty() {
                 for dv in &duplicates {
                     eprintln!(
                         "{:>8} {}  name: '{}' service: {}",
@@ -598,10 +597,9 @@ pub async fn set_pipeline_vars_from_file(
         }
     }
 
-    if skipped_pipeline == true {
+    if skipped_pipeline {
         eprintln!(
-            "\n{} Not all pipelines were changed because they were busy and --ci mode is active!",
-            "⚠️"
+            "\n⚠️ Not all pipelines were changed because they were busy and --ci mode is active!"
         );
         process::exit(2);
     }

@@ -28,11 +28,15 @@ serde = { version = "1.0.228", features = ["derive"] }
 
 serde_json = "1.0.149"
 serde_yaml = "0.9.34"
+x509-parser = "0.16"
+time = "0.3.45"   # or latest compatible with x509-parser
 strum = "0.27.2"
 strum_macros = "0.27.2"
 tokio = { version = "1.49.0", features = ["full"] }
 headers = "0.4.1"
 rustls = "0.23.36"
+anyhow = "1.0.70"
+http = "1.4.0"
 [dependencies.reqwest]
 version = "0.12.28"
 #default-features = false

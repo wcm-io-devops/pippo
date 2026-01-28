@@ -3,8 +3,6 @@ use serde::{de, Deserialize, Deserializer, Serialize};
 use std::fmt;
 use strum_macros::{EnumString, IntoStaticStr};
 
-/// Model for common cloud manager variables
-
 /// Possible types that a variable can have
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -42,12 +40,9 @@ pub enum EnvironmentVariableServiceType {
 }
 
 impl fmt::Display for EnvironmentVariableServiceType {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            formatter,
-            "{}",
-            format!("{}", serde_json::to_string(self).unwrap().to_string())
-        )
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = serde_json::to_string(self).map_err(|_| fmt::Error)?;
+        f.write_str(&s)
     }
 }
 fn environment_variable_skip_serializing(t: &EnvironmentVariableServiceType) -> bool {
@@ -118,12 +113,9 @@ pub enum PipelineVariableServiceType {
 }
 
 impl fmt::Display for PipelineVariableServiceType {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            formatter,
-            "{}",
-            format!("{}", serde_json::to_string(self).unwrap().to_string())
-        )
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = serde_json::to_string(self).map_err(|_| fmt::Error)?;
+        f.write_str(&s)
     }
 }
 

@@ -56,7 +56,7 @@ impl AdobeConnector for CloudManagerClient {
                 let response = self
                     .client
                     .get(path)
-                    .header(AUTHORIZATION, &self.config.access_token)
+                    .header(AUTHORIZATION, &self.config.authorization_header)
                     .header("x-gw-ims-org-id", &self.config.organization_id)
                     .header("x-api-key", &self.config.client_id)
                     .query(&query_params)
@@ -69,7 +69,7 @@ impl AdobeConnector for CloudManagerClient {
                 let response = self
                     .client
                     .patch(path)
-                    .header(AUTHORIZATION, &self.config.access_token)
+                    .header(AUTHORIZATION, &self.config.authorization_header)
                     .header("x-gw-ims-org-id", &self.config.organization_id)
                     .header("x-api-key", &self.config.client_id)
                     .header("Content-Type", "application/json")
@@ -80,13 +80,15 @@ impl AdobeConnector for CloudManagerClient {
             }
 
             Method::PUT => {
+                let request_body = serde_json::to_string(&body.unwrap()).unwrap();
                 let response = self
                     .client
                     .put(path)
-                    .header(AUTHORIZATION, &self.config.access_token)
+                    .header(AUTHORIZATION, &self.config.authorization_header)
                     .header("x-gw-ims-org-id", &self.config.organization_id)
                     .header("x-api-key", &self.config.client_id)
                     .header("Content-Type", "application/json")
+                    .body(request_body)
                     .send()
                     .await?;
                 Ok(response)
@@ -97,7 +99,7 @@ impl AdobeConnector for CloudManagerClient {
                 let response = self
                     .client
                     .post(path)
-                    .header(AUTHORIZATION, &self.config.access_token)
+                    .header(AUTHORIZATION, &self.config.authorization_header)
                     .header("x-gw-ims-org-id", &self.config.organization_id)
                     .header("x-api-key", &self.config.client_id)
                     .header("Content-Type", "application/json")
@@ -111,7 +113,7 @@ impl AdobeConnector for CloudManagerClient {
                 let response = self
                     .client
                     .delete(path)
-                    .header(AUTHORIZATION, &self.config.access_token)
+                    .header(AUTHORIZATION, &self.config.authorization_header)
                     .header("x-gw-ims-org-id", &self.config.organization_id)
                     .header("x-api-key", &self.config.client_id)
                     .header("Content-Type", "application/json")

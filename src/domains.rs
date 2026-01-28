@@ -50,10 +50,7 @@ pub async fn get_domains(
     Ok(domains.domain_list)
 }
 
-/// Sets pipeline variables that are read from a given YAML file.
-///
-/// When the target pipeline is currently updating, the function will retry until its state
-/// is back to ready.
+/// Created domains that are read from a given YAML file.
 ///
 /// # Arguments
 ///
@@ -85,7 +82,7 @@ pub async fn create_domains(
                                 d.id,
                                 e.id.into(),
                             ),
-                            certificate_id: dom.certificate_id.clone(),
+                            certificate_id: dom.certificate_id,
                             environment_id: e.id.into(),
                             dns_zone: String::from("adobe.com."),
                         };
@@ -101,7 +98,7 @@ pub async fn create_domains(
                                         "Warning, check output above".yellow(),
                                         "⚠".yellow()
                                     );
-                                    ret_value = ret_value + 1;
+                                    ret_value += 1;
                                 }
                             },
                             Err(error) => {
@@ -174,5 +171,5 @@ fn generate_txt_record(domain: String, program_id: u32, env_id: i64) -> String {
         &env_id,
         &uuid.hyphenated().to_string(),
     );
-    return txt_record;
+    txt_record
 }

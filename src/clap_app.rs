@@ -174,37 +174,38 @@ pub async fn init_cli() {
         Some(Commands::Certificates {
             certificate_command,
         }) => {
-            if let Some(program_id) = cli.program {
-                match &certificate_command {
-                    CertificateCommands::List { start, limit } => {
-                        let certificates: CertificateList = certificates::get_certificates(
-                            &mut cm_client,
-                            program_id,
-                            start,
-                            limit,
-                        )
-                        .await
-                        .unwrap();
-
-                        println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
-                    }
-                    CertificateCommands::Manage { input } => {
-                        if let Err(_e) = certificates::manage_certificates(
-                            input.to_string(),
-                            program_id,
-                            &mut cm_client,
-                        )
-                        .await
-                        {
-                            process::exit(100);
-                        }
-                        process::exit(0);
-                    }
+            if let CertificateCommands::Manage { input } = &certificate_command {
+                if let Err(_e) =
+                    certificates::manage_certificates(input.to_string(), &mut cm_client).await
+                {
+                    process::exit(100);
                 }
+                process::exit(0);
             } else {
-                eprintln!(
-                    "❌ You have to provide a valid Cloud Manager program ID to run this command!"
-                );
+                if let Some(program_id) = cli.program {
+                    match &certificate_command {
+                        CertificateCommands::List { start, limit } => {
+                            let certificates: CertificateList = certificates::get_certificates(
+                                &mut cm_client,
+                                program_id,
+                                start,
+                                limit,
+                            )
+                            .await
+                            .unwrap();
+
+                            println!("{}", serde_json::to_string_pretty(&certificates).unwrap());
+                        }
+                        CertificateCommands::Manage { input: _ } => {
+                            // must be implemented here, but is already run above
+                            process::exit(0);
+                        }
+                    }
+                } else {
+                    eprintln!(
+                        "❌ You have to provide a valid Cloud Manager program ID to run this command!"
+                    );
+                }
             }
         }
 

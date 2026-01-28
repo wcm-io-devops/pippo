@@ -142,7 +142,6 @@ pub async fn get_certificates(
 /// * Only one certificate per configuration entry is processed.
 pub async fn manage_certificates(
     file_path: String,
-    program_id: u32,
     client: &mut CloudManagerClient,
 ) -> anyhow::Result<StatusCode> {
     let mut certs_updated: Vec<&CertificateConfig> = Vec::new();
@@ -202,16 +201,15 @@ pub async fn manage_certificates(
         }
     }
 
-    // get current certificate
-    let existing_certificates = get_certificates(client, program_id, &0, &1000)
-        .await
-        .unwrap();
-
     println!();
 
     // manage certificates
     for program in programs {
         println!("☁ Program: {}", program.id,);
+
+        let existing_certificates = get_certificates(client, program.id, &0, &1000)
+            .await
+            .unwrap();
 
         if let Some(certs) = &program.certificates {
             for cert_cfg in certs {
@@ -305,7 +303,7 @@ pub async fn manage_certificates(
                     || certificate_action == CertificateAction::Update
                 {
                     let result =
-                        perform_create_update(&new_cert, program_id, client, &certificate_action)
+                        perform_create_update(&new_cert, program.id, client, &certificate_action)
                             .await?;
                     if result == StatusCode::NOT_ACCEPTABLE {
                         certs_failed.push(cert_cfg);

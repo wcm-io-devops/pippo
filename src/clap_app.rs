@@ -182,6 +182,7 @@ pub async fn init_cli() {
                 }
                 process::exit(0);
             } else {
+                // Since all "domain" subcommands need a program ID, we can only run them when it was provided.
                 if let Some(program_id) = cli.program {
                     match &certificate_command {
                         CertificateCommands::List { start, limit } => {

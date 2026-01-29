@@ -366,9 +366,9 @@ programs:
         chain: prod/prod-cert-chain.pem
         key: prod/prod-cert-key.pem
       - name: stage-cert
-        certificate: stage/prod-cert.pem
-        chain: stage/prod-cert-chain.pem
-        key: stage/prod-cert-key.pem
+        certificate: stage/stage-cert.pem
+        chain: stage/stage-cert-chain.pem
+        key: stage/stage-cert-key.pem
             
 ```
 

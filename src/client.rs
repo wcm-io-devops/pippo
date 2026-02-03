@@ -63,11 +63,10 @@ impl AdobeConnector for CloudManagerClient {
         match method {
             Method::POST | Method::PUT | Method::PATCH => {
                 if let Some(b) = body {
-                    req = req.json(&b);            // reqwest does serialization + error handling
+                    req = req.json(&b); // reqwest does serialization + error handling
                 } else {
-                    req = req
-                        .header("Content-Type", "application/json")
-                        .body("{}");               // default empty JSON
+                    req = req.header("Content-Type", "application/json").body("{}");
+                    // default empty JSON
                 }
             }
             _ => {} // GET and DELETE typically have no bodies

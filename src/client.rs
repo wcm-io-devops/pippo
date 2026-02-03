@@ -45,85 +45,37 @@ impl AdobeConnector for CloudManagerClient {
     where
         T: Serialize + Send,
     {
-        match method {
-            Method::GET => {
-                let query_params = match query {
-                    None => {
-                        vec![("", "")]
-                    }
-                    Some(q) => q,
-                };
-                let response = self
-                    .client
-                    .get(path)
-                    .header(AUTHORIZATION, &self.config.authorization_header)
-                    .header("x-gw-ims-org-id", &self.config.organization_id)
-                    .header("x-api-key", &self.config.client_id)
-                    .query(&query_params)
-                    .send()
-                    .await?;
-                Ok(response)
-            }
-            Method::PATCH => {
-                let request_body = serde_json::to_string(&body.unwrap()).unwrap();
-                let response = self
-                    .client
-                    .patch(path)
-                    .header(AUTHORIZATION, &self.config.authorization_header)
-                    .header("x-gw-ims-org-id", &self.config.organization_id)
-                    .header("x-api-key", &self.config.client_id)
-                    .header("Content-Type", "application/json")
-                    .body(request_body)
-                    .send()
-                    .await?;
-                Ok(response)
-            }
+        // Start building request
+        let mut req = self.client.request(method.clone(), &path);
 
-            Method::PUT => {
-                let request_body = serde_json::to_string(&body.unwrap()).unwrap();
-                let response = self
-                    .client
-                    .put(path)
-                    .header(AUTHORIZATION, &self.config.authorization_header)
-                    .header("x-gw-ims-org-id", &self.config.organization_id)
-                    .header("x-api-key", &self.config.client_id)
-                    .header("Content-Type", "application/json")
-                    .body(request_body)
-                    .send()
-                    .await?;
-                Ok(response)
-            }
+        // Common headers
+        req = req
+            .header(AUTHORIZATION, &self.config.authorization_header)
+            .header("x-gw-ims-org-id", &self.config.organization_id)
+            .header("x-api-key", &self.config.client_id);
 
-            Method::POST => {
-                let request_body = serde_json::to_string(&body.unwrap()).unwrap();
-                let response = self
-                    .client
-                    .post(path)
-                    .header(AUTHORIZATION, &self.config.authorization_header)
-                    .header("x-gw-ims-org-id", &self.config.organization_id)
-                    .header("x-api-key", &self.config.client_id)
-                    .header("Content-Type", "application/json")
-                    .body(request_body)
-                    .send()
-                    .await?;
-                Ok(response)
-            }
-
-            Method::DELETE => {
-                let response = self
-                    .client
-                    .delete(path)
-                    .header(AUTHORIZATION, &self.config.authorization_header)
-                    .header("x-gw-ims-org-id", &self.config.organization_id)
-                    .header("x-api-key", &self.config.client_id)
-                    .header("Content-Type", "application/json")
-                    .send()
-                    .await?;
-                Ok(response)
-            }
-
-            _ => panic!("This method is not implemented."),
+        // Add query parameters (if any)
+        if let Some(params) = query {
+            req = req.query(&params);
         }
+
+        // Add JSON body for methods that support it
+        match method {
+            Method::POST | Method::PUT | Method::PATCH => {
+                if let Some(b) = body {
+                    req = req.json(&b);            // reqwest does serialization + error handling
+                } else {
+                    req = req
+                        .header("Content-Type", "application/json")
+                        .body("{}");               // default empty JSON
+                }
+            }
+            _ => {} // GET and DELETE typically have no bodies
+        }
+
+        // Send the request
+        let response = req.send().await?;
+        Ok(response)
     }
 }
 

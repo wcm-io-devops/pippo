@@ -25,7 +25,6 @@ jobs:
         run: cargo test
 
   clippy:
-    name: Clippy
     runs-on: ubuntu-latest
     permissions:
       checks: write

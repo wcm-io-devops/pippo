@@ -23,7 +23,9 @@ fn provide_secret_key() -> String {
         Err(_) => match std::fs::read_to_string(".cryptkey") {
             Ok(key_from_file) => key_from_file.trim_end().to_string(),
             Err(_) => {
-                eprintln!("❌ PIPPO_CRYPTKEY not set and .cryptkey file not found. Can't do any crypto!");
+                eprintln!(
+                    "❌ PIPPO_CRYPTKEY not set and .cryptkey file not found. Can't do any crypto!"
+                );
                 process::exit(1);
             }
         },

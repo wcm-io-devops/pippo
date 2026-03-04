@@ -6,8 +6,15 @@ use chacha20poly1305::{
     aead::{Aead, KeyInit, OsRng},
     ChaCha20Poly1305, Key, Nonce,
 };
+use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 use rand::RngCore;
 use zeroize::Zeroize;
+
+/// Marker for legacy values (magic-crypt)
+pub const ENC_MARKER_V1: &str = "$enc";
+
+/// Marker for new values (argon2 + chacha20poly1305)
+pub const ENC_MARKER_V2: &str = "$enc2";
 
 /// Reads the encryption key either from `PIPPO_CRYPTKEY` environment variable or from the `./.cryptkey` file.
 fn provide_secret_key() -> String {
@@ -35,10 +42,30 @@ const NONCE_LEN: usize = 12;
 
 /// Encrypts a string and returns base64
 ///
-/// # Arguments
-///
-///  * `input` - The string you want to encrypt
+/// Keeps original behavior for callers that want raw ciphertext (no marker).
+#[allow(dead_code)]
 pub fn encrypt(input: &str) -> String {
+    encrypt_v2_base64(input)
+}
+
+/// Encrypts and returns a value prefixed with `$enc2 ` (note the space).
+pub fn encrypt_marked(input: &str) -> String {
+    format!("{ENC_MARKER_V2} {}", encrypt_v2_base64(input))
+}
+
+/// Decrypts a value and returns the plaintext.
+///
+/// Supports:
+/// - `$enc2 <...>` / `$enc2<...>` (new scheme)
+/// - `$enc <...>`  / `$enc<...>`  (legacy scheme; also supports "new ciphertext with old marker")
+/// - raw base64 (tries new first, then legacy)
+pub fn decrypt(input: String) -> String {
+    decrypt_auto(input.trim())
+        .expect("Could not decrypt string - wrong key or tampered/corrupted ciphertext?")
+}
+
+/// Internal: encrypt using v2 scheme -> base64
+fn encrypt_v2_base64(input: &str) -> String {
     let password = provide_secret_key();
 
     // Random salt for key derivation
@@ -75,16 +102,8 @@ pub fn encrypt(input: &str) -> String {
     B64.encode(blob)
 }
 
-/// Decrypts a string and returns it
-///
-/// # Arguments
-///
-/// * `input` The string you want to decrypt
-pub fn decrypt(input: String) -> String {
-    decrypt_any(&input).expect("Could not decrypt string - wrong key or tampered/corrupted ciphertext?")
-}
-
-fn decrypt_any(b64: &str) -> Result<String, String> {
+/// Internal: decrypt v2 base64 only (expects v2 envelope)
+fn decrypt_v2_base64(b64: &str) -> Result<String, String> {
     let blob = B64.decode(b64).map_err(|_| "Invalid base64".to_string())?;
 
     if blob.len() < 1 + SALT_LEN + NONCE_LEN + 1 {
@@ -93,10 +112,7 @@ fn decrypt_any(b64: &str) -> Result<String, String> {
 
     let version = blob[0];
     if version != VERSION_V2 {
-        return Err(format!(
-            "Unsupported ciphertext version {} (expected {})",
-            version, VERSION_V2
-        ));
+        return Err("Not a v2 ciphertext".to_string());
     }
 
     let salt_start = 1;
@@ -129,6 +145,44 @@ fn decrypt_any(b64: &str) -> Result<String, String> {
     String::from_utf8(plaintext).map_err(|_| "Decrypted text is not valid UTF-8".to_string())
 }
 
+/// Internal: decrypt legacy base64 using magic-crypt (v1).
+///
+/// IMPORTANT:
+/// - This is kept ONLY for backwards compatibility so old `$enc...` values keep working.
+/// - New encryption must NOT use this.
+fn decrypt_legacy_base64(b64: &str) -> Result<String, String> {
+    let secret_key = provide_secret_key();
+    let magic_crypt = new_magic_crypt!(secret_key, 256);
+    magic_crypt
+        .decrypt_base64_to_string(b64)
+        .map_err(|_| "Legacy decryption failed (wrong key or corrupted data)".to_string())
+}
+
+/// Decrypt that understands `$enc` / `$enc2` markers and does new->old fallback.
+///
+/// Accepts both forms:
+/// - "$enc2<base64>" and "$enc2 <base64>"
+/// - "$enc<base64>"  and "$enc <base64>"
+fn decrypt_auto(input: &str) -> Result<String, String> {
+    let s = input.trim();
+
+    // Prefer explicit v2 marker
+    if let Some(rest) = s.strip_prefix(ENC_MARKER_V2) {
+        let payload = rest.trim_start(); // <-- critical for "$enc2 <b64>"
+        return decrypt_v2_base64(payload);
+    }
+
+    // Legacy marker: first try v2 (in case people stored new ciphertext but kept $enc),
+    // then fall back to legacy magic-crypt.
+    if let Some(rest) = s.strip_prefix(ENC_MARKER_V1) {
+        let payload = rest.trim_start(); // <-- critical for "$enc <b64>"
+        return decrypt_v2_base64(payload).or_else(|_| decrypt_legacy_base64(payload));
+    }
+
+    // No marker: try v2, then legacy
+    decrypt_v2_base64(s).or_else(|_| decrypt_legacy_base64(s))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -140,15 +194,14 @@ mod tests {
     }
 
     fn with_cryptkey<T>(key: &str, f: impl FnOnce() -> T) -> T {
-        let _guard = env_lock().lock().unwrap();
+        // Avoid poisoned-lock panics (tests can run in parallel; a panic poisons the mutex)
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
 
-        // Save old value (tests run in parallel; env is process-global)
         let old = env::var("PIPPO_CRYPTKEY").ok();
         env::set_var("PIPPO_CRYPTKEY", key);
 
         let result = f();
 
-        // Restore old value
         match old {
             Some(v) => env::set_var("PIPPO_CRYPTKEY", v),
             None => env::remove_var("PIPPO_CRYPTKEY"),
@@ -158,27 +211,55 @@ mod tests {
     }
 
     #[test]
-    fn encryption_workflow() {
+    fn encryption_workflow_v2_raw_base64() {
         with_cryptkey("Test 123@!", || {
             let test_string = "th!s i$ a 'TEST`";
             let encrypted_value = encrypt(test_string);
             let decrypted_value = decrypt(encrypted_value);
-
             assert_eq!(test_string, decrypted_value);
         });
     }
 
     #[test]
+    fn encryption_workflow_v2_marked_enc2() {
+        with_cryptkey("Test 123@!", || {
+            let test_string = "hello";
+            let encrypted_value = encrypt_marked(test_string);
+            let decrypted_value = decrypt(encrypted_value);
+            assert_eq!(test_string, decrypted_value);
+        });
+    }
+
+    #[test]
+    fn legacy_enc_marker_still_works() {
+        with_cryptkey("Test 123@!", || {
+            // Create a legacy ciphertext using magic-crypt (simulates existing stored values).
+            let legacy_plain = "legacy-secret";
+            let secret_key = provide_secret_key();
+            let magic_crypt = new_magic_crypt!(secret_key, 256);
+            let legacy_b64 = magic_crypt.encrypt_str_to_base64(legacy_plain);
+
+            // Legacy values commonly appear as "$enc<base64>" (no space)
+            let marked_no_space = format!("{ENC_MARKER_V1}{legacy_b64}");
+            assert_eq!(legacy_plain, decrypt(marked_no_space));
+
+            // Also accept "$enc <base64>" (with space)
+            let marked_with_space = format!("{ENC_MARKER_V1} {legacy_b64}");
+            assert_eq!(legacy_plain, decrypt(marked_with_space));
+        });
+    }
+
+    #[test]
     fn wrong_key_fails() {
-        let _guard = env_lock().lock().unwrap();
+        let _guard = env_lock().lock().unwrap_or_else(|e| e.into_inner());
 
         let old = env::var("PIPPO_CRYPTKEY").ok();
 
         env::set_var("PIPPO_CRYPTKEY", "Key-A");
-        let encrypted = encrypt("secret");
+        let encrypted = encrypt_marked("secret"); // v2
 
         env::set_var("PIPPO_CRYPTKEY", "Key-B");
-        assert!(super::decrypt_any(&encrypted).is_err());
+        assert!(super::decrypt_auto(&encrypted).is_err());
 
         match old {
             Some(v) => env::set_var("PIPPO_CRYPTKEY", v),
@@ -197,7 +278,7 @@ mod tests {
             blob[last] ^= 1;
 
             let tampered = B64.encode(blob);
-            assert!(super::decrypt_any(&tampered).is_err());
+            assert!(decrypt_v2_base64(&tampered).is_err());
         });
     }
 

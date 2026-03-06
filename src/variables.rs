@@ -247,13 +247,16 @@ pub async fn set_env_vars_from_file(
                                 vars_final.push(tmp_loop_var);
                             }
                             VariableType::SecretString => {
-                                // If the value is a secret, check if it's encrypted and decrypt it if that's the case
+                                // If the value is a secret, check if it's encrypted ($enc or $enc2)
+                                // and decrypt it if that's the case.
+                                //
+                                // decrypt() supports:
+                                // - $enc2 <...> / $enc2<...> (new scheme)
+                                // - $enc <...>  / $enc<...>  (legacy scheme, with fallback)
+                                // - raw base64 (tries new first, then legacy)
                                 let tmp_loop_var_value = tmp_loop_var.clone().value.unwrap();
                                 if tmp_loop_var_value.starts_with("$enc") {
-                                    let encrypted_value =
-                                        tmp_loop_var_value.split_whitespace().collect::<Vec<_>>();
-                                    let decrypted_value = decrypt(encrypted_value[1].to_string());
-                                    tmp_loop_var.value = Some(decrypted_value);
+                                    tmp_loop_var.value = Some(decrypt(tmp_loop_var_value));
                                 }
                                 vars_final.push(tmp_loop_var);
                             }
@@ -502,13 +505,16 @@ pub async fn set_pipeline_vars_from_file(
                                 vars_final.push(tmp_loop_var);
                             }
                             VariableType::SecretString => {
-                                // If the value is a secret, check if it's encrypted and decrypt it if that's the case
+                                // If the value is a secret, check if it's encrypted ($enc or $enc2)
+                                // and decrypt it if that's the case.
+                                //
+                                // decrypt() supports:
+                                // - $enc2 <...> / $enc2<...> (new scheme)
+                                // - $enc <...>  / $enc<...>  (legacy scheme, with fallback)
+                                // - raw base64 (tries new first, then legacy)
                                 let tmp_loop_var_value = tmp_loop_var.clone().value.unwrap();
                                 if tmp_loop_var_value.starts_with("$enc") {
-                                    let encrypted_value =
-                                        tmp_loop_var_value.split_whitespace().collect::<Vec<_>>();
-                                    let decrypted_value = decrypt(encrypted_value[1].to_string());
-                                    tmp_loop_var.value = Some(decrypted_value);
+                                    tmp_loop_var.value = Some(decrypt(tmp_loop_var_value));
                                 }
                                 vars_final.push(tmp_loop_var);
                             }

@@ -10,7 +10,7 @@ use crate::auth::obtain_access_token;
 use crate::clap_models::*;
 use crate::client::CloudManagerClient;
 use crate::config::CloudManagerConfig;
-use crate::encryption::{decrypt, encrypt};
+use crate::encryption::{decrypt, encrypt_marked};
 use crate::logs::{download_log, tail_log};
 use crate::models::domain::Domain;
 use crate::models::log::{LogType, ServiceType};
@@ -29,7 +29,7 @@ pub async fn init_cli() {
     // we don't need a Cloud Manager config for this.
     match &cli.command {
         Some(Commands::Encrypt { input }) => {
-            println!("{}", encrypt(input));
+            println!("{}", encrypt_marked(input));
             process::exit(0);
         }
         Some(Commands::Decrypt { input }) => {

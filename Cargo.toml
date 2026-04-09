@@ -36,10 +36,10 @@ serde_yaml = "0.9.34"
 x509-parser = "0.18"
 time = "0.3.47"   # or latest compatible with x509-parser
 strum = "0.28.0"
-strum_macros = "0.27.2"
-tokio = { version = "1.49.0", features = ["full"] }
+strum_macros = "0.28.0"
+tokio = { version = "1.50.0", features = ["full"] }
 headers = "0.4.1"
-rustls = "0.23.36"
+rustls = "0.23.37"
 anyhow = "1.0.102"
 http = "1.4.0"
 [dependencies.reqwest]
@@ -60,6 +60,6 @@ pre-build = [
 ]
 
 [target.x86_64-apple-darwin.dependencies]
-openssl = { version = "0.10.75", features = ["vendored"] }
+openssl = { version = "0.10.76", features = ["vendored"] }
 
 

@@ -184,14 +184,24 @@ programs:
 ##### Encrypting secretString variables
 
 pippo can encrypt variables for you if you provide an encryption key either via `PIPPO_CRYPTKEY` or the `./.cryptkey` file.
-It uses the [`magic_crypt`](https://docs.rs/magic-crypt/latest/magic_crypt/) crate for that.
+pippo supports two encryption formats:
+| Marker | Description |
+|--------|------------|
+| `$enc`  | Legacy format [`magic_crypt`](https://docs.rs/magic-crypt/latest/magic_crypt/) ⚠️ deprecated |
+| `$enc2` | New format (Argon2 + ChaCha20Poly1305) ✅ recommended |
+
+⚠️ **Deprecation Notice**  
+The `$enc` format is deprecated and will be removed in the next major release.  
+Please migrate all existing encrypted values to `$enc2`.
+
+pippo automatically detects the format during decryption and ensures backward compatibility.
 
 :bulb: You only have to setup the `PIPPO_CRYPTKEY`, no `pippo.json` required for encrypting / decrypting credentials!
 
 ```bash
-$ PIPPO_CRYPTKEY='foo!$bar' pippo encrypt "hello world"
-8cLHS/BXGOG60nOQnYOpow==
-$ PIPPO_CRYPTKEY='foo!$bar' pippo decrypt 8cLHS/BXGOG60nOQnYOpow==
+$ PIPPO_CRYPTKEY='foo!$bar' pippo encrypt 'hello world'
+$enc2 Ao6mpkFs4R589+xiR6JP2b5fsvkhySZUDcRTV6poEZrgoRNVBzpIKBmvtnI14uUo98712rYTHhE=
+$ PIPPO_CRYPTKEY='foo!$bar' pippo decrypt 'Ao6mpkFs4R589+xiR6JP2b5fsvkhySZUDcRTV6poEZrgoRNVBzpIKBmvtnI14uUo98712rYTHhE='
 hello world
 ```
 
@@ -203,14 +213,62 @@ programs:
       - id: 67890
         variables:
           - name: secret
-            value: $enc 8cLHS/BXGOG60nOQnYOpow==
+            value: $enc2 Ao6mpkFs4R589+xiR6JP2b5fsvkhySZUDcRTV6poEZrgoRNVBzpIKBmvtnI14uUo98712rYTHhE=
             type: secretString
 ```
 
-Prefixing the value with `$enc` tells pippo that this value is encrypted. It will decrypt it on runtime and push the
-decrypted value to Cloud Manager.
-> ⚠ You can only use `$enc` with variables of type `secretString`. Using `string` variables will always render the value
+Prefixing the value with `$enc2` tells pippo that this value is encrypted using the new format.
+Legacy `$enc` values are still supported for decryption during the migration period, but `$enc` is deprecated and will be removed in the next major release.
+
+pippo detects the `$enc2` prefix, decrypts the value at runtime, and sends the decrypted value to Cloud Manager.
+> ⚠ You can only use `$enc` / `$enc2` with variables of type `secretString`. Using `string` variables will always render the value
 > in plain text.
+
+### Migration from `$enc` to `$enc2`
+
+Existing encrypted values using `$enc` should be migrated to the new `$enc2` format.
+
+#### Migrate a single value
+
+1. Decrypt the old value:
+```bash
+PIPPO_CRYPTKEY='your-key' pippo decrypt '$enc OLD_VALUE'
+```
+2. Re-encrypt the secret value using the new format:
+```bash
+PIPPO_CRYPTKEY='your-key' pippo encrypt 'secret-value'
+```
+3. Replace the old value in your YAML file:
+
+Before:
+```bash
+value: $enc 8cLHS/BXGOG60nOQnYOpow==
+```
+After:
+```bash
+value: $enc2 Ao6mpkFs4R589+xiR6JP2b5fsvkhySZUDcRTV6poEZrgoRNVBzpIKBmvtnI14uUo98712rYTHhE=
+```
+### Bulk migration script
+Please use the `pippo-encryption-migrate.sh` to migrate all `$enc` values in a YAML file to the new `$enc2` format.
+
+Usage:
+```bash
+export PIPPO_CRYPTKEY='your-key'
+
+./pippo-encryption-migrate.sh path/to/your-file.yml
+```
+Notes:
+
+1. A backup file (.bak) is created before modification.
+
+2. Only values prefixed with $enc are migrated.
+
+3. $enc2 values are left unchanged.
+
+4. It is recommended to review changes using diff before committing:
+```bash
+diff -u file.yml.bak file.yml
+```
 
 ### Pipelines
 
@@ -254,7 +312,7 @@ programs:
             value: bar
             type: string
           - name: SECRET_FOO
-            value: $enc muchEncryptedString
+            value: $enc2 muchEncryptedString
             type: secretString
 ```
 

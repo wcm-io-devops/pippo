@@ -2237,7 +2237,7 @@ dependencies = [
  "magic-crypt",
  "num",
  "openssl",
- "rand 0.8.5",
+ "rand 0.10.0",
  "reqwest",
  "rustls",
  "serde",

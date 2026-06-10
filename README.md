@@ -310,7 +310,7 @@ programs:
         variables:
           - name: FOO
             value: bar
-            type: string            
+            type: string
           - name: SECRET_FOO
             value: $enc2 muchEncryptedString
             type: secretString

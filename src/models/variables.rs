@@ -107,6 +107,7 @@ pub struct PipelineVariable {
 pub enum PipelineVariableServiceType {
     Build,
     UiTest,
+    Deploy,
     FunctionalTest,
     #[serde(other)]
     Invalid,

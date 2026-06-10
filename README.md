@@ -314,6 +314,7 @@ programs:
           - name: SECRET_FOO
             value: $enc2 muchEncryptedString
             type: secretString
+            service: deploy
 ```
 
 ### Logs

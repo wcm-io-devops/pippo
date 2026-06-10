@@ -84,8 +84,11 @@ impl Hash for PipelineVariableServiceType {
             PipelineVariableServiceType::UiTest => {
                 state.write_u8(3);
             }
-            PipelineVariableServiceType::Invalid => {
+            PipelineVariableServiceType::Deploy => {
                 state.write_u8(4);
+            }
+            PipelineVariableServiceType::Invalid => {
+                state.write_u8(5);
             }
         }
     }

@@ -100,6 +100,12 @@ pub enum Commands {
         #[clap(subcommand)]
         certificate_command: CertificateCommands,
     },
+
+    /// Tools to retrieve Adobe content request usage
+    ContentRequests {
+        #[clap(subcommand)]
+        content_requests_command: ContentRequestsCommands,
+    },
 }
 
 #[derive(Subcommand)]
@@ -229,5 +235,35 @@ pub enum CertificateCommands {
     Manage {
         #[clap(value_parser, value_name = "FILE")]
         input: String,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum ContentRequestsCommands {
+    /// Download Adobe content request usage
+    Download {
+        /// Start date in YYYY-MM-DD format
+        #[clap(long, value_parser, value_name = "YYYY-MM-DD")]
+        start_date: String,
+
+        /// End date in YYYY-MM-DD format
+        #[clap(long, value_parser, value_name = "YYYY-MM-DD")]
+        end_date: String,
+
+        /// Time unit: daily or monthly
+        #[clap(long, value_parser, possible_values = vec!["daily", "monthly"], default_value = "monthly")]
+        time_unit: String,
+
+        /// Output format: json or csv
+        #[clap(long, value_parser, possible_values = vec!["json", "csv"], default_value = "json")]
+        format: String,
+
+        /// Output file path
+        #[clap(short, long, value_parser)]
+        output: Option<String>,
+
+        /// Filter by program name
+        #[clap(long, value_parser)]
+        program_name: Option<String>,
     },
 }

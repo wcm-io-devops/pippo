@@ -15,6 +15,7 @@ mod clap_app;
 mod clap_models;
 mod client;
 mod config;
+mod content_requests;
 mod domains;
 mod encryption;
 mod environments;
@@ -30,6 +31,7 @@ use crate::clap_app::init_cli;
 
 const HOST_NAME: &str = "https://cloudmanager.adobe.io";
 const IMS_ENDPOINT: &str = "ims-na1.adobelogin.com";
+const ASSETS_REPORTING_HOST_NAME: &str = "https://assets-reporting.adobe.io";
 
 #[tokio::main]
 async fn main() {

@@ -10,6 +10,7 @@ use crate::auth::obtain_access_token;
 use crate::clap_models::*;
 use crate::client::CloudManagerClient;
 use crate::config::CloudManagerConfig;
+use crate::content_requests;
 use crate::encryption::{decrypt, encrypt_marked};
 use crate::logs::{download_log, tail_log};
 use crate::models::domain::Domain;
@@ -368,6 +369,53 @@ pub async fn init_cli() {
                 );
             }
         }
+
+        Some(Commands::ContentRequests {
+            content_requests_command,
+        }) => match &content_requests_command {
+            ContentRequestsCommands::Download {
+                start_date,
+                end_date,
+                time_unit,
+                format,
+                output,
+                program_name,
+            } => {
+                let response = content_requests::download_content_requests(
+                    &mut cm_client,
+                    start_date,
+                    end_date,
+                    time_unit,
+                    program_name.as_deref(),
+                )
+                .await
+                .unwrap();
+
+                let content = match format.as_str() {
+                    "json" => serde_json::to_string_pretty(&response).unwrap(),
+                    "csv" => {
+                        let mut writer = csv::Writer::from_writer(vec![]);
+
+                        for record in &response {
+                            writer.serialize(record).unwrap();
+                        }
+
+                        String::from_utf8(writer.into_inner().unwrap()).unwrap()
+                    }
+                    _ => {
+                        eprintln!("❌ Unsupported format: {}", format);
+                        process::exit(1);
+                    }
+                };
+
+                if let Some(output) = output {
+                    std::fs::write(output, content).unwrap();
+                    println!("✅ Content request usage written to {}", output);
+                } else {
+                    println!("{}", content);
+                }
+            }
+        },
 
         _ => {}
     }

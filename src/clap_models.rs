@@ -266,4 +266,38 @@ pub enum ContentRequestsCommands {
         #[clap(long, value_parser)]
         program_name: Option<String>,
     },
+
+    /// Ingest Adobe content request usage into OpenSearch
+    Ingest {
+        /// Start date in YYYY-MM-DD format
+        #[clap(long, value_parser, value_name = "YYYY-MM-DD")]
+        start_date: String,
+
+        /// End date in YYYY-MM-DD format
+        #[clap(long, value_parser, value_name = "YYYY-MM-DD")]
+        end_date: String,
+
+        /// Time unit: daily or monthly
+        #[clap(long, value_parser, possible_values = vec!["daily", "monthly"], default_value = "monthly")]
+        time_unit: String,
+
+        /// Filter by program name
+        #[clap(long, value_parser)]
+        program_name: Option<String>,
+
+        #[clap(long, value_parser, default_value = "https://localhost:9200")]
+        opensearch_url: String,
+
+        #[clap(long, value_parser, default_value = "aem-content-requests-test")]
+        opensearch_index: String,
+
+        #[clap(long, value_parser)]
+        opensearch_username: String,
+
+        #[clap(long, value_parser)]
+        opensearch_password: String,
+
+        #[clap(long, action = ArgAction::SetTrue)]
+        insecure: bool,
+    },
 }

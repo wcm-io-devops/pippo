@@ -16,6 +16,7 @@ use crate::logs::{download_log, tail_log};
 use crate::models::domain::Domain;
 use crate::models::log::{LogType, ServiceType};
 use crate::models::variables::{EnvironmentVariableServiceType, PipelineVariableServiceType};
+use crate::opensearch;
 
 use crate::models::certificates::CertificateList;
 use crate::variables::{
@@ -414,6 +415,39 @@ pub async fn init_cli() {
                 } else {
                     println!("{}", content);
                 }
+            }
+
+            ContentRequestsCommands::Ingest {
+                start_date,
+                end_date,
+                time_unit,
+                program_name,
+                opensearch_url,
+                opensearch_index,
+                opensearch_username,
+                opensearch_password,
+                insecure,
+            } => {
+                let records = content_requests::download_content_requests(
+                    &mut cm_client,
+                    start_date,
+                    end_date,
+                    time_unit,
+                    program_name.as_deref(),
+                )
+                .await
+                .unwrap();
+
+                opensearch::ingest_content_requests(
+                    &records,
+                    opensearch_url,
+                    opensearch_index,
+                    opensearch_username,
+                    opensearch_password,
+                    *insecure,
+                )
+                .await
+                .unwrap();
             }
         },
 

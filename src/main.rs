@@ -23,6 +23,7 @@ mod errors;
 mod execution;
 mod logs;
 mod models;
+mod opensearch;
 mod pipelines;
 mod programs;
 mod variables;

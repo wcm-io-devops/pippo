@@ -142,7 +142,7 @@ fn flatten_content_requests(
         .data
         .programs
         .into_iter()
-        .filter(|program| program_name_filter.map_or(true, |name| program.name == name))
+        .filter(|program| program_name_filter.is_none_or(|name| program.name == name))
         .flat_map(|program| {
             let program_name = program.name;
 

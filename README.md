@@ -13,6 +13,8 @@ It enables you to
  * create Domains
  * manage OV and EV certificates
  * get an access token which can be reused e.g. by `curl` commands in CI/CD pipelines
+ * download Adobe Content Requests usage
+ * ingest Adobe Content Requests usage into OpenSearch
 
 ## Installation
 
@@ -328,6 +330,66 @@ programs:
 pippo -c <pippo.json> -p <program-id> -e <environment-id> log save --service <svc> --log <log> --date <YYYY-MM-DD>
 pippo -c <pippo.json> -p <program-id> -e <environment-id> log tail --service <svc> --log <log>
 ```
+
+### Content Requests
+
+* Download Adobe Content Requests usage
+* Export results as JSON or CSV
+* Ingest Adobe Content Requests usage into OpenSearch
+
+It is possible to pass the program ID by setting the environment variable `PIPPO_PROGRAM_ID`.
+
+#### JSON export
+
+```bash
+pippo -c <pippo.json> -p <program-id> content-requests download \
+  --start-date 2026-01-01 \
+  --end-date 2026-06-30 \
+  --time-unit daily \
+  --format json
+```
+#### CSV export
+
+```bash
+pippo -c <pippo.json> -p <program-id> content-requests download \
+  --start-date 2026-01-01 \
+  --end-date 2026-06-30 \
+  --time-unit monthly \
+  --format csv \
+  --output content-requests.csv
+```
+
+#### OpenSearch ingestion
+
+- The target OpenSearch index must already exist and is supplied using the `--opensearch-index` option.
+
+- When connecting to a local OpenSearch instance with a self-signed certificate, use the `--insecure` option.
+
+```bash
+pippo -c <pippo.json> -p <program-id> content-requests ingest \
+  --start-date 2026-01-01 \
+  --end-date 2026-06-30 \
+  --time-unit daily \
+  --opensearch-url <opensearch-url> \
+  --opensearch-index <opensearch-index> \
+  --opensearch-username <username> \
+  --opensearch-password <password>
+```
+
+#### Options
+
+| Option | Description | Applies to |
+|--------|-------------|------------|
+| `--start-date` | Start date in `YYYY-MM-DD` format | Download, Ingest |
+| `--end-date` | End date in `YYYY-MM-DD` format | Download, Ingest |
+| `--time-unit` | Aggregation interval: `daily` or `monthly` | Download, Ingest |
+| `--format` | Output format: `json` or `csv` | Download |
+| `--output` | Output file path | Download |
+| `--opensearch-url` | OpenSearch endpoint | Ingest |
+| `--opensearch-index` | Target OpenSearch index | Ingest |
+| `--opensearch-username` | OpenSearch username | Ingest |
+| `--opensearch-password` | OpenSearch password | Ingest |
+| `--insecure` | Skip TLS certificate validation | Ingest |
 
 ### dry-run mode
 

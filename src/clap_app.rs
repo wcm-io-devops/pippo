@@ -380,24 +380,28 @@ pub async fn init_cli() {
                 time_unit,
                 format,
                 output,
-                program_name,
             } => {
-                let response = content_requests::download_content_requests(
+                let program_id_filter = cli
+                    .program
+                    .as_ref()
+                    .map(|program_id| program_id.to_string());
+
+                let records = content_requests::download_content_requests(
                     &mut cm_client,
                     start_date,
                     end_date,
                     time_unit,
-                    program_name.as_deref(),
+                    program_id_filter.as_deref(),
                 )
                 .await
                 .unwrap();
 
                 let content = match format.as_str() {
-                    "json" => serde_json::to_string_pretty(&response).unwrap(),
+                    "json" => serde_json::to_string_pretty(&records).unwrap(),
                     "csv" => {
                         let mut writer = csv::Writer::from_writer(vec![]);
 
-                        for record in &response {
+                        for record in &records {
                             writer.serialize(record).unwrap();
                         }
 
@@ -421,19 +425,23 @@ pub async fn init_cli() {
                 start_date,
                 end_date,
                 time_unit,
-                program_name,
                 opensearch_url,
                 opensearch_index,
                 opensearch_username,
                 opensearch_password,
                 insecure,
             } => {
+                let program_id_filter = cli
+                    .program
+                    .as_ref()
+                    .map(|program_id| program_id.to_string());
+
                 let records = content_requests::download_content_requests(
                     &mut cm_client,
                     start_date,
                     end_date,
                     time_unit,
-                    program_name.as_deref(),
+                    program_id_filter.as_deref(),
                 )
                 .await
                 .unwrap();

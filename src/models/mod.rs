@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod certificates;
 pub mod config;
+pub mod content_requests;
 pub mod domain;
 pub mod environment;
 pub mod execution;

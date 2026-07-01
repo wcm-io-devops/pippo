@@ -1,4 +1,4 @@
-use crate::content_requests::ContentRequestsRecord;
+use crate::models::content_requests::ContentRequestsRecord;
 use anyhow::Result;
 use serde_json::json;
 
@@ -16,13 +16,14 @@ pub async fn ingest_content_requests(
         payload.push_str(&serde_json::to_string(&json!({
             "index": {
                 "_index": opensearch_index,
-                "_id": format!("{}-{}", record.program_name, record.date)
+                "_id": format!("p{}-{}", record.program_id, record.date)
             }
         }))?);
         payload.push('\n');
 
         payload.push_str(&serde_json::to_string(&json!({
             "@timestamp": record.date,
+            "programId": record.program_id,
             "programName": record.program_name,
             "apiCalls": record.api_calls,
             "contentRequests": record.content_requests,

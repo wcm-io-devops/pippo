@@ -1,65 +1,18 @@
 use crate::client::{AdobeConnector, CloudManagerClient};
+use crate::models::content_requests::{ContentRequestsRecord, ContentRequestsResponse};
 use crate::ASSETS_REPORTING_HOST_NAME;
 use chrono::{Duration, NaiveDate};
 use reqwest::Method;
-use serde::{Deserialize, Serialize};
 
-const DAILY_SLICE_DAYS: i64 = 90;
-const MONTHLY_SLICE_DAYS: i64 = 365;
-
-#[derive(Debug, Deserialize)]
-pub struct ContentRequestsResponse {
-    pub data: ContentRequestsData,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ContentRequestsData {
-    pub programs: Vec<ContentRequestsProgram>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ContentRequestsProgram {
-    pub name: String,
-    pub usage: Vec<ContentRequestsUsage>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ContentRequestsUsage {
-    #[serde(rename = "apiCalls")]
-    pub api_calls: u64,
-
-    #[serde(rename = "contentRequests")]
-    pub content_requests: u64,
-
-    pub date: String,
-
-    #[serde(rename = "pageViews")]
-    pub page_views: u64,
-}
-
-#[derive(Debug, Serialize)]
-pub struct ContentRequestsRecord {
-    pub date: String,
-
-    #[serde(rename = "programName")]
-    pub program_name: String,
-
-    #[serde(rename = "apiCalls")]
-    pub api_calls: u64,
-
-    #[serde(rename = "contentRequests")]
-    pub content_requests: u64,
-
-    #[serde(rename = "pageViews")]
-    pub page_views: u64,
-}
+const DAILY_SLICE_DAYS: i64 = 60;
+const MONTHLY_SLICE_DAYS: i64 = 360;
 
 pub async fn download_content_requests(
     client: &mut CloudManagerClient,
     start_date: &str,
     end_date: &str,
     time_unit: &str,
-    program_name_filter: Option<&str>,
+    program_id_filter: Option<&str>,
 ) -> Result<Vec<ContentRequestsRecord>, reqwest::Error> {
     let slice_days = if time_unit == "daily" {
         DAILY_SLICE_DAYS
@@ -76,7 +29,7 @@ pub async fn download_content_requests(
             &slice_start,
             &slice_end,
             time_unit,
-            program_name_filter,
+            program_id_filter,
         )
         .await?;
 
@@ -91,7 +44,7 @@ async fn download_content_requests_slice(
     start_date: &str,
     end_date: &str,
     time_unit: &str,
-    program_name_filter: Option<&str>,
+    program_id_filter: Option<&str>,
 ) -> Result<Vec<ContentRequestsRecord>, reqwest::Error> {
     let path = format!(
         "{}/statistics/contentRequestsUsage",
@@ -110,7 +63,7 @@ async fn download_content_requests_slice(
 
     let parsed = response.json::<ContentRequestsResponse>().await?;
 
-    Ok(flatten_content_requests(parsed, program_name_filter))
+    Ok(flatten_content_requests(parsed, program_id_filter))
 }
 
 fn build_date_slices(start_date: &str, end_date: &str, slice_days: i64) -> Vec<(String, String)> {
@@ -136,14 +89,15 @@ fn build_date_slices(start_date: &str, end_date: &str, slice_days: i64) -> Vec<(
 
 fn flatten_content_requests(
     response: ContentRequestsResponse,
-    program_name_filter: Option<&str>,
+    program_id_filter: Option<&str>,
 ) -> Vec<ContentRequestsRecord> {
     response
         .data
         .programs
         .into_iter()
-        .filter(|program| program_name_filter.is_none_or(|name| program.name == name))
+        .filter(|program| program_id_filter.is_none_or(|id| program.id.to_string() == id))
         .flat_map(|program| {
+            let program_id = program.id;
             let program_name = program.name;
 
             program
@@ -151,6 +105,7 @@ fn flatten_content_requests(
                 .into_iter()
                 .map(move |usage| ContentRequestsRecord {
                     date: format!("{}T00:00:00Z", usage.date),
+                    program_id,
                     program_name: program_name.clone(),
                     api_calls: usage.api_calls,
                     content_requests: usage.content_requests,
@@ -171,11 +126,11 @@ mod tests {
         assert_eq!(slices.len(), 2);
         assert_eq!(
             slices[0],
-            ("2025-01-01".to_string(), "2025-03-31".to_string())
+            ("2025-01-01".to_string(), "2025-03-01".to_string())
         );
         assert_eq!(
             slices[1],
-            ("2025-04-01".to_string(), "2025-04-15".to_string())
+            ("2025-03-02".to_string(), "2025-04-15".to_string())
         );
     }
 
@@ -186,11 +141,11 @@ mod tests {
         assert_eq!(slices.len(), 2);
         assert_eq!(
             slices[0],
-            ("2025-01-01".to_string(), "2025-12-31".to_string())
+            ("2025-01-01".to_string(), "2025-12-26".to_string())
         );
         assert_eq!(
             slices[1],
-            ("2026-01-01".to_string(), "2026-03-31".to_string())
+            ("2025-12-27".to_string(), "2026-03-31".to_string())
         );
     }
 }

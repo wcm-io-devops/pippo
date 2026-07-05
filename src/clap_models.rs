@@ -283,10 +283,10 @@ pub enum ContentRequestsCommands {
         #[clap(long, value_parser)]
         opensearch_index: String,
 
-        #[clap(long, value_parser)]
+        #[clap(long, value_parser, env = "OPENSEARCH_USERNAME")]
         opensearch_username: String,
 
-        #[clap(long, value_parser)]
+        #[clap(long, value_parser, env = "OPENSEARCH_PASSWORD")]
         opensearch_password: String,
 
         #[clap(long, action = ArgAction::SetTrue)]

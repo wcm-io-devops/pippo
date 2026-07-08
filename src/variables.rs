@@ -257,7 +257,7 @@ pub async fn set_env_vars_from_file(
                                 // - $enc2 <...> / $enc2<...> (new scheme)
                                 // - $enc <...>  / $enc<...>  (legacy scheme, with fallback)
                                 // - raw base64 (tries new first, then legacy)
-                                let tmp_loop_var_value = tmp_loop_var.clone().value.unwrap();
+                                let tmp_loop_var_value = tmp_loop_var.value.clone().unwrap();
                                 if tmp_loop_var_value.starts_with("$enc") {
                                     tmp_loop_var.value = Some(decrypt(tmp_loop_var_value));
                                 }
@@ -268,9 +268,12 @@ pub async fn set_env_vars_from_file(
 
                     // If a variable is only present on Cloud Manager and not in the YAML, then we
                     // will set its value to None and push it to vars_final, so it will be deleted.
+                    // Build a set for O(1) lookup instead of scanning the vec on every iteration.
+                    let vars_yaml_set: HashSet<EnvironmentVariable> =
+                        vars_yaml.iter().cloned().collect();
                     let vars_cloud = get_env_vars(client, p.id, e.id).await.unwrap().variables;
                     for vc in vars_cloud {
-                        if !vars_yaml.clone().contains(&vc) {
+                        if !vars_yaml_set.contains(&vc) {
                             let variable_to_be_deleted = EnvironmentVariable {
                                 name: vc.name,
                                 value: None,
@@ -515,7 +518,7 @@ pub async fn set_pipeline_vars_from_file(
                                 // - $enc2 <...> / $enc2<...> (new scheme)
                                 // - $enc <...>  / $enc<...>  (legacy scheme, with fallback)
                                 // - raw base64 (tries new first, then legacy)
-                                let tmp_loop_var_value = tmp_loop_var.clone().value.unwrap();
+                                let tmp_loop_var_value = tmp_loop_var.value.clone().unwrap();
                                 if tmp_loop_var_value.starts_with("$enc") {
                                     tmp_loop_var.value = Some(decrypt(tmp_loop_var_value));
                                 }
@@ -526,12 +529,15 @@ pub async fn set_pipeline_vars_from_file(
 
                     // If a variable is only present on Cloud Manager and not in the YAML, then we
                     // will set its value to None and push it to vars_final, so it will be deleted.
+                    // Build a set for O(1) lookup instead of scanning the vec on every iteration.
+                    let vars_yaml_set: HashSet<PipelineVariable> =
+                        vars_yaml.iter().cloned().collect();
                     let vars_cloud = get_pipeline_vars(client, p.id, &l.id)
                         .await
                         .unwrap()
                         .variables;
                     for vc in vars_cloud {
-                        if !vars_yaml.clone().contains(&vc) {
+                        if !vars_yaml_set.contains(&vc) {
                             let variable_to_be_deleted = PipelineVariable {
                                 name: vc.name,
                                 value: None,

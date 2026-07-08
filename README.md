@@ -387,9 +387,22 @@ pippo -c <pippo.json> -p <program-id> content-requests ingest \
 | `--output` | Output file path | Download |
 | `--opensearch-url` | OpenSearch endpoint | Ingest |
 | `--opensearch-index` | Target OpenSearch index | Ingest |
-| `--opensearch-username` | OpenSearch username | Ingest |
-| `--opensearch-password` | OpenSearch password | Ingest |
+| `--opensearch-username` | OpenSearch username (or environment variable `OPENSEARCH_USERNAME`) | Ingest |
+| `--opensearch-password` | OpenSearch password (or environment variable `OPENSEARCH_PASSWORD`) | Ingest |
 | `--insecure` | Skip TLS certificate validation | Ingest |
+
+Instead of passing `--opensearch-username` and `--opensearch-password` on the command line, you can provide them via the `OPENSEARCH_USERNAME` and `OPENSEARCH_PASSWORD`environment variables.
+
+#### Example usage
+
+```bash
+pippo content-requests ingest \
+  --opensearch-url "$OPENSEARCH_URL" \
+  --opensearch-index "$OPENSEARCH_INDEX" \
+  --start-date 2026-06-01 \
+  --end-date 2026-07-01 \
+  --time-unit daily
+```
 
 ### dry-run mode
 

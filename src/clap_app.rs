@@ -10,11 +10,13 @@ use crate::auth::obtain_access_token;
 use crate::clap_models::*;
 use crate::client::CloudManagerClient;
 use crate::config::CloudManagerConfig;
+use crate::content_requests;
 use crate::encryption::{decrypt, encrypt_marked};
 use crate::logs::{download_log, tail_log};
 use crate::models::domain::Domain;
 use crate::models::log::{LogType, ServiceType};
 use crate::models::variables::{EnvironmentVariableServiceType, PipelineVariableServiceType};
+use crate::opensearch;
 
 use crate::models::certificates::CertificateList;
 use crate::variables::{
@@ -368,6 +370,94 @@ pub async fn init_cli() {
                 );
             }
         }
+
+        Some(Commands::ContentRequests {
+            content_requests_command,
+        }) => match &content_requests_command {
+            ContentRequestsCommands::Download {
+                start_date,
+                end_date,
+                time_unit,
+                format,
+                output,
+            } => {
+                let program_id_filter = cli
+                    .program
+                    .as_ref()
+                    .map(|program_id| program_id.to_string());
+
+                let records = content_requests::download_content_requests(
+                    &mut cm_client,
+                    start_date,
+                    end_date,
+                    time_unit,
+                    program_id_filter.as_deref(),
+                )
+                .await
+                .unwrap();
+
+                let content = match format.as_str() {
+                    "json" => serde_json::to_string_pretty(&records).unwrap(),
+                    "csv" => {
+                        let mut writer = csv::Writer::from_writer(vec![]);
+
+                        for record in &records {
+                            writer.serialize(record).unwrap();
+                        }
+
+                        String::from_utf8(writer.into_inner().unwrap()).unwrap()
+                    }
+                    _ => {
+                        eprintln!("❌ Unsupported format: {}", format);
+                        process::exit(1);
+                    }
+                };
+
+                if let Some(output) = output {
+                    std::fs::write(output, content).unwrap();
+                    println!("✅ Content request usage written to {}", output);
+                } else {
+                    println!("{}", content);
+                }
+            }
+
+            ContentRequestsCommands::Ingest {
+                start_date,
+                end_date,
+                time_unit,
+                opensearch_url,
+                opensearch_index,
+                opensearch_username,
+                opensearch_password,
+                insecure,
+            } => {
+                let program_id_filter = cli
+                    .program
+                    .as_ref()
+                    .map(|program_id| program_id.to_string());
+
+                let records = content_requests::download_content_requests(
+                    &mut cm_client,
+                    start_date,
+                    end_date,
+                    time_unit,
+                    program_id_filter.as_deref(),
+                )
+                .await
+                .unwrap();
+
+                opensearch::ingest_content_requests(
+                    &records,
+                    opensearch_url,
+                    opensearch_index,
+                    opensearch_username,
+                    opensearch_password,
+                    *insecure,
+                )
+                .await
+                .unwrap();
+            }
+        },
 
         _ => {}
     }

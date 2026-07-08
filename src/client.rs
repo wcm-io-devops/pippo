@@ -23,6 +23,16 @@ pub trait AdobeConnector {
     ) -> Result<Response, Error>
     where
         T: Serialize + Send;
+
+    async fn perform_assets_reporting_request<T>(
+        &mut self,
+        method: Method,
+        path: String,
+        body: Option<T>,
+        query: Option<Vec<(&str, &str)>>,
+    ) -> Result<Response, Error>
+    where
+        T: Serialize + Send;
 }
 
 #[async_trait]
@@ -55,6 +65,48 @@ impl AdobeConnector for CloudManagerClient {
             .header("x-api-key", &self.config.client_id);
 
         // Add query parameters (if any)
+        if let Some(params) = query {
+            req = req.query(&params);
+        }
+
+        match method {
+            Method::POST | Method::PUT | Method::PATCH => {
+                if let Some(b) = body {
+                    req = req.json(&b);
+                }
+            }
+            _ => {}
+        }
+
+        let response = req.send().await?;
+        Ok(response)
+    }
+
+    /// Issues HTTP requests to Adobe Assets Reporting APIs.
+    ///
+    /// This endpoint requires `x-api-key: ssp_ui` instead of the normal Pippo client ID.
+    async fn perform_assets_reporting_request<T>(
+        &mut self,
+        method: Method,
+        path: String,
+        body: Option<T>,
+        query: Option<Vec<(&str, &str)>>,
+    ) -> Result<Response, Error>
+    where
+        T: Serialize + Send,
+    {
+        let mut req = self.client.request(method.clone(), &path);
+
+        req = req
+            .header(AUTHORIZATION, &self.config.authorization_header)
+            .header("x-gw-ims-org-id", &self.config.organization_id)
+            .header("x-api-key", "ssp_ui")
+            .header("accept", "application/json, text/plain, */*")
+            .header("cache-control", "no-cache")
+            .header("pragma", "no-cache")
+            .header("origin", "https://cdn.experience.adobe.net")
+            .header("referer", "https://cdn.experience.adobe.net/");
+
         if let Some(params) = query {
             req = req.query(&params);
         }

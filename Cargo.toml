@@ -42,6 +42,7 @@ headers = "0.4.1"
 rustls = "0.23.40"
 anyhow = "1.0.102"
 http = "1.4.0"
+csv = "1.3"
 [dependencies.reqwest]
 version = "0.12.28"
 #default-features = false

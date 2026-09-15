@@ -39,7 +39,7 @@ mod tests {
         assert_eq!(vobj.exp, 1550001438);
         assert_eq!(vobj.iss, "C74F69D7594880280.....@AdobeOrg");
         assert_eq!(vobj.sub, "6657031C5C095BB40A4.....@techacct.adobe.com");
-        assert_eq!(vobj.scope_ent_aem_cloud_api, false);
-        assert_eq!(vobj.scope_ent_cloudmgr_sdk, true);
+        assert!(!vobj.scope_ent_aem_cloud_api);
+        assert!(vobj.scope_ent_cloudmgr_sdk);
     }
 }

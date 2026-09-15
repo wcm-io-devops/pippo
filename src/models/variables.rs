@@ -162,7 +162,7 @@ mod tests {
         let vobj: EnvironmentVariablesResponse =
             read_json_from_file("test/variables/environment_variables_response.json").unwrap();
 
-        let under_test: &EnvironmentVariable = vobj.variables_list.variables.get(0).unwrap();
+        let under_test: &EnvironmentVariable = vobj.variables_list.variables.first().unwrap();
         assert_eq!(under_test.service, EnvironmentVariableServiceType::All,);
         assert_eq!(under_test.name, "VARIABLE",);
         assert_eq!(

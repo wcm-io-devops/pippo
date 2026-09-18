@@ -166,10 +166,10 @@ fn generate_txt_record(domain: String, program_id: u32, env_id: i64) -> String {
     // adobe-aem-verification=<domain-name>/<program-id>/<environment-id>/<random-8-4-4-4-12-guid>\
     let txt_record = format!(
         "adobe-aem-verification={}/{}/{}/{}",
-        &domain,
-        &program_id,
-        &env_id,
-        &uuid.hyphenated().to_string(),
+        domain,
+        program_id,
+        env_id,
+        uuid.hyphenated(),
     );
     txt_record
 }

@@ -13,7 +13,7 @@ impl YamlConfig {
     pub fn from_file(path: String) -> Self {
         let data = fs::read_to_string(&path)
             .unwrap_or_else(|_| {
-                eprintln!("[ERROR] Unable to find/load yaml config at path '{}'. The documentation is available at https://github.com/wcm-io-devops/pippo", &path);
+                eprintln!("[ERROR] Unable to find/load yaml config at path '{}'. The documentation is available at https://github.com/wcm-io-devops/pippo", path);
                 std::process::exit(1)
             });
         let input: YamlConfig = serde_yaml::from_str(data.as_str()).unwrap_or_else(|err| {
@@ -76,6 +76,6 @@ mod tests {
 
         assert_eq!(vobj.programs.len(), 1);
         assert_eq!(vobj.programs.first().unwrap().id, 222222);
-        assert_eq!(vobj.programs.first().unwrap().pipelines.is_some(), true);
+        assert!(vobj.programs.first().unwrap().pipelines.is_some());
     }
 }

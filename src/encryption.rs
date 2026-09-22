@@ -7,7 +7,7 @@ use chacha20poly1305::{
     ChaCha20Poly1305, Key, Nonce,
 };
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
-use rand::RngCore;
+use chacha20poly1305::aead::rand_core::RngCore;
 use zeroize::Zeroize;
 
 /// Marker for legacy values (magic-crypt)

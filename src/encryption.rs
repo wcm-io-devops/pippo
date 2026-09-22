@@ -2,12 +2,12 @@ use std::{env, process};
 
 use argon2::Argon2;
 use base64::{engine::general_purpose::STANDARD as B64, Engine as _};
+use chacha20poly1305::aead::rand_core::RngCore;
 use chacha20poly1305::{
     aead::{Aead, KeyInit, OsRng},
     ChaCha20Poly1305, Key, Nonce,
 };
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
-use chacha20poly1305::aead::rand_core::RngCore;
 use zeroize::Zeroize;
 
 /// Marker for legacy values (magic-crypt)

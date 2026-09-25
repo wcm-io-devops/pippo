@@ -88,7 +88,6 @@ impl EnvironmentVariableServiceType {
 }
 
 /// Model for all information about a Cloud Manager pipeline variable
-/// Model for all information about a Cloud Manager environment variable
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PipelineVariable {
     pub name: String,
